@@ -14,14 +14,14 @@ const {app, runServer, closeServer} = require('../server');
 chai.use(chaiHttp);
 
 describe('Root return', function(){
-  it('should return 200', function(){
+  it('should exist and return 200', function(){
     let res;
       return chai.request(app)
         .get('/')
         .then(function(_res) {
           // so subsequent .then blocks can access response object
           res = _res;
-          console.log(res);
+          console.log(`res is ${res}`);
           expect(res).to.have.status(200);
         })
   });
