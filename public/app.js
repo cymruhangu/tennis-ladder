@@ -180,7 +180,10 @@ let MOCK_MATCHES = {
                     "loserGames": 2
                 }
             },
-            "datePlayed": 1535987897 
+            "datePlayed": 1535987897,
+            "challenger": "3333333",
+            "defender": "1111111", 
+            "matchPlayed": true
         },
         {
             "id": "5b8b17c398b8ca31ea41194f",
@@ -201,7 +204,10 @@ let MOCK_MATCHES = {
                     "loserGames": 3
                 }
             },
-            "datePlayed": 1535987897
+            "datePlayed": 1535987897,
+            "challenger": "5555555",
+            "defender": "2222222", 
+            "matchPlayed": true
         },
         {
             "id": "5b8b17c3e62428d45fe1f9ab",
@@ -222,7 +228,10 @@ let MOCK_MATCHES = {
                     "loserGames": 3
                 }
             },
-            "datePlayed": 1535987897
+            "datePlayed": 1535987897,
+            "challenger": "4444444",
+            "defender": "3333333", 
+            "matchPlayed": true
         },
         {
             "id": "5b8b17c354c1e18445736711",
@@ -243,7 +252,10 @@ let MOCK_MATCHES = {
                     "loserGames": 3
                 }
             },
-            "datePlayed": 1535987897
+            "datePlayed": 1535987897,
+            "challenger": "8888888",
+            "defender": "6666666", 
+            "matchPlayed": true
         }
     ]
 };
@@ -265,7 +277,7 @@ let MOCK_LADDERS =  {
                 {"rung": 9, "player": "9999999"},
                 {"rung": 10, "player": "10000000"},
                 {"rung": 11, "player": "11000000"}
-            ]    
+            ]
         }
     ]
 };
@@ -277,13 +289,37 @@ function showLadder(ladderName){
         const rungDiv = createRungHTML(rank, playerName);
         $('#ladder').append(rungDiv);
         });
+        addChallengeListener();
 }
 
 function createRungHTML(rank, player){
-    return `<div class="ladder-rung">${rank}:  ${player}
-            <button type="button" class="challenge">Challenge</button>
-            <button type="button" class="record">Record Score</button>
+    return `<div class="ladder-rung" data-attr="${player}">${rank}:  ${player}
+             <button type="button" class="challenge">Challenge</button>
+             <button type="button" class="record" hidden >Record Score</button>
     </div>`
+}
+
+function addChallengeListener(){
+    $('.challenge').on("click", function(event){
+        event.preventDefault();
+        const defender = $(this).parent().attr('data-attr');
+        alert(`challenge to ${defender} will be created`);
+        $(this).fadeOut();
+        $(this).next('.record').fadeIn();
+        //create Match 
+        addRecordListener();
+    });
+}
+
+function addRecordListener(){
+    $('.record').on('click', function(event){
+        event.preventDefault();
+        const defender = $(this).parent().attr('data-attr');
+        alert(`A match with ${defender} will be recorded`);
+        $(this).fadeOut();
+        $('#score').fadeIn();
+        $(this).prev('.challenge').fadeIn();
+    });
 }
 
 function findPlayer(playerID){
@@ -312,5 +348,5 @@ function createMatchHTML(winner, loser, first, second, third){
 showLadder("singlesOpen");
 showMatches();
 
-$()
+// const x = $('.ladder-rung').attr('data-attr');
 

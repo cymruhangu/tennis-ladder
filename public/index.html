@@ -6,15 +6,30 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   
   <title>Tennis Ladder Capstone</title>
-  <link rel="stylesheet" type="text/css" href="main.css">
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.1.1/normalize.min.css">
+  <link rel="stylesheet" type="text/css" href="./main.css">
 </head>
 <body>
   <section id="ladder">
     <p>This section will show the ladder!</p>
   </section>
     
-  <section id="score">
-    <p>Scoreboard form - modal window</p>
+  <section id="score" hidden>
+    <form>
+      <fieldset>
+        <legend><span id="defender">Defender:</span></legend>
+        <input type="number" class="games" id="def-set1" min="0" max="7">
+        <input type="number" class="games" id="chal-set1" min="0" max="7">
+        <input type="number" class="games" id="def-set2" min="0" max="7">
+      </fieldset>  
+      <fieldset>
+          <legend><span id="challenger">Challenger:</span></legend>
+        <input type="number" class="games" id="chal-set2" min="0" max="7">
+        <input type="number" class="games" id="def-set3" min="0" max="7">
+        <input type="number" class="games" id="chal-set3" min="0" max="7">
+      </fieldset>
+      <button id="submit-score" type="submit">Submit</button>
+    </form>
   </section>
 
   <section id="matches">

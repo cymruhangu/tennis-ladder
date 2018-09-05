@@ -1,0 +1,17 @@
+* {
+	box-sizing: border-box;
+}
+
+#ladder, #matches, #score {
+    padding-left: 25px;
+}
+
+#score {
+    width: 10%;
+}
+
+fieldset > legend {
+    float: left;
+    padding-right: 10px;
+}
+
