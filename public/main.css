@@ -1,0 +1,37 @@
+* {
+	box-sizing: border-box;
+}
+
+#ladder, #matches, #score {
+    padding-left: 25px;
+}
+
+#score {
+    width: 25%;
+    position: absolute;
+    left: 400px;
+    top: 250px;
+}
+
+fieldset > legend {
+    float: left;
+    padding-right: 10px;
+}
+
+label {
+    display: inline-block;
+}
+
+#matches, #ladder {
+   font-size: 1.5em;
+   padding-bottom: 30px;
+}
+
+a {
+    padding: 50px;
+    font-size: 1.3em;
+}
+
+form {
+       background-color: rgb(180, 180, 192);
+}
