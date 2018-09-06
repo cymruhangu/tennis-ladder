@@ -316,6 +316,8 @@ function addRecordListener(){
         event.preventDefault();
         const defender = $(this).parent().attr('data-attr');
         alert(`A match with ${defender} will be recorded`);
+        $('#defender').html(`${defender}:`);
+        $('#challenger').html('Logged-in User:');
         $(this).fadeOut();
         $('#score').fadeIn();
         $(this).prev('.challenge').fadeIn();
