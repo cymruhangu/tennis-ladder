@@ -5,6 +5,9 @@
 #ladder, #matches, #score {
     padding-left: 25px;
 }
+h1, #welcome{
+    text-align: center;
+}
 
 #score {
     width: 25%;

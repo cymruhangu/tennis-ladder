@@ -1,3 +1,4 @@
+$(function(){
 'use strict';
 
 let MOCK_USERS = {
@@ -282,6 +283,7 @@ let MOCK_LADDERS =  {
     ]
 };
 
+
 function showLadder(ladderName){
     MOCK_LADDERS.ladders[0].rankings.forEach(function(place) {
         const playerName = findPlayer(place.player);
@@ -348,7 +350,8 @@ function createMatchHTML(winner, loser, first, second, third){
 }
 
 showLadder("singlesOpen");
+
 showMatches();
 
-// const x = $('.ladder-rung').attr('data-attr');
 
+});

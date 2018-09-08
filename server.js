@@ -1,7 +1,13 @@
 const express = require('express');
 const app = express();
-app.set('view engine', "html");
+const mongoose = require('mongoose');
+const morgan = require('morgan');
+
 app.use(express.static(__dirname + '/public'));
+
+app.post('/register', function(req, res){
+  console.log(req.path);
+});
 
 
 let server;
