@@ -12,11 +12,11 @@ const userSchema = new mongoose.Schema({
 		unique: true
 	},
 	age: {type: Number, default: 19},
-  	gender: {type: String, default: "male"},
-  	ladders: [{type: mongoose.Schema.Types.ObjectId, ref: 'Ladder'}],
-  	dateJoined: Date,
-  	isActive: {type: Boolean, default: false},
-  	matches: [{type: mongoose.Schema.Types.ObjectId, ref: 'Match'}]
+  gender: {type: String, default: "male"},
+  ladders: [{type: mongoose.Schema.Types.ObjectId, ref: 'Ladder'}],
+  dateJoined: {type: Date, default: Date.now},
+  isActive: {type: Boolean, default: false},
+  matches: [{type: mongoose.Schema.Types.ObjectId, ref: 'Match'}]
 });
 
 userSchema.virtual('playerName').get(function(){

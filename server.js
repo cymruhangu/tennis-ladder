@@ -16,6 +16,7 @@ app.use(express.json());
 app.use(express.json());
 
 //USER ROUTES
+//Show all users
 app.get('/users', (req, res) => {
     User
         .find()
@@ -31,6 +32,7 @@ app.get('/users', (req, res) => {
         });
 });
 
+//Show an individual user
 app.get('/users/:id', (req, res) => {
   User
     .findById(req.params.id)
@@ -41,6 +43,57 @@ app.get('/users/:id', (req, res) => {
       res.status(500).json({message: 'Internal server error'});
     });
 });
+
+//add a user
+app.post('/users', (req, res) => {
+  res.send('Sent from app.post');
+  const requiredFields = ['name', 'username', 'age', 'gender'];
+  for(let i=0; i<requiredFields.length; i++){
+    const field = requiredFields[i];
+    if(!(field in req.body)){
+      const message = `Missing ${field} in request body`;
+      console.error(message);
+      return res.status(400).send(message);
+    }
+  }
+  User.create({
+    name: { firstName: req.body.firstName,
+            lastName: req.body.lastName},
+    username: req.body.username,
+    age: req.body.age,
+    gender: req.body.gender,
+    isActive: req.body.isActive
+  })
+  .then(user => res.status(201).json(user.serialize()))
+  .catch(err => {
+    console.log(err);
+    res.status(500).json({ message: "Internal server error" });
+  });
+});
+
+// app.post("/restaurants", (req, res) => {
+//   const requiredFields = ["name", "borough", "cuisine"];
+//   for (let i = 0; i < requiredFields.length; i++) {
+//     const field = requiredFields[i];
+//     if (!(field in req.body)) {
+//       const message = `Missing \`${field}\` in request body`;
+//       console.error(message);
+//       return res.status(400).send(message);
+//     }
+//   }
+// Restaurant.create({
+//   name: req.body.name,
+//   borough: req.body.borough,
+//   cuisine: req.body.cuisine,
+//   grades: req.body.grades,
+//   address: req.body.address
+// })
+//   .then(restaurant => res.status(201).json(restaurant.serialize()))
+//   .catch(err => {
+//     console.error(err);
+//     res.status(500).json({ message: "Internal server error" });
+//   });
+// });
 
 //NEXT STEPS
 // Add routes for user create and delete
@@ -64,7 +117,7 @@ function runServer(databaseUrl, port = PORT) {
   console.log(`databaseUrl is ${databaseUrl}`);
   return new Promise((resolve, reject) => {
     mongoose.connect(
-      databaseUrl, 
+      databaseUrl,  {useNewUrlParser: true },
       err => {
       if (err) {
         return reject(err);
