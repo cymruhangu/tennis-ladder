@@ -284,14 +284,30 @@ let MOCK_LADDERS =  {
 };
 
 
-function showLadder(ladderName){
-    MOCK_LADDERS.ladders[0].rankings.forEach(function(place) {
-        const playerName = findPlayer(place.player);
-        const rank = place.rung;
+function showLadder(ladderData){
+    ladderData.forEach(function(place) {
+        const playerName = `${place.user.name.firstName} ${place.user.name.lastName}`;
+        console.log(place);
+        const rank = place.rank;
         const rungDiv = createRungHTML(rank, playerName);
         $('#ladder').append(rungDiv);
         });
         addChallengeListener();
+}
+
+function getLadder(ladderId){
+    $.ajax({
+        url: `http://localhost:8080/ladders/${ladderId}`,
+        method: "GET",
+        dataType: 'json'
+    })
+    .done(function(data){
+        console.log(data.rankings);
+        showLadder(data.rankings);
+    })
+    .fail(function(err){
+        console.log(err);
+    })
 }
 
 function createRungHTML(rank, player){
@@ -333,6 +349,7 @@ function findPlayer(playerID){
     return `${player.name.firstName} ${player.name.lastName}`;
 }
 
+
 function showMatches(){
     MOCK_MATCHES.matches.forEach(function(match){
         const winnerName = findPlayer(match.winner);
@@ -345,13 +362,44 @@ function showMatches(){
     })
 }
 
+function showMatchesToo(){
+    $.ajax({
+        url: 'http://localhost:8080/matches',
+        method: "GET",
+        dataType: 'json'
+    })
+    .done(function(data){
+        console.log(data);
+    })
+    .fail(function(err){
+        console.log(err);
+    })
+}
+
+function showUsers(){
+    $.ajax({
+        url: 'http://localhost:8080/users',
+        method: "GET",
+        dataType: 'json'
+    })
+    .done(function(data){
+        console.log(data);
+    })
+    .fail(function(err){
+        console.log(err);
+    })
+}
+
 function createMatchHTML(winner, loser, first, second, third){
     return `<div class="match">${winner} d. ${loser} ${first}, ${second}, ${third}</div>`;
 }
 
-showLadder("singlesOpen");
+const ladderID = '5b8b17c354c1e18445736711'
+getLadder(ladderID);
 
 showMatches();
+showMatchesToo();
+showUsers();
 
 
 });

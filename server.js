@@ -2,102 +2,33 @@ const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
 const morgan = require('morgan');
+const bodyParser = require('body-parser');
 
 mongoose.Promise = global.Promise;
 
 const { PORT, DATABASE_URL } = require('./config');
 const { User } = require('./models/user');
+const userRoutes = require('./routes/users');
+const ladderRoutes = require('./routes/ladders');
+const matchRoutes = require('./routes/matches');
 
 app.use(express.static(__dirname + '/public'));
 
 app.use(morgan('common'));
 app.use(express.json());
 
-app.use(express.json());
-
-//USER ROUTES
-//Show all users
-app.get('/users', (req, res) => {
-    User
-        .find()
-        .then(users => {
-            res.json({
-              users: users.map(user => user.serialize())
-            });
-            console.log('Here');
-        })
-        .catch(err => {
-            console.error(err);
-            res.status(500).json({error: 'something went wrong'});
-        });
+app.use(function (req, res, next) {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Headers', 'Content-Type');
+  res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,PATCH,DELETE');
+  next();
 });
 
-//Show an individual user
-app.get('/users/:id', (req, res) => {
-  User
-    .findById(req.params.id)
-    .then(user => res.json(user.serialize()))
-    .catch(err => {
-      console.log(req.params.id);
-      console.error(err);
-      res.status(500).json({message: 'Internal server error'});
-    });
-});
-
-//add a user
-app.post('/users', (req, res) => {
-  res.send('Sent from app.post');
-  const requiredFields = ['name', 'username', 'age', 'gender'];
-  for(let i=0; i<requiredFields.length; i++){
-    const field = requiredFields[i];
-    if(!(field in req.body)){
-      const message = `Missing ${field} in request body`;
-      console.error(message);
-      return res.status(400).send(message);
-    }
-  }
-  User.create({
-    name: { firstName: req.body.firstName,
-            lastName: req.body.lastName},
-    username: req.body.username,
-    age: req.body.age,
-    gender: req.body.gender,
-    isActive: req.body.isActive
-  })
-  .then(user => res.status(201).json(user.serialize()))
-  .catch(err => {
-    console.log(err);
-    res.status(500).json({ message: "Internal server error" });
-  });
-});
-
-// app.post("/restaurants", (req, res) => {
-//   const requiredFields = ["name", "borough", "cuisine"];
-//   for (let i = 0; i < requiredFields.length; i++) {
-//     const field = requiredFields[i];
-//     if (!(field in req.body)) {
-//       const message = `Missing \`${field}\` in request body`;
-//       console.error(message);
-//       return res.status(400).send(message);
-//     }
-//   }
-// Restaurant.create({
-//   name: req.body.name,
-//   borough: req.body.borough,
-//   cuisine: req.body.cuisine,
-//   grades: req.body.grades,
-//   address: req.body.address
-// })
-//   .then(restaurant => res.status(201).json(restaurant.serialize()))
-//   .catch(err => {
-//     console.error(err);
-//     res.status(500).json({ message: "Internal server error" });
-//   });
-// });
-
+app.use('/users', userRoutes);
+app.use('/ladders', ladderRoutes);
+app.use('/matches', matchRoutes);
 //NEXT STEPS
-// Add routes for user create and delete
-// Fix testing 
+// Add routes for user update, delete
 // Add tests for user routes
 // Add ladder and match routes
  
@@ -105,6 +36,8 @@ app.post('/users', (req, res) => {
 app.use('*', function (req, res) {
   res.status(404).json({ message: 'Not Found' });
 });
+
+
 
 // closeServer needs access to a server object, but that only
 // gets created when `runServer` runs, so we declare `server` here

@@ -11,13 +11,26 @@ const userSchema = new mongoose.Schema({
 		required: true,
 		unique: true
 	},
-	age: {type: Number, default: 19},
-  gender: {type: String, default: "male"},
+	age: {type: Number, default: 19},   //***This should be DOB so system can determine age****
+  gender: {type: String, enum: ["male", "female"], default: "male"},
   ladders: [{type: mongoose.Schema.Types.ObjectId, ref: 'Ladder'}],
   dateJoined: {type: Date, default: Date.now},
   isActive: {type: Boolean, default: false},
-  matches: [{type: mongoose.Schema.Types.ObjectId, ref: 'Match'}]
+  matches: [{type: mongoose.Schema.Types.ObjectId, ref: 'Match'}],
+  lastMatch: {type: Date}
 });
+
+
+//populate middleware
+// userSchema.pre('find', function(next) {
+//     this.populate('name');
+//     next();
+//   });
+  
+// userSchema.pre('findOne', function(next) {
+//     this.populate('name');
+//     next();
+//   });
 
 userSchema.virtual('playerName').get(function(){
     return `${this.name.firstName} ${this.name.lastName}`;
@@ -26,12 +39,13 @@ userSchema.virtual('playerName').get(function(){
 userSchema.methods.serialize = function() {
     return {
         id: this._id,
-        player: this.playerName,
+        name: this.playerName,
         username: this.username,
         age: this.age,
         gender: this.gender,
-        isActive: this.isActive,
-        matches: this.matches
+        ladders: this.ladders,
+        matches: this.matches,
+        isActive: this.isActive
     }
 }
 
