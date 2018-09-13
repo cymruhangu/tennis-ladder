@@ -286,13 +286,15 @@ let MOCK_LADDERS =  {
 
 function showLadder(ladderData){
     ladderData.forEach(function(place) {
-        const playerName = `${place.user.name.firstName} ${place.user.name.lastName}`;
-        console.log(place);
-        const rank = place.rank;
-        const rungDiv = createRungHTML(rank, playerName);
-        $('#ladder').append(rungDiv);
-        });
-        addChallengeListener();
+        if(place.user){
+            const playerName = `${place.user.name.firstName} ${place.user.name.lastName}`;
+            console.log(place);
+            const rank = place.rank;
+            const rungDiv = createRungHTML(rank, playerName);
+            $('#ladder').append(rungDiv);
+            addChallengeListener();
+    }
+    });
 }
 
 function getLadder(ladderId){
@@ -319,9 +321,10 @@ function createRungHTML(rank, player){
 
 function addChallengeListener(){
     $('.challenge').on("click", function(event){
-        event.preventDefault();
+        // event.preventDefault();
+        event.stopPropagation();
         const defender = $(this).parent().attr('data-attr');
-        alert(`challenge to ${defender} will be created`);
+        console.log(`challenge to ${defender} will be created`);
         $(this).fadeOut();
         $(this).next('.record').fadeIn();
         //create Match 
@@ -331,9 +334,8 @@ function addChallengeListener(){
 
 function addRecordListener(){
     $('.record').on('click', function(event){
-        event.preventDefault();
+        event.stopPropagation();
         const defender = $(this).parent().attr('data-attr');
-        alert(`A match with ${defender} will be recorded`);
         $('#defender').html(`${defender}:`);
         $('#challenger').html('Logged-in User:');
         $(this).fadeOut();
