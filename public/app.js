@@ -1,164 +1,35 @@
 $(function(){
 'use strict';
 
-let MOCK_USERS = {
-	"users": [
-        {
-            "id": "1111111",
-            "username": "rnadal",
-            "name": {
-                firstName: 'Rafael',
-                lastName: 'Nadal'
-            },
-            "age": 31,
-            "gender": "male",
-            "ladders": ["singlesOpen"],
-            "dateJoined": 1470016976609,
-            "isActive": true,
-            "matches": ["5b8b17c398b8ca31ea41193e"]
-        },
-        {
-            "id": "2222222",
-            "username": "rfederer",
-            "name": {
-                firstName: 'Roger',
-                lastName: 'Federer'
-            },
-            "age": 37,
-            "gender": "male",
-            "ladders": ["singlesOpen"],
-            "dateJoined": 1470016976609,
-            "isActive": true,
-            "matches": ["5b8b17c398b8ca31ea41194f"]
-        },
-        {
-            "id": "3333333",
-            "username": "jdelpotro",
-            "name": {
-                firstName: 'Juan Martin',
-                lastName: 'Del Potro'
-            },
-            "age": 29,
-            "gender": "male",
-            "ladders": ["singlesOpen"],
-            "dateJoined": 1470016976609,
-            "isActive": true,
-            "matches": ["5b8b17c398b8ca31ea41193e"]
-        },
-        {
-            "id": "4444444",
-            "username": "azverev",
-            "name": {
-                firstName: 'Alexander',
-                lastName: 'Zverev'
-            },
-            "age": 20,
-            "gender": "male",
-            "ladders": ["singlesOpen"],
-            "dateJoined": 1470016976609,
-            "isActive": true,
-            "matches": []
-        },
-        {
-            "id": "5555555",
-            "username": "kanderson",
-            "name": {
-                firstName: 'Kevin',
-                lastName: 'Anderson'
-            },
-            "age": 32,
-            "gender": "male",
-            "ladders": ["singlesOpen"],
-            "dateJoined": 1470016976609,
-            "isActive": true,
-            "matches": ["5b8b17c398b8ca31ea41194f"]
-        },
-        {
-            "id": "6666666",
-            "username": "novak",
-            "name": {
-                firstName: 'Novak',
-                lastName: 'Djokovic'
-            },
-            "age": 31,
-            "gender": "male",
-            "ladders": ["singlesOpen"],
-            "dateJoined": 1470016976609,
-            "isActive": true,
-            "matches": []
-        },
-        {
-            "id": "7777777",
-            "username": "mcilic",
-            "name": {
-                firstName: 'Marin',
-                lastName: 'Cilic'
-            },
-            "age": 28,
-            "gender": "male",
-            "ladders": ["singlesOpen"],
-            "dateJoined": 1470016976609,
-            "isActive": true,
-            "matches": []
-        },
-        {
-            "id": "8888888",
-            "username": "gdimitrov",
-            "name": {
-                firstName: 'Grigor',
-                lastName: 'Dmitrov'
-            },
-            "age": 26,
-            "gender": "male",
-            "ladders": ["singlesOpen"],
-            "dateJoined": 1470016976609,
-            "isActive": true,
-            "matches": []
-        },
-        {
-            "id": "9999999",
-            "username": "dthiem",
-            "name": {
-                firstName: 'Dominic',
-                lastName: 'Thiem'
-            },
-            "age": 22,
-            "gender": "male",
-            "ladders": ["singlesOpen"],
-            "dateJoined": 1470016976609,
-            "isActive": true,
-            "matches": []
-        },
-        {
-            "id": "10000000",
-            "username": "dgoffin",
-            "name": {
-                firstName: 'David',
-                lastName: 'Goffin'
-            },
-            "age": 27,
-            "gender": "male",
-            "ladders": ["singlesOpen"],
-            "dateJoined": 1470016976609,
-            "isActive": true,
-            "matches": []
-        },
-        {
-            "id": "11000000",
-            "username": "jisner",
-            "name": {
-                firstName: 'John',
-                lastName: 'Isner'
-            },
-            "age": 33,
-            "gender": "male",
-            "ladders": ["singlesOpen"],
-            "dateJoined": 1470016976609,
-            "isActive": true,
-            "matches": []
+addIndexListeners();
+
+function addIndexListeners(){
+    $('#sign-in').on('click', function(e){
+        e.preventDefault();
+        console.log('SIGN IN CLICKED');
+    });
+    $('#sign-up').on('click', function(e){
+        e.preventDefault();
+        console.log('SIGN UP CLICKED');
+        $('#welcome').fadeOut();
+        $('#registration').fadeIn();
+        addRegisterListener();
+    });
+}
+
+function addRegisterListener(){
+    $('#ladderReg').submit(function(e){
+        e.preventDefault();
+        const firstName = $('input[id=first]').val();
+        const lastName = $('input[id=last]').val();
+        const userName = $('input[id=username]').val();
+        const email = $('input[id=email]').val();
+        const password = $('input[id=pwd]').val();
+        const userPost = {
+            
         }
-    ]
-};
+    })
+}
 
 let MOCK_MATCHES = {
     "matches":[
@@ -257,28 +128,6 @@ let MOCK_MATCHES = {
             "challenger": "8888888",
             "defender": "6666666", 
             "matchPlayed": true
-        }
-    ]
-};
-
-let MOCK_LADDERS =  {
-    "ladders": [ 
-        {
-            "id": "123984102937492eb",
-            "name": "singlesOpen",
-            "rankings": [
-                {"rung": 1, "player": "1111111"},
-                {"rung": 2, "player": "2222222"},
-                {"rung": 3, "player": "3333333"},
-                {"rung": 4, "player": "4444444"},
-                {"rung": 5, "player": "5555555"},
-                {"rung": 6, "player": "6666666"},
-                {"rung": 7, "player": "7777777"},
-                {"rung": 8, "player": "8888888"},
-                {"rung": 9, "player": "9999999"},
-                {"rung": 10, "player": "10000000"},
-                {"rung": 11, "player": "11000000"}
-            ]
         }
     ]
 };
@@ -399,7 +248,7 @@ function createMatchHTML(winner, loser, first, second, third){
 const ladderID = '5b8b17c354c1e18445736711'
 getLadder(ladderID);
 
-showMatches();
+// showMatches();
 showMatchesToo();
 showUsers();
 

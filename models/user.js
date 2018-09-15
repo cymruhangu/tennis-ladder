@@ -1,5 +1,6 @@
 'use strict';
 const mongoose = require("mongoose");
+require('mongoose-type-email');
 mongoose.Promise = global.Promise;
 
 const userSchema = new mongoose.Schema({
@@ -10,7 +11,8 @@ const userSchema = new mongoose.Schema({
 		type: String,
 		required: true,
 		unique: true
-	},
+    },
+    email: mongoose.SchemaTypes.Email,
 	age: {type: Number, default: 19},   //***This should be DOB so system can determine age****
   gender: {type: String, enum: ["male", "female"], default: "male"},
   ladders: [{type: mongoose.Schema.Types.ObjectId, ref: 'Ladder'}],
