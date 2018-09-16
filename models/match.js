@@ -24,25 +24,27 @@ const matchSchema = new mongoose.Schema({
 });
 
 //populate middleware
-// matchSchema.pre('find', function(next) {
-//     this.populate('defender');
-//     // console.log(`defender is ${defender}`);
-//     next();
-//   });
+matchSchema.pre('find', function(next) {
+    this.populate('winner');
+    this.populate('loser');
+    // console.log(`defender is ${defender}`);
+    next();
+  });
   
-// matchSchema.pre('findOne', function(next) {
-//     this.populate('defender');
-//     next();
-//   });
+matchSchema.pre('findOne', function(next) {
+    this.populate('winner');
+    this.populate('loser');
+    next();
+  });
 
 
-// matchSchema.virtual('defenderName').get(function(){
-//     return `${this.defender.name.firstName} ${this.defender.name.lastName}`;
-// });
+matchSchema.virtual('winnerName').get(function(){
+    return `${this.winner.name.firstName} ${this.winner.name.lastName}`;
+});
 
-// matchSchema.virtual('challengerName').get(function(){
-//     return `${this.challenger.name.firstName}  ${this.challenger.name.lastName}`;
-// });
+matchSchema.virtual('loserName').get(function(){
+    return `${this.loser.name.firstName}  ${this.loser.name.lastName}`;
+});
 
 matchSchema.methods.serialize = function() {
     return {
@@ -54,7 +56,8 @@ matchSchema.methods.serialize = function() {
         loser: this.loser,
         score: this.score,
         challengeDate: this.challengeDate,
-        datePlayed: this.dataPlayed
+        datePlayed: this.dataPlayed,
+        matchPlayed: this.matchPlayed
     }
 }
 

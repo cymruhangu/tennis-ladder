@@ -210,9 +210,10 @@ function showLadder(ladderData){
     ladderData.forEach(function(place) {
         if(place.user){
             const playerName = `${place.user.name.firstName} ${place.user.name.lastName}`;
+            const playerID = place.user._id;
             // console.log(place);
             const rank = place.rank;
-            const rungDiv = createRungHTML(rank, playerName);
+            const rungDiv = createRungHTML(rank, playerName, playerID);
             $('#ladder').append(rungDiv);
     }
     });
@@ -234,8 +235,8 @@ function getLadder(ladderId){
     })
 }
 
-function createRungHTML(rank, player){
-    return `<div class="ladder-rung" data-attr="${player}">${rank}:  ${player}
+function createRungHTML(rank, player, ID){
+    return `<div class="ladder-rung" data-attr="${ID}">${rank}:  ${player}
              <button type="button" class="challenge">Challenge</button>
              <button type="button" class="record" hidden >Record Score</button>
     </div>`
@@ -253,10 +254,34 @@ function addChallengeListener(){
         $(this).fadeOut();
         $(this).next('.record').fadeIn();
         //create Match 
+        const challenger = "5b9e5486bd2fd176d74b35c3";
+        const matchObj = {"defender": defender, "challenger": challenger, "ladder": ladderID};
+        createMatch(matchObj);
+        // console.log(matchObj);
         addRecordListener();
     });
 }
 
+function createMatch(matchObj){
+    $.ajax({
+        url: 'http://localhost:8080/matches',
+        method: "POST",
+        dataType: 'json',
+        contentType: 'application/json',
+        data: JSON.stringify(matchObj),
+        // processData: false,
+        success: function(response){
+            console.log(response.content);
+        }
+    })
+    .done(function(){
+        // console.log(data);
+        getMatches();
+    })
+    .fail(function(err){
+    console.log(err);
+    })
+}
 
 
 function addRecordListener(){
@@ -271,44 +296,44 @@ function addRecordListener(){
     });
 }
 
-
-function showMatches(){
-    MOCK_MATCHES.matches.forEach(function(match){
-        const winnerName = findPlayer(match.winner);
-        const loserName = findPlayer(match.loser);
-        const firstSet = `${match.score.set1.winnerGames}-${match.score.set1.loserGames}`;
-        const secondSet = `${match.score.set2.winnerGames}-${match.score.set2.loserGames}`;
-        const thirdSet = `${match.score.set3.winnerGames}-${match.score.set3.loserGames}`;
-        const matchDiv = createMatchHTML(winnerName, loserName, firstSet, secondSet, thirdSet);
-        $('#matches').append(matchDiv);
-    })
+function showMatches(matchData){
+    matchData.forEach(function(match){
+        if(match.matchPlayed){
+            const winnerName = `${match.winner.name.firstName} ${match.winner.name.lastName}`;
+            const loserName = `${match.loser.name.firstName} ${match.loser.name.lastName}`;
+            const firstSet = `${match.score[0].winnerGames}-${match.score[0].loserGames}`;
+            const secondSet = `${match.score[1].winnerGames}-${match.score[1].loserGames}`;
+            const thirdSet = `${match.score[2].winnerGames}-${match.score[2].loserGames}`;
+            const matchDiv = generateMatchHTML(winnerName, loserName, firstSet, secondSet, thirdSet);
+            $('#matches').append(matchDiv);
+        }
+    });
 }
 
-function showMatchesToo(){
+function getMatches(){
     $.ajax({
         url: 'http://localhost:8080/matches',
         method: "GET",
         dataType: 'json'
     })
     .done(function(data){
-        // console.log(data);
+    showMatches(data.matches);
     })
     .fail(function(err){
         console.log(err);
     })
 }
 
-
-
-function createMatchHTML(winner, loser, first, second, third){
-    return `<div class="match">${winner} d. ${loser} ${first}, ${second}, ${third}</div>`;
+function generateMatchHTML(winner, loser, first, second, third){
+    return `<div class="match">${winner} d. ${loser}: ${first}, ${second}, ${third}</div>`;
 }
 
-const ladderID = '5b8b17c354c1e18445736711'
+const ladderID = "5b8b17c354c1e18445736711";
+
 getLadder(ladderID);
 
 // showMatches();
-showMatchesToo();
+getMatches();
 getUsers();
 
 

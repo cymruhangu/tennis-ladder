@@ -13,6 +13,8 @@ router.get('/', (req, res) => {
         .find()
         .populate('defender', 'name')
         .populate('challenger','name')
+        // .populate('winner','name')
+        // .populate('loser','name')
         .then(matches => {
             res.json({
               matches: matches.map(match => match.serialize())
@@ -54,8 +56,7 @@ router.post('/', jsonParser, (req, res) => {
   Match.create({
     ladder: req.body.ladder,
     defender: req.body.defender,
-    challenger: req.body.region
-    
+    challenger: req.body.challenger
   })
   .then(match => res.status(201).json(match.serialize()))
   .catch(err => {
