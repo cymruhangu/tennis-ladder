@@ -36,7 +36,7 @@ router.get('/:id', (req, res) => {
 
 //add a user
 router.post('/', jsonParser, (req, res) => {
-  const requiredFields = ['name', 'username', 'age', 'gender'];
+  const requiredFields = ['name', 'username'];
   for(let i=0; i<requiredFields.length; i++){
     const field = requiredFields[i];
     if(!(field in req.body)){
@@ -64,27 +64,27 @@ router.post('/', jsonParser, (req, res) => {
 
 router.put('/:id', (req, res) => {
   res.send(`trying to post something to ${req.params.id}`);
-  // // ensure that the id in the request path and the one in request body match
-  // if (!(req.params.id && req.body.id && req.params.id === req.body.id)) {
-  //   const message =
-  //     `Request path id (${req.params.id}) and request body id ` +
-  //     `(${req.body.id}) must match`;
-  //   console.error(message);
-  //   return res.status(400).json({ message: message });
-  // }
-  //   const toUpdate = {};
-  //   const updateableFields = ["age", "ladders", "isActive", "matches", "lastMatch"];
+  // ensure that the id in the request path and the one in request body match
+  if (!(req.params.id && req.body.id && req.params.id === req.body.id)) {
+    const message =
+      `Request path id (${req.params.id}) and request body id ` +
+      `(${req.body.id}) must match`;
+    console.error(message);
+    return res.status(400).json({ message: message });
+  }
+    const toUpdate = {};
+    const updateableFields = ["age", "username", "email"];
 
-  //   updateableFields.forEach(field => {
-  //     if (field in req.body) {
-  //       toUpdate[field] = req.body[field];
-  //     }
-  //   });
+    updateableFields.forEach(field => {
+      if (field in req.body) {
+        toUpdate[field] = req.body[field];
+      }
+    });
 
-  //   User.findById(req.params.id, (err, player) => {
-
-  //   });
-
+    User
+      .findByIdAndUpdate(req.params.id, { $set: toUpdate})
+      .then(user => res.status(204).end())
+      .catch(err => res.status(500).json({ message: "Internal server error" }));
 });
 
 

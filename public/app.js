@@ -7,6 +7,8 @@ function addIndexListeners(){
     $('#sign-in').on('click', function(e){
         e.preventDefault();
         console.log('SIGN IN CLICKED');
+        $('#welcome').fadeOut();
+        $('#users').fadeIn();
     });
     $('#sign-up').on('click', function(e){
         e.preventDefault();
@@ -17,6 +19,7 @@ function addIndexListeners(){
     });
 }
 
+//USERS
 function addRegisterListener(){
     $('#ladderReg').submit(function(e){
         e.preventDefault();
@@ -25,125 +28,195 @@ function addRegisterListener(){
         const userName = $('input[id=username]').val();
         const email = $('input[id=email]').val();
         const password = $('input[id=pwd]').val();
-        const userPost = {
-            
-        }
+        const userObj = {
+            "name": {"firstName": `${firstName}`,
+                    "lastName": `${lastName}`
+            },
+            "username": `${userName}`,
+            "email": `${email}`,
+            "password": `${password}`
+        };
+        postNewUser(userObj);
+    });
+    
+}
+
+function postNewUser(userObj){
+    $.ajax({
+        url: `http://localhost:8080/users`,
+        method: 'POST',
+        dataType: 'json',
+        contentType: 'application/json',
+        data: JSON.stringify(userObj),
+        processData: false
+    })
+    .done(function(data){
+        getUsers();
+        $('#registration').fadeOut();
+        $('#users').fadeIn();
+        console.log(data);
+    })
+    .fail(function(err){
+        console.log(err);
     })
 }
 
-let MOCK_MATCHES = {
-    "matches":[
-        {
-            "id": "5b8b17c398b8ca31ea41193e",
-            "ladder": "5b8b17c354c1e18445736711",
-            "winner": "1111111",
-            "loser": "3333333",
-            "score": {
-                "set1": {
-                    "winnerGames": 6,
-                    "loserGames": 4
-                },
-                "set2": {
-                    "winnerGames": 1,
-                    "loserGames": 6
-                },
-                "set3": {
-                    "winnerGames": 6,
-                    "loserGames": 2
-                }
-            },
-            "datePlayed": 1535987897,
-            "challenger": "3333333",
-            "defender": "1111111", 
-            "matchPlayed": true
-        },
-        {
-            "id": "5b8b17c398b8ca31ea41194f",
-            "ladder": "5b8b17c354c1e18445736711",
-            "winner": "2222222",
-            "loser": "5555555",
-            "score": {
-                "set1": {
-                    "winnerGames": 6,
-                    "loserGames": 1
-                },
-                "set2": {
-                    "winnerGames": 6,
-                    "loserGames": 7
-                },
-                "set3": {
-                    "winnerGames": 6,
-                    "loserGames": 3
-                }
-            },
-            "datePlayed": 1535987897,
-            "challenger": "5555555",
-            "defender": "2222222", 
-            "matchPlayed": true
-        },
-        {
-            "id": "5b8b17c3e62428d45fe1f9ab",
-            "ladder": "5b8b17c354c1e18445736711",
-            "winner": "3333333",
-            "loser": "4444444",
-            "score": {
-                "set1": {
-                    "winnerGames": 6,
-                    "loserGames": 1
-                },
-                "set2": {
-                    "winnerGames": 6,
-                    "loserGames": 7
-                },
-                "set3": {
-                    "winnerGames": 6,
-                    "loserGames": 3
-                }
-            },
-            "datePlayed": 1535987897,
-            "challenger": "4444444",
-            "defender": "3333333", 
-            "matchPlayed": true
-        },
-        {
-            "id": "5b8b17c354c1e18445736711",
-            "ladder": "5b8b17c354c1e18445736711",
-            "winner": "6666666",
-            "loser": "8888888",
-            "score": {
-                "set1": {
-                    "winnerGames": 6,
-                    "loserGames": 1
-                },
-                "set2": {
-                    "winnerGames": 6,
-                    "loserGames": 7
-                },
-                "set3": {
-                    "winnerGames": 6,
-                    "loserGames": 3
-                }
-            },
-            "datePlayed": 1535987897,
-            "challenger": "8888888",
-            "defender": "6666666", 
-            "matchPlayed": true
+function getUsers(){
+    $.ajax({
+        url: 'http://localhost:8080/users',
+        method: "GET",
+        dataType: 'json'
+    })
+    .done(function(data){
+        // console.log(data);
+        showUsers(data.users);
+    })
+    .fail(function(err){
+        console.log(err);
+    })
+}
+
+function showUsers(usersData){
+    usersData.forEach(function(user){
+        const playerName = `${user.name}`;
+        const playerID = `${user.id}`;
+        const playerDiv =createPlayerHTML(playerName, playerID);
+        $('#players').append(playerDiv);
+    });
+    addUserEditListener();
+}
+
+function createPlayerHTML(name, id){
+    return `<div class="player-show" data-attr=${id}>${name}
+            <button type="button" class="user-edit">Edit</button>`
+}
+
+function addUserEditListener(){
+    $('.user-edit').on("click", function(event){
+        event.stopPropagation();
+        const playerID = $(this).parent().attr('data-attr');
+        console.log(`going to edit users/${playerID} `);
+        //ajax call for specific user
+        getPlayer(playerID);
+    });
+}
+
+function getPlayer(ID){
+    $.ajax({
+        url: `http://localhost:8080/users/${ID}`,
+        method: 'GET',
+        dataType: 'json'
+    })
+    .done(function(data){
+        console.log(data);
+        //render player PUT Form
+        createUserEdit(data);
+    })
+    .fail(function(err){
+        console.log(err)
+    })
+}
+
+function createUserEdit(user){
+    console.log(`${user.name} ${user.username} ${user.gender} isActive:${user.isActive}`);
+    const userForm = generateUserFormHTML(user.name, user.username, user.age, user.email);
+    $('#users').fadeOut();
+    $('#user-edit').append(userForm).fadeIn();
+    addUserPutListener(user);
+    addUserDeleteListener(user.id);
+}
+
+function addUserDeleteListener(ID){
+    $('#user-delete').on('click', function(e){
+        alert('Are you sure you want to delete this user?');
+        userDelete(ID);
+    });
+}
+
+function userDelete(ID){
+    $.ajax({
+        url: `http://localhost:8080/users/${ID}`,
+        method: 'DELETE'
+    })
+    .done(function(data){
+        getUsers();
+        $('#user-edit').fadeOut();
+        $('#users').fadeIn();
+    })
+    .fail(function(err){
+        console.log(err)
+    })
+}
+
+function addUserPutListener(user){
+    $('#user-edit').submit(function(e){
+        e.preventDefault();
+        const userName = $('input[id=new-username]').val();
+        const age = $('input[id=new-age]').val();
+        const email = $('input[id=new-email]').val();
+        console.log(`updating ${user.id} ${userName}  ${age}  ${email} `);
+        const userObj = {
+            "id": `${user.id}`,
+            "username": `${userName}`,
+            "email": `${email}`,
+            "age": `${age}`
         }
-    ]
-};
+        console.log(userObj);
+        putUser(user.id, userObj);
+    });
+}
 
+function putUser(ID, userObj){
+    $.ajax({
+        url: `http://localhost:8080/users/${ID}`,
+        method: "PUT",
+        dataType: 'json',
+        contentType: 'application/json',
+        data: JSON.stringify(userObj),
+        processData: false
+    })
+    .done(function(data){
+        console.log(data);
+    })
+    .fail(function(err){
+        console.log(err);
+    })
+}
 
+function generateUserFormHTML(name, username, age, email){
+    return `<form id="user-edit">
+    <h1>Edit Player Profile for ${name}<h1>
+      <fieldset>
+        <legend></legend>
+        <label for="new-username"><b>Username</b></label>
+        <input id="new-username" type="text" placeholder="${username}" name="new-username">
+        
+        <label for="new-email"><b>Email</b></label>
+        <input id="new-email" type="text" placeholder="${email}" name="new-email">
+    
+        <label for="new-age"><b>Age</b></label>
+        <input id="new-age" type="text" placeholder="${age}" name="age">
+    
+        <input type="submit" id="user-edit-btn" value="Submit">
+      </fieldset>
+    </div>
+  </form> 
+  <button type="button" id="user-delete">Delete this User</button>`;
+}
+
+//~~~~~~~~
+//LADDERS 
 function showLadder(ladderData){
     ladderData.forEach(function(place) {
         if(place.user){
             const playerName = `${place.user.name.firstName} ${place.user.name.lastName}`;
-            console.log(place);
+            // console.log(place);
             const rank = place.rank;
             const rungDiv = createRungHTML(rank, playerName);
             $('#ladder').append(rungDiv);
-            addChallengeListener();
     }
     });
+    addChallengeListener();
 }
 
 function getLadder(ladderId){
@@ -153,7 +226,7 @@ function getLadder(ladderId){
         dataType: 'json'
     })
     .done(function(data){
-        console.log(data.rankings);
+        // console.log(data.rankings);
         showLadder(data.rankings);
     })
     .fail(function(err){
@@ -168,9 +241,12 @@ function createRungHTML(rank, player){
     </div>`
 }
 
+
+//~~~~~~~
+//MATCHES
+
 function addChallengeListener(){
     $('.challenge').on("click", function(event){
-        // event.preventDefault();
         event.stopPropagation();
         const defender = $(this).parent().attr('data-attr');
         console.log(`challenge to ${defender} will be created`);
@@ -180,6 +256,8 @@ function addChallengeListener(){
         addRecordListener();
     });
 }
+
+
 
 function addRecordListener(){
     $('.record').on('click', function(event){
@@ -191,13 +269,6 @@ function addRecordListener(){
         $('#score').fadeIn();
         $(this).prev('.challenge').fadeIn();
     });
-}
-
-function findPlayer(playerID){
-    const player =  MOCK_USERS.users.find(function (user){
-        return user.id === playerID;
-    });
-    return `${player.name.firstName} ${player.name.lastName}`;
 }
 
 
@@ -220,26 +291,14 @@ function showMatchesToo(){
         dataType: 'json'
     })
     .done(function(data){
-        console.log(data);
+        // console.log(data);
     })
     .fail(function(err){
         console.log(err);
     })
 }
 
-function showUsers(){
-    $.ajax({
-        url: 'http://localhost:8080/users',
-        method: "GET",
-        dataType: 'json'
-    })
-    .done(function(data){
-        console.log(data);
-    })
-    .fail(function(err){
-        console.log(err);
-    })
-}
+
 
 function createMatchHTML(winner, loser, first, second, third){
     return `<div class="match">${winner} d. ${loser} ${first}, ${second}, ${third}</div>`;
@@ -250,7 +309,7 @@ getLadder(ladderID);
 
 // showMatches();
 showMatchesToo();
-showUsers();
+getUsers();
 
 
 });

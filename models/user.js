@@ -12,14 +12,14 @@ const userSchema = new mongoose.Schema({
 		required: true,
 		unique: true
     },
-    email: mongoose.SchemaTypes.Email,
+    email: { type: mongoose.SchemaTypes.Email, default: 'blah@blah.com'},
 	age: {type: Number, default: 19},   //***This should be DOB so system can determine age****
-  gender: {type: String, enum: ["male", "female"], default: "male"},
-  ladders: [{type: mongoose.Schema.Types.ObjectId, ref: 'Ladder'}],
-  dateJoined: {type: Date, default: Date.now},
-  isActive: {type: Boolean, default: false},
-  matches: [{type: mongoose.Schema.Types.ObjectId, ref: 'Match'}],
-  lastMatch: {type: Date}
+    gender: {type: String, enum: ["male", "female"], default: "male"},
+    ladders: [{type: mongoose.Schema.Types.ObjectId, ref: 'Ladder'}],
+    dateJoined: {type: Date, default: Date.now},
+    isActive: {type: Boolean, default: true},
+    matches: [{type: mongoose.Schema.Types.ObjectId, ref: 'Match'}],
+    lastMatch: {type: Date}
 });
 
 

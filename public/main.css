@@ -46,7 +46,7 @@ hr {
     opacity: 0.9;
 }
 
-.registerbtn:hover {
+.registerBtn:hover {
     opacity: 1;
 }
 
@@ -84,7 +84,7 @@ label {
     display: inline-block;
 }
 
-#matches, #ladder {
+#matches, #ladder, #users {
    font-size: 1.5em;
    padding-bottom: 30px;
 }
