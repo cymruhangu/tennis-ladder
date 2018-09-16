@@ -58,7 +58,10 @@ router.post('/', jsonParser, (req, res) => {
     defender: req.body.defender,
     challenger: req.body.challenger
   })
-  .then(match => res.status(201).json(match.serialize()))
+  .then(match => { 
+      res.status(201).json(match.serialize());
+      res.end(match.id);
+  })
   .catch(err => {
     console.log(err);
     res.status(500).json({ message: "Internal server error" });

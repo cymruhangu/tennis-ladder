@@ -246,19 +246,21 @@ function createRungHTML(rank, player, ID){
 //~~~~~~~
 //MATCHES
 
-function addChallengeListener(){
+function addChallengeListener(matchID){
     $('.challenge').on("click", function(event){
         event.stopPropagation();
         const defender = $(this).parent().attr('data-attr');
         console.log(`challenge to ${defender} will be created`);
         $(this).fadeOut();
+        //change data-attr on this to matchID
+        $(this).parent().attr('data-attr', `${matchID}`);
         $(this).next('.record').fadeIn();
         //create Match 
         const challenger = "5b9e5486bd2fd176d74b35c3";
         const matchObj = {"defender": defender, "challenger": challenger, "ladder": ladderID};
         createMatch(matchObj);
         // console.log(matchObj);
-        addRecordListener();
+        // addRecordListener();
     });
 }
 
@@ -271,11 +273,11 @@ function createMatch(matchObj){
         data: JSON.stringify(matchObj),
         // processData: false,
         success: function(response){
-            console.log(response.content);
+            console.log(response.id);
+            addRecordListener(response.id);
         }
     })
     .done(function(){
-        // console.log(data);
         getMatches();
     })
     .fail(function(err){
