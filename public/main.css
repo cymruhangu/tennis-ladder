@@ -61,20 +61,23 @@ a {
     text-align: center;
 }
 
-#ladder, #matches, #score {
+#ladder, #matches, #score, #challenges {
     padding-left: 25px;
 }
 h1, #welcome{
     text-align: center;
 }
 
-#score {
-    width: 25%;
+#scoreboard {
+    width: 35%;
     position: absolute;
-    left: 400px;
+    left: 40%;
     top: 250px;
 }
 
+.games {
+    width: 35px;
+}
 fieldset > legend {
     float: left;
     padding-right: 10px;
@@ -84,7 +87,7 @@ label {
     display: inline-block;
 }
 
-#matches, #ladder, #users {
+#matches, #ladder, #users, #challenges {
    font-size: 1.5em;
    padding-bottom: 30px;
 }

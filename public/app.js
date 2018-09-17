@@ -207,17 +207,18 @@ function generateUserFormHTML(name, username, age, email){
 //~~~~~~~~
 //LADDERS 
 function showLadder(ladderData){
+    let rank;
     ladderData.forEach(function(place) {
         if(place.user){
             const playerName = `${place.user.name.firstName} ${place.user.name.lastName}`;
             const playerID = place.user._id;
             // console.log(place);
-            const rank = place.rank;
+            rank = place.rank;
             const rungDiv = createRungHTML(rank, playerName, playerID);
             $('#ladder').append(rungDiv);
     }
     });
-    addChallengeListener();
+    addChallengeListener(rank);
 }
 
 function getLadder(ladderId){
@@ -236,9 +237,8 @@ function getLadder(ladderId){
 }
 
 function createRungHTML(rank, player, ID){
-    return `<div class="ladder-rung" data-attr="${ID}">${rank}:  ${player}
+    return `<div id="${rank}" class="ladder-rung" data-attr="${ID}">${rank}:  ${player}
              <button type="button" class="challenge">Challenge</button>
-             <button type="button" class="record" hidden >Record Score</button>
     </div>`
 }
 
@@ -246,21 +246,22 @@ function createRungHTML(rank, player, ID){
 //~~~~~~~
 //MATCHES
 
-function addChallengeListener(matchID){
+function addChallengeListener(rank){
     $('.challenge').on("click", function(event){
         event.stopPropagation();
         const defender = $(this).parent().attr('data-attr');
         console.log(`challenge to ${defender} will be created`);
         $(this).fadeOut();
         //change data-attr on this to matchID
+        
+        //create Match 
+        const challenger = "5b9d6e9661b1448a7f9d5936";
+        const matchObj = {"defender": defender, "challenger": challenger, "defenderRank": rank, "ladder": ladderID};
+        const matchID = createMatch(matchObj);
+        console.log(matchID);
+        
         $(this).parent().attr('data-attr', `${matchID}`);
         $(this).next('.record').fadeIn();
-        //create Match 
-        const challenger = "5b9e5486bd2fd176d74b35c3";
-        const matchObj = {"defender": defender, "challenger": challenger, "ladder": ladderID};
-        createMatch(matchObj);
-        // console.log(matchObj);
-        // addRecordListener();
     });
 }
 
@@ -271,10 +272,10 @@ function createMatch(matchObj){
         dataType: 'json',
         contentType: 'application/json',
         data: JSON.stringify(matchObj),
-        // processData: false,
+        processData: false,
         success: function(response){
             console.log(response.id);
-            addRecordListener(response.id);
+            
         }
     })
     .done(function(){
@@ -285,21 +286,74 @@ function createMatch(matchObj){
     })
 }
 
-
 function addRecordListener(){
     $('.record').on('click', function(event){
         event.stopPropagation();
-        const defender = $(this).parent().attr('data-attr');
-        $('#defender').html(`${defender}:`);
-        $('#challenger').html('Logged-in User:');
-        $(this).fadeOut();
-        $('#score').fadeIn();
-        $(this).prev('.challenge').fadeIn();
+        const matchID = $(this).parent().attr('data-attr');
+        //need a get for specific matches
+        getMatch(matchID);
+       
+        
     });
+}
+
+function getMatch(matchID){
+    $.ajax({
+        url: `http://localhost:8080/matches/${matchID}`,
+        method: "GET",
+        dataType: 'json'
+    })
+    .done(function(data){
+    console.log(data);
+    showScoreboard(data);
+    })
+    .fail(function(err){
+        console.log(err);
+    })
+
+}
+
+function showScoreboard(match){
+    $('#defender').text(`${match.defender.name.firstName} ${match.defender.name.lastName}`);
+    $('#challenger').text(`${match.challenger.name.firstName} ${match.challenger.name.lastName}`);
+    $('#scoreboard').fadeIn();
+    addScoreListener(match);
+}
+
+function addScoreListener(match){
+    $('#record-score').submit(event => {
+        event.preventDefault();
+        console.log("record-score submitted");
+        const defSet1 = $('input[id=def-set1]').val();
+        const defSet2 = $('input[id=def-set2]').val();
+        const defSet3 = $('input[id=def-set3]').val();
+        const chalSet1 = $('input[id=chal-set1]').val();
+        const chalSet2 = $('input[id=chal-set2').val();
+        const chalSet3 = $('input[id=chal-set3').val();
+        tallyScore(match, defSet1, defSet2, defSet3, chalSet1, chalSet2, chalSet3);
+    });
+}
+
+function tallyScore(matchID, def1, def2, def3, chal1, chal2, chal3){
+    let defSets = 0;
+    let chalSets = 0;
+
+    if(def1 > chal1) { defSets++;}
+    else{ chalSets++;}
+    if(def2 > chal2) { defSets++;}
+    else{ chalSets++;}
+    if(def3 > chal3) { defSets++;}
+    else{ chalSets++;}
+    const matchWinner = defSets > chalSets > 1? match.defender: match.challenger;
+    const matchObj = {
+        
+    }
+
 }
 
 function showMatches(matchData){
     matchData.forEach(function(match){
+        console.log(match.matchPlayed);
         if(match.matchPlayed){
             const winnerName = `${match.winner.name.firstName} ${match.winner.name.lastName}`;
             const loserName = `${match.loser.name.firstName} ${match.loser.name.lastName}`;
@@ -308,8 +362,24 @@ function showMatches(matchData){
             const thirdSet = `${match.score[2].winnerGames}-${match.score[2].loserGames}`;
             const matchDiv = generateMatchHTML(winnerName, loserName, firstSet, secondSet, thirdSet);
             $('#matches').append(matchDiv);
+        } else  {  //unplayed challenge
+            console.log(match);
+            const defenderName = `${match.defender.name.firstName} ${match.defender.name.lastName}`;
+            const challengerName = `${match.challenger.name.firstName} ${match.loser.name.lastName}`;
+            // const challengerName = "Pete Sampras";
+            const matchID = match.id;
+            // console.log(challengerName);
+            const challengeDiv = generateChallengeHTML(defenderName, challengerName, matchID);
+            $('#challenges').append(challengeDiv);
+            addRecordListener();
         }
     });
+}
+
+function generateChallengeHTML(defender, challenger, id){
+    return `<div class="challenge" data-attr=${id}>${challenger} challenged ${defender}
+            <button type="button" class="record">Record Score</button>
+            </div>`;
 }
 
 function getMatches(){
