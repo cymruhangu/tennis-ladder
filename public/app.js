@@ -8,7 +8,8 @@ function addIndexListeners(){
         e.preventDefault();
         // console.log('SIGN IN CLICKED');
         $('#welcome').fadeOut();
-        $('#users').fadeIn();
+        $('#login').fadeIn();
+        addLoginListner();
     });
     $('#sign-up').on('click', function(e){
         e.preventDefault();
@@ -19,7 +20,36 @@ function addIndexListeners(){
     });
 }
 
-//USERS
+function addLoginListener(){
+    $('#sign-in').submit(function(e){
+        e.preventDefault();
+        const userName = $('input[id=username]').val();
+        const password = $('input[id=pwd]').val();
+        const authObj = {"username": userName, "password": password};
+        userAuth(authObj);
+    });
+}
+
+function userAuth(authObj){
+    $.ajax({
+        $.ajax({
+            url: `http://localhost:8080/auth/login`,
+            method: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            data: JSON.stringify(),
+            processData: false
+        })
+        .done(function(data){
+            $('#login').fadeOut();
+            $('#users').fadeIn();
+            // console.log(data);
+        })
+        .fail(function(err){
+            console.log(err);
+    })
+}
+
 function addRegisterListener(){
     $('#ladderReg').submit(function(e){
         e.preventDefault();

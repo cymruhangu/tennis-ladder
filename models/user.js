@@ -20,7 +20,7 @@ const userSchema = new mongoose.Schema({
     email: { type: mongoose.SchemaTypes.Email, default: 'blah@blah.com'},
 	age: {type: Number, default: 19},   //***This should be DOB so system can determine age****
     gender: {type: String, enum: ["male", "female"], default: "male"},
-    ladders: [{type: mongoose.Schema.Types.ObjectId, ref: 'Ladder'}],
+    ladders: [{type: mongoose.Schema.Types.ObjectId, ref: 'Ladder', default: "5b8b17c354c1e18445736711"}],
     dateJoined: {type: Date, default: Date.now},
     isActive: {type: Boolean, default: true},
     matches: [{type: mongoose.Schema.Types.ObjectId, ref: 'Match'}],

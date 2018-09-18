@@ -10,7 +10,7 @@ const jsonParser = bodyParser.json();
 
 // Post to register a new user
 router.post('/', jsonParser, (req, res) => {
-  const requiredFields = ['username', 'password', 'firstName', 'lastName'];
+  const requiredFields = ['username', 'password'];
   const missingField = requiredFields.find(field => !(field in req.body));
 
   if (missingField) {
@@ -95,8 +95,8 @@ router.post('/', jsonParser, (req, res) => {
   let {username, password, firstName = '', lastName = ''} = req.body;
   // Username and password come in pre-trimmed, otherwise we throw an error
   // before this
-  name.firstName = name.firstName.trim();
-  name.lastName = name.lastName.trim();
+  firstName = firstName.trim();
+  lastName = lastName.trim();
   // const name = {"firstName": firstName, "lastName": lastName};
 
   return User.find({username})
@@ -118,7 +118,7 @@ router.post('/', jsonParser, (req, res) => {
       return User.create({
         username,
         password: hash,
-        name
+        name: {"firstName":firstName, "lastName":lastName}
       });
     })
     .then(user => {
