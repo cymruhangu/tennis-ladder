@@ -254,6 +254,7 @@ function addChallengeListener(rank){
         $(this).fadeOut();
         
         //create Match 
+        //Pete Sampras as the default challenger until auth implemented
         const challenger = "5b9d6e9661b1448a7f9d5936";
         const matchObj = {"defender": defender, "challenger": challenger, "defenderRank": rank, "ladder": ladderID};
         const matchID = createMatch(matchObj);
