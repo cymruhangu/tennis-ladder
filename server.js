@@ -27,12 +27,7 @@ app.use(function (req, res, next) {
 app.use('/users', userRoutes);
 app.use('/ladders', ladderRoutes);
 app.use('/matches', matchRoutes);
-//NEXT STEPS
-// Add routes for user update, delete
-// Add tests for user routes
-// Add ladder and match routes
- 
-//===========================
+
 app.use('*', function (req, res) {
   res.status(404).json({ message: 'Not Found' });
 });

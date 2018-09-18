@@ -26,17 +26,22 @@ function addRegisterListener(){
         const firstName = $('input[id=first]').val();
         const lastName = $('input[id=last]').val();
         const userName = $('input[id=username]').val();
-        const email = $('input[id=email]').val();
         const password = $('input[id=pwd]').val();
+        // const userObj = {
+        //     "name": {"firstName": `${firstName}`,
+        //             "lastName": `${lastName}`
+        //     },
+        //     "username": `${userName}`,
+        //     "password": `${password}`
+        // };
         const userObj = {
-            "name": {"firstName": `${firstName}`,
-                    "lastName": `${lastName}`
-            },
+            "firstName": `${firstName}`,
+            "lastName": `${lastName}`,
             "username": `${userName}`,
-            "email": `${email}`,
             "password": `${password}`
         };
         postNewUser(userObj);
+        console.log(userObj);
     });
     
 }
@@ -357,6 +362,7 @@ function addScoreListener(match){
 }
 
 function tallyScore(match, def1, def2, def3, chal1, chal2, chal3){
+    let rankingChange = false;
     let defSets = 0;
     let chalSets = 0;
     // let chalTB1 = chalTB2 =chalTB3 = defTB1 = defTB2 = defTB3 = 0;
@@ -387,6 +393,7 @@ function tallyScore(match, def1, def2, def3, chal1, chal2, chal3){
             loserGames: chal3
         };
     } else {
+        rankingChange = true;
         matchLoser = match.defender;
         set1 = {
                 setNum: 1,
@@ -415,7 +422,17 @@ function tallyScore(match, def1, def2, def3, chal1, chal2, chal3){
 
     console.log(matchUpdateObj);
     matchUpdate(match.id, matchUpdateObj);
+    if(rankingChange){
+        updateRankings(match.ladder, defender, challenger);
+
+    }
 }
+
+//Update ladder rankings
+function updateRankings(ladder, defender, challenger){
+    //get current ladder rankings, manipulate and PUT back ladder changes.
+}
+
     function matchUpdate(matchID, matchUpdateObj){
     $.ajax({
         url: `http://localhost:8080/matches/${matchID}`,

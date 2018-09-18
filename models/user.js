@@ -1,4 +1,5 @@
 'use strict';
+const bcrypt = require('bcryptjs');
 const mongoose = require("mongoose");
 require('mongoose-type-email');
 mongoose.Promise = global.Promise;
@@ -11,6 +12,10 @@ const userSchema = new mongoose.Schema({
 		type: String,
 		required: true,
 		unique: true
+    },
+    password: {
+        type: String,
+        required: true
     },
     email: { type: mongoose.SchemaTypes.Email, default: 'blah@blah.com'},
 	age: {type: Number, default: 19},   //***This should be DOB so system can determine age****
@@ -33,6 +38,15 @@ const userSchema = new mongoose.Schema({
 //     this.populate('name');
 //     next();
 //   });
+
+userSchema.methods.validatePassword = function(password) {
+    return bcrypt.compare(password, this.password);
+};
+  
+userSchema.statics.hashPassword = function(password) {
+    return bcrypt.hash(password, 10);
+};
+  
 
 userSchema.virtual('playerName').get(function(){
     return `${this.name.firstName} ${this.name.lastName}`;
