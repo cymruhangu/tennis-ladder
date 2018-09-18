@@ -60,7 +60,7 @@ router.post('/', jsonParser, (req, res) => {
   })
   .then(match => { 
       res.status(201).json(match.serialize());
-      res.end(match.id);
+    //   res.end(match.id);
   })
   .catch(err => {
     console.log(err);
@@ -71,7 +71,28 @@ router.post('/', jsonParser, (req, res) => {
 //Update a match
 //updating a match would a occur when the score is posted.
 router.put('/:id', (req, res) => {
-    res.send(`trying to update ${req.params.id}`);
+    console.log(req.body);
+    res.send(`trying to post something to ${req.params.id}`);
+  if (!(req.params.id && req.body.id && req.params.id === req.body.id)) {
+    const message =
+      `Request path id (${req.params.id}) and request body id ` +
+      `(${req.body.id}) must match`;
+    console.error(message);
+    return res.status(400).json({ message: message });
+  }
+    const toUpdate = {};
+    const updateableFields = ["winner", "loser", "score", "datePlayed", "matchPlayed"];
+
+    updateableFields.forEach(field => {
+      if (field in req.body) {
+        toUpdate[field] = req.body[field];
+      }
+    });
+
+    Match
+      .findByIdAndUpdate(req.params.id, { $set: toUpdate})
+      .then(user => res.status(204).end())
+      .catch(err => res.status(500).json({ message: "Internal server error" }));
 });
 
 

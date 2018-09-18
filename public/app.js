@@ -6,13 +6,13 @@ addIndexListeners();
 function addIndexListeners(){
     $('#sign-in').on('click', function(e){
         e.preventDefault();
-        console.log('SIGN IN CLICKED');
+        // console.log('SIGN IN CLICKED');
         $('#welcome').fadeOut();
         $('#users').fadeIn();
     });
     $('#sign-up').on('click', function(e){
         e.preventDefault();
-        console.log('SIGN UP CLICKED');
+        // console.log('SIGN UP CLICKED');
         $('#welcome').fadeOut();
         $('#registration').fadeIn();
         addRegisterListener();
@@ -54,7 +54,7 @@ function postNewUser(userObj){
         getUsers();
         $('#registration').fadeOut();
         $('#users').fadeIn();
-        console.log(data);
+        // console.log(data);
     })
     .fail(function(err){
         console.log(err);
@@ -108,7 +108,7 @@ function getPlayer(ID){
         dataType: 'json'
     })
     .done(function(data){
-        console.log(data);
+        // console.log(data);
         //render player PUT Form
         createUserEdit(data);
     })
@@ -250,15 +250,14 @@ function addChallengeListener(rank){
     $('.challenge').on("click", function(event){
         event.stopPropagation();
         const defender = $(this).parent().attr('data-attr');
-        console.log(`challenge to ${defender} will be created`);
+        // console.log(`challenge to ${defender} will be created`);
         $(this).fadeOut();
-        //change data-attr on this to matchID
         
         //create Match 
         const challenger = "5b9d6e9661b1448a7f9d5936";
         const matchObj = {"defender": defender, "challenger": challenger, "defenderRank": rank, "ladder": ladderID};
         const matchID = createMatch(matchObj);
-        console.log(matchID);
+        // console.log(matchID);
         
         $(this).parent().attr('data-attr', `${matchID}`);
         $(this).next('.record').fadeIn();
@@ -287,13 +286,22 @@ function createMatch(matchObj){
 }
 
 function addRecordListener(){
-    $('.record').on('click', function(event){
-        event.stopPropagation();
+    $('.record').on('click', function(e){
+        // e.stopPropagation();
+        e.preventDefault();
         const matchID = $(this).parent().attr('data-attr');
         //need a get for specific matches
         getMatch(matchID);
-       
-        
+    });
+}
+
+function addMatchDeleteListener(){
+    $('.del-challenge').on('click', function(e){
+        // event.stopPropagation();
+        e.preventDefault();
+        const matchID = $(this).parent().attr('data-attr');
+        //need a get for specific matches
+        deleteMatch(matchID);
     });
 }
 
@@ -304,13 +312,25 @@ function getMatch(matchID){
         dataType: 'json'
     })
     .done(function(data){
-    console.log(data);
     showScoreboard(data);
     })
     .fail(function(err){
         console.log(err);
     })
+}
 
+function deleteMatch(matchID){
+    $.ajax({
+        url: `http://localhost:8080/matches/${matchID}`,
+        method: "DELETE",
+        dataType: 'json'
+    })
+    .done(function(data){
+    // showScoreboard(data);
+    })
+    .fail(function(err){
+        console.log(err);
+    })
 }
 
 function showScoreboard(match){
@@ -323,7 +343,7 @@ function showScoreboard(match){
 function addScoreListener(match){
     $('#record-score').submit(event => {
         event.preventDefault();
-        console.log("record-score submitted");
+        // event.stopPropagation();
         const defSet1 = $('input[id=def-set1]').val();
         const defSet2 = $('input[id=def-set2]').val();
         const defSet3 = $('input[id=def-set3]').val();
@@ -331,12 +351,14 @@ function addScoreListener(match){
         const chalSet2 = $('input[id=chal-set2').val();
         const chalSet3 = $('input[id=chal-set3').val();
         tallyScore(match, defSet1, defSet2, defSet3, chalSet1, chalSet2, chalSet3);
+        $('#scoreboard').fadeOut();
     });
 }
 
-function tallyScore(matchID, def1, def2, def3, chal1, chal2, chal3){
+function tallyScore(match, def1, def2, def3, chal1, chal2, chal3){
     let defSets = 0;
     let chalSets = 0;
+    // let chalTB1 = chalTB2 =chalTB3 = defTB1 = defTB2 = defTB3 = 0;
 
     if(def1 > chal1) { defSets++;}
     else{ chalSets++;}
@@ -345,15 +367,73 @@ function tallyScore(matchID, def1, def2, def3, chal1, chal2, chal3){
     if(def3 > chal3) { defSets++;}
     else{ chalSets++;}
     const matchWinner = defSets > chalSets > 1? match.defender: match.challenger;
-    const matchObj = {
-        
+    let matchLoser, set1, set2, set3;
+    if(matchWinner === match.defender){
+        matchLoser = match.challenger;
+        set1 = {
+            setNum: 1,
+            winnerGames: def1,
+            loserGames: chal1
+        };
+        set2 = {
+            setNum: 2,
+            winnerGames: def2,
+            loserGames: chal2
+        }; 
+        set3 = {
+            setNum: 3,
+            winnerGames: def3,
+            loserGames: chal3
+        };
+    } else {
+        matchLoser = match.defender;
+        set1 = {
+                setNum: 1,
+                winnerGames: def1,
+                loserGames: chal1
+        };
+        set2 = {
+                setNum: 2,
+                winnerGames: def2,
+                loserGames: chal2
+        }; 
+        set3 = {
+                setNum: 3,
+                winnerGames: def3,
+                loserGames: chal3
+        };
     }
+      const matchUpdateObj = {
+        "id": match.id,
+        "winner": matchWinner,
+        "loser": matchLoser,
+        "score": [set1, set2, set3],
+        "dataPlayed": Date.now,
+        "matchPlayed": true
+        };
 
+    console.log(matchUpdateObj);
+    matchUpdate(match.id, matchUpdateObj);
+}
+    function matchUpdate(matchID, matchUpdateObj){
+    $.ajax({
+        url: `http://localhost:8080/matches/${matchID}`,
+        method: "PUT",
+        dataType: 'json',
+        contentType: 'application/json',
+        data: JSON.stringify(matchUpdateObj),
+        processData: false
+    })
+    .done(function(data){
+    showMatches(data.matches);
+    })
+    .fail(function(err){
+        console.log(err);
+    });
 }
 
 function showMatches(matchData){
     matchData.forEach(function(match){
-        console.log(match.matchPlayed);
         if(match.matchPlayed){
             const winnerName = `${match.winner.name.firstName} ${match.winner.name.lastName}`;
             const loserName = `${match.loser.name.firstName} ${match.loser.name.lastName}`;
@@ -363,15 +443,14 @@ function showMatches(matchData){
             const matchDiv = generateMatchHTML(winnerName, loserName, firstSet, secondSet, thirdSet);
             $('#matches').append(matchDiv);
         } else  {  //unplayed challenge
-            console.log(match);
             const defenderName = `${match.defender.name.firstName} ${match.defender.name.lastName}`;
-            const challengerName = `${match.challenger.name.firstName} ${match.loser.name.lastName}`;
+            const challengerName = `${match.challenger.name.firstName} ${match.challenger.name.lastName}`;
             // const challengerName = "Pete Sampras";
             const matchID = match.id;
-            // console.log(challengerName);
             const challengeDiv = generateChallengeHTML(defenderName, challengerName, matchID);
             $('#challenges').append(challengeDiv);
             addRecordListener();
+            addMatchDeleteListener();
         }
     });
 }
@@ -379,6 +458,7 @@ function showMatches(matchData){
 function generateChallengeHTML(defender, challenger, id){
     return `<div class="challenge" data-attr=${id}>${challenger} challenged ${defender}
             <button type="button" class="record">Record Score</button>
+            <button type="button" class="del-challenge">Delete Challenge</button>
             </div>`;
 }
 
@@ -393,7 +473,7 @@ function getMatches(){
     })
     .fail(function(err){
         console.log(err);
-    })
+    });
 }
 
 function generateMatchHTML(winner, loser, first, second, third){
