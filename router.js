@@ -1,11 +1,11 @@
 'use strict';
 const express = require('express');
 const bodyParser = require('body-parser');
-const passport = require('passport');
-const {User} = require('../models/user');
+
+const {User} = require('./models');
 
 const router = express.Router();
-const jwt = require('jsonwebtoken');
+
 const jsonParser = bodyParser.json();
 
 // Post to register a new user
@@ -97,7 +97,6 @@ router.post('/', jsonParser, (req, res) => {
   // before this
   firstName = firstName.trim();
   lastName = lastName.trim();
-  // const name = {"firstName": firstName, "lastName": lastName};
 
   return User.find({username})
     .count()
@@ -118,7 +117,8 @@ router.post('/', jsonParser, (req, res) => {
       return User.create({
         username,
         password: hash,
-        name: {"firstName":firstName, "lastName":lastName}
+        firstName,
+        lastName
       });
     })
     .then(user => {
@@ -138,79 +138,10 @@ router.post('/', jsonParser, (req, res) => {
 // we're just doing this so we have a quick way to see
 // if we're creating users. keep in mind, you can also
 // verify this in the Mongo shell.
-// router.get('/', (req, res) => {
-//   return User.find()
-//     .then(users => res.json(users.map(user => user.serialize())))
-//     .catch(err => res.status(500).json({message: 'Internal server error'}));
-// });
-
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//Created before auth
-const jwtAuth = passport.authenticate('jwt', {session: false});
-//READ USERS
-//Show all users
 router.get('/', (req, res) => {
-    User
-        .find()
-        .then(users => {
-            res.json({
-              users: users.map(user => user.serialize())
-            });
-        })
-        .catch(err => {
-            console.error(err);
-            res.status(500).json({error: 'something went wrong'});
-        });
-  });
-  
-  //Show an individual user
-  router.get('/:id', (req, res) => {
-  User
-    .findById(req.params.id)
-    .then(user => res.json(user.serialize()))
-    .catch(err => {
-      console.log(req.params.id);
-      console.error(err);
-      res.status(500).json({message: 'Internal server error'});
-    });
-  });
-  
-  //UPDATE A USER
-  //a user would be updated by adding matches, ladders, lastplayed, and isActive
-  
-  router.put('/:id', (req, res) => {
-    res.send(`trying to post something to ${req.params.id}`);
-    if (!(req.params.id && req.body.id && req.params.id === req.body.id)) {
-      const message =
-        `Request path id (${req.params.id}) and request body id ` +
-        `(${req.body.id}) must match`;
-      console.error(message);
-      return res.status(400).json({ message: message });
-    }
-      const toUpdate = {};
-      const updateableFields = ["age", "username", "email"];
-  
-      updateableFields.forEach(field => {
-        if (field in req.body) {
-          toUpdate[field] = req.body[field];
-        }
-      });
-  
-      User
-        .findByIdAndUpdate(req.params.id, { $set: toUpdate})
-        .then(user => res.status(204).end())
-        .catch(err => res.status(500).json({ message: "Internal server error" }));
-  });
-  
-  
-  //DELETE A USER
-  router.delete('/:id', (req, res) => {
-    console.log(req.params.id);
-    User
-    .findByIdAndRemove(req.params.id)
-    .then(user => res.status(204).end())
-    .catch(err => res.status(500).json({message: "Internal server error"}));
-  });
+  return User.find()
+    .then(users => res.json(users.map(user => user.serialize())))
+    .catch(err => res.status(500).json({message: 'Internal server error'}));
+});
 
-
-module.exports = router;
+module.exports = {router};

@@ -18,6 +18,20 @@
       <button id="sign-in" type="button">Sign-in</button>
       <button id="sign-up" type="button">Register</button>
   </section>
+  <section id="login" hidden>
+    <form id="login-form">
+      <div class="container">
+          <h1>Login to the Tennis Ladder App</h1>
+          <fieldset>
+            <label for="uname">Username:</label>
+            <input type="text" id="uname" name="uname" placeholder="username" required>
+            <label for="passwd">password:</label>
+            <input type="password" id="passwd" name="passwd" placeholder="password" required>
+          </fieldset>
+          <button type="submit">Submit</button>
+      </div>
+    </form>
+  </section>
   <section id="registration" hidden>
       <form id="ladderReg">
         <div class="container">
@@ -33,9 +47,6 @@
 
             <label for="username"><b>Username</b></label>
             <input id="username" type="text" placeholder="Enter Username" name="username" required>
-            
-            <label for="email"><b>Email</b></label>
-            <input id="email" type="text" placeholder="Enter Email" name="email" required>
         
             <label for="psw"><b>Password</b></label>
             <input id="pwd" type="password" placeholder="Enter Password" name="psw" required>
@@ -43,8 +54,7 @@
             <label for="psw-repeat"><b>Repeat Password</b></label>
             <input id="pwd-rep" type="password" placeholder="Repeat Password" name="psw-repeat" required>
             <hr>
-            <p>By creating an account you agree to our <a href="#">Terms & Privacy</a>.</p>
-        
+                   
             <input type="submit" id="registerBtn" value="Register">
           </fieldset>
         </div>
@@ -83,7 +93,7 @@
     </form>
     <a href="/matches.html">View Match Results</a>
   </section>
-
+  
   <section id="matches" hidden></section>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
 	<script type="text/javascript" src="app.js"></script>

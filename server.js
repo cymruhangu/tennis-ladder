@@ -1,8 +1,13 @@
+'use strict';
+
+require('dotenv').config();
+
 const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
+const passport = require('passport');
 
 mongoose.Promise = global.Promise;
 
@@ -12,10 +17,16 @@ const userRoutes = require('./routes/users');
 const ladderRoutes = require('./routes/ladders');
 const matchRoutes = require('./routes/matches');
 
+const { router: authRouter, localStrategy, jwtStrategy } = require('./auth');
+
 app.use(express.static(__dirname + '/public'));
 
 app.use(morgan('common'));
 app.use(express.json());
+
+
+passport.use(localStrategy);
+passport.use(jwtStrategy);
 
 app.use(function (req, res, next) {
   res.header('Access-Control-Allow-Origin', '*');
@@ -27,12 +38,8 @@ app.use(function (req, res, next) {
 app.use('/users', userRoutes);
 app.use('/ladders', ladderRoutes);
 app.use('/matches', matchRoutes);
-//NEXT STEPS
-// Add routes for user update, delete
-// Add tests for user routes
-// Add ladder and match routes
- 
-//===========================
+app.use('/auth', authRouter);
+
 app.use('*', function (req, res) {
   res.status(404).json({ message: 'Not Found' });
 });
