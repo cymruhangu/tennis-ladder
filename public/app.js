@@ -6,14 +6,12 @@ addIndexListeners();
 function addIndexListeners(){
     $('#sign-in').on('click', function(e){
         e.preventDefault();
-        // console.log('SIGN IN CLICKED');
         $('#welcome').fadeOut();
         $('#login').fadeIn();
-        addLoginListner();
+        addLoginListener();
     });
     $('#sign-up').on('click', function(e){
         e.preventDefault();
-        // console.log('SIGN UP CLICKED');
         $('#welcome').fadeOut();
         $('#registration').fadeIn();
         addRegisterListener();
@@ -21,35 +19,44 @@ function addIndexListeners(){
 }
 
 function addLoginListener(){
-    $('#sign-in').submit(function(e){
+    $('#login-form').on('submit', function(e){
         e.preventDefault();
-        const userName = $('input[id=username]').val();
-        const password = $('input[id=pwd]').val();
+        const userName = $('input[id=uname]').val();
+        const password = $('input[id=passwd]').val();
         const authObj = {"username": userName, "password": password};
-        userAuth(authObj);
+        $('#uname').val('');
+        $('#passwd').val('');
+        userAuth(authObj, userName);
     });
 }
 
-function userAuth(authObj){
+function userAuth(authObj, userName){
     $.ajax({
-        $.ajax({
-            url: `http://localhost:8080/auth/login`,
-            method: 'POST',
-            dataType: 'json',
-            contentType: 'application/json',
-            data: JSON.stringify(),
-            processData: false
+        url: `http://localhost:8080/auth/login`,
+        method: 'POST',
+        dataType: 'json',
+        contentType: 'application/json',
+        data: JSON.stringify(authObj),
+        processData: false
         })
         .done(function(data){
             $('#login').fadeOut();
-            $('#users').fadeIn();
-            // console.log(data);
+            console.log(data);
+            sessionStorage.setItem('userToken', data.authToken);
+            sessionStorage.setItem('userName', userName);
+            //get users and find the current user's ID
+            getUsers(userName);
+            //Get the ladder and create HTML
+            getLadder(ladderID);
+            //fadeIn the Ladder
+            $('#ladder').fadeIn();
         })
         .fail(function(err){
             console.log(err);
     })
 }
 
+//when a user is created they should be put at the bottom of the ladder
 function addRegisterListener(){
     $('#ladderReg').submit(function(e){
         e.preventDefault();
@@ -57,13 +64,6 @@ function addRegisterListener(){
         const lastName = $('input[id=last]').val();
         const userName = $('input[id=username]').val();
         const password = $('input[id=pwd]').val();
-        // const userObj = {
-        //     "name": {"firstName": `${firstName}`,
-        //             "lastName": `${lastName}`
-        //     },
-        //     "username": `${userName}`,
-        //     "password": `${password}`
-        // };
         const userObj = {
             "firstName": `${firstName}`,
             "lastName": `${lastName}`,
@@ -88,7 +88,7 @@ function postNewUser(userObj){
     .done(function(data){
         getUsers();
         $('#registration').fadeOut();
-        $('#users').fadeIn();
+        $('#ladder').fadeIn();
         // console.log(data);
     })
     .fail(function(err){
@@ -96,7 +96,7 @@ function postNewUser(userObj){
     })
 }
 
-function getUsers(){
+function getUsers(userName){
     $.ajax({
         url: 'http://localhost:8080/users',
         method: "GET",
@@ -104,11 +104,28 @@ function getUsers(){
     })
     .done(function(data){
         // console.log(data);
-        showUsers(data.users);
+        if(userName){
+            setUserID(data.users);
+        } else {
+            showUsers(data.users);
+        }
     })
     .fail(function(err){
         console.log(err);
     })
+}
+
+function setUserID(usersData){
+    //find the ID of the username in sessionStorage
+    console.log(usersData);
+    const userName = sessionStorage.getItem('userName');
+    const userArr = usersData.filter(user => {
+        return user.username === userName;
+    });
+    const currentUser = userArr[0];
+    console.log(currentUser.name);
+    sessionStorage.setItem('currentUserID', currentUser.id);
+    sessionStorage.setItem('currentUserName', currentUser.name);
 }
 
 function showUsers(usersData){
@@ -277,7 +294,6 @@ function createRungHTML(rank, player, ID){
     </div>`
 }
 
-
 //~~~~~~~
 //MATCHES
 
@@ -288,9 +304,8 @@ function addChallengeListener(rank){
         // console.log(`challenge to ${defender} will be created`);
         $(this).fadeOut();
         
-        //create Match 
-        //Pete Sampras as the default challenger until auth implemented
-        const challenger = "5b9d6e9661b1448a7f9d5936";
+        //create Match
+        const challenger = sessionStorage.getItem('currentUserID');
         const matchObj = {"defender": defender, "challenger": challenger, "defenderRank": rank, "ladder": ladderID};
         const matchID = createMatch(matchObj);
         // console.log(matchID);
@@ -513,6 +528,7 @@ function generateChallengeHTML(defender, challenger, id){
 function getMatches(){
     $.ajax({
         url: 'http://localhost:8080/matches',
+        headers: {'Authorization': sessionStorage.getItem('userToken')},
         method: "GET",
         dataType: 'json'
     })
@@ -530,7 +546,7 @@ function generateMatchHTML(winner, loser, first, second, third){
 
 const ladderID = "5b8b17c354c1e18445736711";
 
-getLadder(ladderID);
+
 
 // showMatches();
 getMatches();

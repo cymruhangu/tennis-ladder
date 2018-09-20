@@ -7,8 +7,13 @@ const bodyParser = require('body-parser');
 const jsonParser = bodyParser.json();
 mongoose.Promise = global.Promise;
 
+const passport = require('passport');
+const jwt = require('jsonwebtoken');
+const jwtAuth = passport.authenticate('jwt', {session: false});
+
+
 //Show all matches
-router.get('/', (req, res) => {
+router.get('/', jwtAuth, (req, res) => {
     Match
         .find()
         .populate('defender', 'name')

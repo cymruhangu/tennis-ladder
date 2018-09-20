@@ -1,11 +1,11 @@
 'use strict';
 const express = require('express');
 const bodyParser = require('body-parser');
-
+const passport = require('passport');
 const {User} = require('../models/user');
 
 const router = express.Router();
-
+const jwt = require('jsonwebtoken');
 const jsonParser = bodyParser.json();
 
 // Post to register a new user
@@ -146,7 +146,7 @@ router.post('/', jsonParser, (req, res) => {
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //Created before auth
-
+const jwtAuth = passport.authenticate('jwt', {session: false});
 //READ USERS
 //Show all users
 router.get('/', (req, res) => {
