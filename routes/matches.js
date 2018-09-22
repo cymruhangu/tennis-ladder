@@ -13,7 +13,7 @@ const jwtAuth = passport.authenticate('jwt', {session: false});
 
 
 //Show all matches
-router.get('/', jwtAuth, (req, res) => {
+router.get('/',jwtAuth, (req, res) => {
     Match
         .find()
         .populate('defender', 'name')

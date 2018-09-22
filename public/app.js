@@ -497,6 +497,7 @@ function updateRankings(ladder, defender, challenger){
 
 function showMatches(matchData){
     matchData.forEach(function(match){
+        // console.log(`match is: ${JSON.stringify(match)}`);
         if(match.matchPlayed){
             const winnerName = `${match.winner.name.firstName} ${match.winner.name.lastName}`;
             const loserName = `${match.loser.name.firstName} ${match.loser.name.lastName}`;
@@ -528,12 +529,15 @@ function generateChallengeHTML(defender, challenger, id){
 function getMatches(){
     $.ajax({
         url: 'http://localhost:8080/matches',
-        headers: {'Authorization': sessionStorage.getItem('userToken')},
+        // beforeSend:function(xhr){ xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem("userToken")); },
+        headers: {"Authorization": "Bearer " + sessionStorage.getItem("userToken")},
         method: "GET",
         dataType: 'json'
     })
     .done(function(data){
     showMatches(data.matches);
+    $('#matches').fadeIn();
+    $('#challenges').fadeIn();
     })
     .fail(function(err){
         console.log(err);
