@@ -17,3 +17,15 @@ C - Admin form allows creation of new ladder
 R - Link lists ladder rankings, challenge, and record buttons
 U - recording a successful challenge will update the ladder rankings
 D - Button that allows deletion of an empty or inactive ladder
+
+USER FLOW:
+
+1) Login or Register
+2) My Ladder 
+  - "challenge" button next to each player I am eligible to challenge (match POST)
+  a. My Profile link -> (User PUT) 
+  b. My Matches link showing played matches and open challenges.
+    * ability to record a score (match PUT) 
+    * ability to delete a match (match DELETE)
+3) All Matches view showing all matches played and active challenges
+  

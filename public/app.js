@@ -88,8 +88,8 @@ function postNewUser(userObj){
     .done(function(data){
         getUsers();
         $('#registration').fadeOut();
-        $('#ladder').fadeIn();
-        // console.log(data);
+        $('#welcome').fadeIn();
+        console.log(data);
     })
     .fail(function(err){
         console.log(err);
@@ -268,9 +268,19 @@ function showLadder(ladderData){
             rank = place.rank;
             const rungDiv = createRungHTML(rank, playerName, playerID);
             $('#ladder').append(rungDiv);
-    }
+        }
     });
+    const showMatchesBtn = `<button type="button" class="show-matches">Show matches and challenges</button>`;
+    $('#ladder').append(showMatchesBtn);
     addChallengeListener(rank);
+    addShowMatchesListener();
+}
+
+function addShowMatchesListener(){
+    $(".show-matches").on('click', function(e){
+        $('#ladder').fadeOut();
+        getMatches();
+    });
 }
 
 function getLadder(ladderId){
@@ -287,10 +297,11 @@ function getLadder(ladderId){
         console.log(err);
     })
 }
-
+//NOTE: logic needs to be put in where if a challenge exists the challenge button doesn't show.
 function createRungHTML(rank, player, ID){
     return `<div id="${rank}" class="ladder-rung" data-attr="${ID}">${rank}:  ${player}
              <button type="button" class="challenge">Challenge</button>
+             <span id="challenged" hidden>Already challenged</span>
     </div>`
 }
 
@@ -303,13 +314,12 @@ function addChallengeListener(rank){
         const defender = $(this).parent().attr('data-attr');
         // console.log(`challenge to ${defender} will be created`);
         $(this).fadeOut();
+        $(this).next('#challenged').fadeIn();
         
         //create Match
         const challenger = sessionStorage.getItem('currentUserID');
         const matchObj = {"defender": defender, "challenger": challenger, "defenderRank": rank, "ladder": ladderID};
         const matchID = createMatch(matchObj);
-        // console.log(matchID);
-        
         $(this).parent().attr('data-attr', `${matchID}`);
         $(this).next('.record').fadeIn();
     });
@@ -325,7 +335,7 @@ function createMatch(matchObj){
         processData: false,
         success: function(response){
             console.log(response.id);
-            
+            getMatches();
         }
     })
     .done(function(){
@@ -418,6 +428,7 @@ function tallyScore(match, def1, def2, def3, chal1, chal2, chal3){
     else{ chalSets++;}
     if(def3 > chal3) { defSets++;}
     else{ chalSets++;}
+    console.log(`defSets = ${defSets} chalSets = ${chalSets}`);
     const matchWinner = defSets > chalSets > 1? match.defender: match.challenger;
     let matchLoser, set1, set2, set3;
     if(matchWinner === match.defender){
@@ -504,18 +515,19 @@ function showMatches(matchData){
             const secondSet = `${match.score[1].winnerGames}-${match.score[1].loserGames}`;
             const thirdSet = `${match.score[2].winnerGames}-${match.score[2].loserGames}`;
             const matchDiv = generateMatchHTML(winnerName, loserName, firstSet, secondSet, thirdSet);
-            $('#matches').append(matchDiv);
+            $('#played-matches').append(matchDiv);
         } else  {  //unplayed challenge
             const defenderName = `${match.defender.name.firstName} ${match.defender.name.lastName}`;
             const challengerName = `${match.challenger.name.firstName} ${match.challenger.name.lastName}`;
             // const challengerName = "Pete Sampras";
             const matchID = match.id;
             const challengeDiv = generateChallengeHTML(defenderName, challengerName, matchID);
-            $('#challenges').append(challengeDiv);
+            $('#unplayed-matches').append(challengeDiv);
             addRecordListener();
             addMatchDeleteListener();
         }
     });
+    $('#all-matches').fadeIn();
 }
 
 function generateChallengeHTML(defender, challenger, id){
@@ -528,7 +540,7 @@ function generateChallengeHTML(defender, challenger, id){
 function getMatches(){
     $.ajax({
         url: 'http://localhost:8080/matches',
-        headers: {'Authorization': sessionStorage.getItem('userToken')},
+        headers: {'Authorization': 'Bearer ' + sessionStorage.getItem('userToken')},
         method: "GET",
         dataType: 'json'
     })
@@ -547,10 +559,9 @@ function generateMatchHTML(winner, loser, first, second, third){
 const ladderID = "5b8b17c354c1e18445736711";
 
 
-
 // showMatches();
-getMatches();
-getUsers();
+
+//getUsers();
 
 
 });

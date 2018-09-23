@@ -188,14 +188,18 @@ router.get('/', (req, res) => {
       return res.status(400).json({ message: message });
     }
       const toUpdate = {};
-      const updateableFields = ["age", "username", "email"];
-  
+      const updateableFields = ["age", "username", "email", "matches", "ladders"];
+
       updateableFields.forEach(field => {
         if (field in req.body) {
           toUpdate[field] = req.body[field];
         }
       });
-  
+   //if the update field is a ladder or match need to push to respective arrays      
+      User
+        .findByIdAndUpdate(req.params.id, )
+
+
       User
         .findByIdAndUpdate(req.params.id, { $set: toUpdate})
         .then(user => res.status(204).end())

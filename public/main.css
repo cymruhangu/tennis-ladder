@@ -104,3 +104,8 @@ form {
 input {
     width: 200px;
 }
+
+#challenged {
+    font-size: 75%;
+    color: royalblue;
+}
