@@ -195,15 +195,27 @@ router.get('/', (req, res) => {
           toUpdate[field] = req.body[field];
         }
       });
-   //if the update field is a ladder or match need to push to respective arrays      
-      User
-        .findByIdAndUpdate(req.params.id, )
-
-
-      User
-        .findByIdAndUpdate(req.params.id, { $set: toUpdate})
-        .then(user => res.status(204).end())
-        .catch(err => res.status(500).json({ message: "Internal server error" }));
+   //if the update field is a match then handle differently    
+      if("matches" in toUpdate){
+        console.log("GONNA DO IT DIFFERENTLY");
+        
+        User
+          .findById(req.params.id, function(err, player){
+              if(err){
+                console.log(err);
+                return;
+              }
+              player.matches.push(toUpdate.matches);
+              players.save(function(err, updatedPlayer){
+                console.log(err);
+              });
+          }) /////****************** */
+      }else {
+        User
+          .findByIdAndUpdate(req.params.id, { $set: toUpdate})
+          .then(user => res.status(204).end())
+          .catch(err => res.status(500).json({ message: "Internal server error" }));
+      }
   });
   
   

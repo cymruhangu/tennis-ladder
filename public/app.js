@@ -335,7 +335,9 @@ function createMatch(matchObj){
         processData: false,
         success: function(response){
             console.log(response.id);
-            getMatches();
+            // getMatches();
+            //Put match to each user
+            addUsersMatch(response.id, matchObj);
         }
     })
     .done(function(){
@@ -344,6 +346,15 @@ function createMatch(matchObj){
     .fail(function(err){
     console.log(err);
     })
+}
+
+function addUsersMatch(matchID, matchObj){
+    const defObj = {"id": matchObj.defender, "matches": matchID };
+    const chalObj = {"id": matchObj.challenger, "matches": matchID };
+    console.log(defObj);
+    console.log(chalObj);
+    putUser(matchObj.defender, defObj);
+    putUser(matchObj.challenger, chalObj);
 }
 
 function addRecordListener(){

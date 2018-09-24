@@ -83,6 +83,7 @@ function addMatchToUser(matchID, playerID){
             if(err){
                 console.log(err);
             }else {
+                console.log(`want to add match ${matchID} to player ${player.name}`);
                 player.matches.push(matchID);
                 player.save();
             }
