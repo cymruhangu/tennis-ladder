@@ -197,19 +197,17 @@ router.get('/', (req, res) => {
       });
    //if the update field is a match then handle differently    
       if("matches" in toUpdate){
-        console.log("GONNA DO IT DIFFERENTLY");
+        console.log("USER PUT called from match creation");
         
         User
-          .findById(req.params.id, function(err, player){
-              if(err){
-                console.log(err);
-                return;
-              }
-              player.matches.push(toUpdate.matches);
-              players.save(function(err, updatedPlayer){
+          .findById(req.params.id, function(err, user){
+              user.matches.push(toUpdate.matches);
+              user.save(function(err, updatedUser){
                 console.log(err);
               });
-          }) /////****************** */
+          })
+          .then(user => res.status(204).end())
+          .catch(err => res.status(500).json ({ message: "Internal server error"}));
       }else {
         User
           .findByIdAndUpdate(req.params.id, { $set: toUpdate})

@@ -124,7 +124,7 @@ router.put('/:id', (req, res) => {
 router.delete('/:id', (req, res) => {
     console.log(req.params.id);
     Match
-    .findByIdAndRemove(req.params.id)
+    .findByIdAndDelete(req.params.id)
     .then(match => res.status(204).end())
     .catch(err => res.status(500).json({message: "Internal server error"}));
   });
