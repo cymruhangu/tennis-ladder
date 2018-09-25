@@ -566,9 +566,11 @@ function createRungHTML(rank, player, ID){
 function updateRankings(match, defender, challenger){
     //get current ladder rankings
     getLadder();
-    console.log(ladderRankings); 
+    console.log(ladderRankings[5].user._id); 
     //find defender 
-    ladderRankings
+    // const newLadder = ladderRankings.map(rung) => {
+    //     if()
+    // }
     
 
 }

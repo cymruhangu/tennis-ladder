@@ -7,7 +7,7 @@ const ladderSchema = new mongoose.Schema({
     minAge: Number,
     gender: String,
     region: {  number: {type: Number, default: 1}, description: String },
-    rankings: [{ rank: {type: Number, default: 99},
+    rankings: [{ rank: Number,
                   user: {type: mongoose.Schema.Types.ObjectId, ref: 'User'} }
             ],
     isActive: {type: Boolean, default: false}

@@ -66,9 +66,7 @@ router.post('/', jsonParser, (req, res) => {
   })
   .then(match => { 
     res.status(201).json(match.serialize());
-    console.log(`new match ID is ${match.id}`);
-    // addMatchToUser(match.id, req.body.defender);
-    // addMatchToUser(match.id, req.body.challenger);
+    console.log(`new match ID is ${match.id}`); 
   })
   .catch(err => {
     console.log(err);
@@ -76,28 +74,12 @@ router.post('/', jsonParser, (req, res) => {
   });
 })
 
-//Add match to 2 participants
-function addMatchToUser(matchID, playerID){
-    User
-        .findById(playerID, function(err, player){
-            if(err){
-                console.log(err);
-            }else {
-                console.log(`want to add match ${matchID} to player ${player.name}`);
-                player.matches.push(matchID);
-                player.save();
-            }
-        });
-}
-
-
-
 //Update a match
 //updating a match would a occur when the score is posted.
 router.put('/:id', (req, res) => {
     console.log(req.body);
     res.send(`trying to post something to ${req.params.id}`);
-  if (!(req.params.id && req.body.id && req.params.id === req.body.id)) {
+  if (!(req.params.id && req.body.id && req.params.id === req.body.id)) {  //if they both are not undefined and are equal
     const message =
       `Request path id (${req.params.id}) and request body id ` +
       `(${req.body.id}) must match`;
@@ -115,7 +97,7 @@ router.put('/:id', (req, res) => {
 
     Match
       .findByIdAndUpdate(req.params.id, { $set: toUpdate})
-      .then(user => res.status(204).end())
+      .then(match => res.status(204).end())   //????
       .catch(err => res.status(500).json({ message: "Internal server error" }));
 });
 
