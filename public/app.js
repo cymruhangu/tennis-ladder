@@ -557,6 +557,7 @@ function getLadder(ladder){
         dataType: 'json'
     })
     .done(function(data){
+        //Ladder Rankings Pretty - Need Ladder Rankings ID only for PUT 
         ladderRankings = data.rankings;
         showLadder(data.rankings);
         // console.log(data.rankings);

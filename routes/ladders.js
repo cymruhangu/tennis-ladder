@@ -100,10 +100,10 @@ router.put('/:id', (req, res) => {
     //       .then(ladder => res.status(204).end())
     //       .catch(err => res.status(500).json ({ message: "Internal server error"}));
     //   }else {
-    //     Ladder
-    //     .findByIdAndUpdate(req.params.id, {$set: toUpdate})
-    //     .then(ladder => res.status(204).end())
-    //     .catch(err => res.status(500).json({ message: "Internal server error" }));
+        Ladder
+        .findByIdAndUpdate(req.params.id, {$set: toUpdate})
+        .then(ladder => res.status(204).end())
+        .catch(err => res.status(500).json({ message: "Internal server error" }));
     //   }
 });
 
