@@ -27,7 +27,6 @@ router.get('/', (req, res) => {
 router.get('/:id', (req, res) => {
   Ladder
     .findById(req.params.id)
-    // .populate('rankings.user')
     .then(ladder => res.json(ladder.serialize()))
     .catch(err => {
       console.error(err);
@@ -87,25 +86,25 @@ router.put('/:id', (req, res) => {
       }
     });
 
-    if("rankings" in toUpdate){
-        console.log("LADDER PUT replace rankings");
+    // if("rankings" in toUpdate){
+    //     // console.log("LADDER PUT replace rankings");
         
-        Ladder
-          .findById(req.params.id, function(err, ladder){
-              ladder.rankings = [];
-              ladder.rankings = toUpdate.rankings;
-              ladder.save(function(err, updatedLadderr){
-                console.log(err);
-              });
-          })
-          .then(ladder => res.status(204).end())
-          .catch(err => res.status(500).json ({ message: "Internal server error"}));
-      }else {
-        Ladder
-        .findByIdAndUpdate(req.params.id, {$set: toUpdate})
-        .then(ladder => res.status(204).end())
-        .catch(err => res.status(500).json({ message: "Internal server error" }));
-      }
+    //     Ladder
+    //       .findById(req.params.id, function(err, ladder){
+    //           ladder.rankings = [];
+    //           ladder.rankings = toUpdate.rankings;
+    //           ladder.save(function(err, updatedLadderr){
+    //             console.log(err);
+    //           });
+    //       })
+    //       .then(ladder => res.status(204).end())
+    //       .catch(err => res.status(500).json ({ message: "Internal server error"}));
+    //   }else {
+    //     Ladder
+    //     .findByIdAndUpdate(req.params.id, {$set: toUpdate})
+    //     .then(ladder => res.status(204).end())
+    //     .catch(err => res.status(500).json({ message: "Internal server error" }));
+    //   }
 });
 
 

@@ -47,7 +47,7 @@ function userAuth(authObj, userName){
             //get users and find the current user's ID
             getUsers(userName);
             //Get the ladder and create HTML
-            getLadder(ladderID);
+            // getLadder(ladderID);
             //fadeIn the Ladder
             $('#ladder').fadeIn();
         })
@@ -89,11 +89,21 @@ function postNewUser(userObj){
         getUsers();
         $('#registration').fadeOut();
         $('#welcome').fadeIn();
-        console.log(data);
+        // console.log("data is: ");
+        // console.log(data);
+        //add new user to the bottom of ladder
+        add2BottomRung(data.id);
     })
     .fail(function(err){
         console.log(err);
     })
+}
+
+function add2BottomRung(userID){
+    ladderRankings.push(userID);
+    const ladderObj = {"id": ladderID, "rankings": ladderRankings};
+    console.log(ladderObj);
+    updateLadder(ladderObj);
 }
 
 function getUsers(userName){
@@ -117,7 +127,7 @@ function getUsers(userName){
 
 function setUserID(usersData){
     //find the ID of the username in sessionStorage
-    console.log(usersData);
+    // console.log(usersData);
     const userName = sessionStorage.getItem('userName');
     const userArr = usersData.filter(user => {
         return user.username === userName;
@@ -517,12 +527,12 @@ function generateMatchHTML(winner, loser, first, second, third){
 //LADDERS 
 function showLadder(ladderData){
     let rank;
-    ladderData.forEach(function(place) {
-        if(place.user){
-            const playerName = `${place.user.name.firstName} ${place.user.name.lastName}`;
-            const playerID = place.user._id;
-            // console.log(place);
-            rank = place.rank;
+    ladderData.forEach(function(place, index) {
+        if(place.name){
+            const playerName = `${place.name.firstName} ${place.name.lastName}`;
+            const playerID = place._id;
+            console.log(place.name.firstName);
+            rank = index + 1;
             const rungDiv = createRungHTML(rank, playerName, playerID);
             $('#ladder').append(rungDiv);
         }
@@ -540,15 +550,16 @@ function addShowMatchesListener(){
     });
 }
 
-function getLadder(){
+function getLadder(ladder){
     $.ajax({
-        url: `http://localhost:8080/ladders/${ladderID}`,
+        url: `http://localhost:8080/ladders/${ladder}`,
         method: "GET",
         dataType: 'json'
     })
     .done(function(data){
         ladderRankings = data.rankings;
         showLadder(data.rankings);
+        // console.log(data.rankings);
     })
     .fail(function(err){
         console.log(err);
@@ -575,12 +586,31 @@ function updateRankings(match, defender, challenger){
 
 }
 
-const ladderID = "5b8b17c354c1e18445736711";
+function updateLadder(ladderUpdateObj){
+    $.ajax({
+        url: `http://localhost:8080/ladders/${ladderID}`,
+        method: "PUT",
+        dataType: 'json',
+        contentType: 'application/json',
+        data: JSON.stringify(ladderUpdateObj),
+        processData: false
+    })
+    .done(function(data){
+    // showMatches(data.matches);
+    })
+    .fail(function(err){
+        console.log(err); 
+    })
+}
+
+
+const ladderID = "5baa4da2f5e65ab65bdf50fc";
 let ladderRankings= [];
 
 // showMatches();
 
 //getUsers();
+getLadder(ladderID);
 
 
 });

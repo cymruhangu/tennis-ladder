@@ -1,30 +1,29 @@
 'use strict';
 const mongoose = require("mongoose");
 mongoose.Promise = global.Promise;
+const User  = require('./user');
 
 const ladderSchema = new mongoose.Schema({
     name: {type: String, required: true},
     minAge: Number,
     gender: String,
     region: {  number: {type: Number, default: 1}, description: String },
-    rankings: [{ rank: Number,
-                  user: {type: mongoose.Schema.Types.ObjectId, ref: 'User'} }
-            ],
+    rankings: [{type: mongoose.Schema.Types.ObjectId, ref: 'User'}],
     isActive: {type: Boolean, default: false}
 }); 
 
 ladderSchema.pre('find', function(next) {
-    this.populate('rankings.user');
+    this.populate('rankings');
     next();
   });
   
   ladderSchema.pre('findOne', function(next) {
-    this.populate('rankings.user');
+    this.populate('rankings');
     next();
   });
 
 ladderSchema.virtual('playerName').get(function(){
-        return `${rankings.user.firstName} ${rankings.user.lastName}`;
+        return `${rankings.firstName} ${rankings.lastName}`;
 });
 
 ladderSchema.methods.serialize = function() {
