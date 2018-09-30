@@ -100,9 +100,10 @@ function postNewUser(userObj){
 }
 
 function add2BottomRung(userID){
-    ladderRankings.push(userID);
-    const ladderObj = {"id": ladderID, "rankings": ladderRankings};
-    console.log(ladderObj);
+    let ladderRankingsID = ladderRankings.map(user => user._id);
+    ladderRankingsID.push(userID);
+    const ladderObj = {"id": ladderID, "rankings": ladderRankingsID};
+    // console.log(ladderObj);
     updateLadder(ladderObj);
 }
 
@@ -560,7 +561,7 @@ function getLadder(ladder){
         //Ladder Rankings Pretty - Need Ladder Rankings ID only for PUT 
         ladderRankings = data.rankings;
         showLadder(data.rankings);
-        // console.log(data.rankings);
+        console.log(data.rankings[0]._id);
     })
     .fail(function(err){
         console.log(err);
@@ -577,7 +578,11 @@ function createRungHTML(rank, player, ID){
 //Update ladder rankings
 function updateRankings(match, defender, challenger){
     //get current ladder rankings
-    getLadder();
+    //map the with only IDs
+    //find the affected section
+    //create an array with changed rankings
+    //splice into the array
+    //put to the ladder
     console.log(ladderRankings[5].user._id); 
     //find defender 
     // const newLadder = ladderRankings.map(rung) => {
