@@ -577,10 +577,19 @@ function createRungHTML(rank, player, ID){
 
 //Update ladder rankings
 function updateRankings(match, defender, challenger){
-    //get current ladder rankings
-    //map the with only IDs
+    //get current ladder rankings and map the with only IDs
+    let currentLadder = ladderRankings.map(user => user._id);
+
     //find the affected section
+    //defender and challenger ranks
+    const defIndex = currentLadder.indexOf(defender);
+    const chalIndex = currentLadder.indexOf(challenger);
+    const affectedPositions = chalIndex - defIndex;
     //create an array with changed rankings
+    let ladderSplice = [challenger, defender];
+    if(affectedPositions >1){
+        
+    }
     //splice into the array
     //put to the ladder
     console.log(ladderRankings[5].user._id); 
