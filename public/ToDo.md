@@ -29,3 +29,10 @@ USER FLOW:
     * ability to delete a match (match DELETE)
 3) All Matches view showing all matches played and active challenges
   
+
+10/3/2018 TO DO:
+1) Deleting a challenge removes in from both users match array -- Mongo Pull
+
+2) Deleting a user should delete their matches and remove them from opponent arrays
+
+3)Update the ladder on the server-side by pulling challenger then pushing using position.

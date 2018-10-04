@@ -2,17 +2,58 @@ $(function(){
 'use strict';
 
 addIndexListeners();
+addLadderViewListener();
+addChallengeViewListener();
+addMatchesViewListener();
+addAdminViewListener();
+
+function addLadderViewListener(){
+    $('#ladder-view').on('click', function(e){
+        e.preventDefault();
+        $('#played-matches, #admin, #challenges').fadeOut();
+        $('#ladder').fadeIn();
+    });
+}
+
+function addChallengeViewListener(){
+    $('#challenge-view').on('click', function(e){
+        // e.preventDefault();
+        console.log('challenge view clicked');
+        getMatches();
+        $('#ladder, #played-matches, #admin').fadeOut();
+        $('#challenges').fadeIn();
+    });
+}
+
+function addMatchesViewListener(){
+    $('#matches-view').on('click', function(e){
+        console.log('matches view clicked');
+        e.preventDefault();
+        $('#ladder, #admin, #challenges, #challenges, #login, #registration').fadeOut();
+        getMatches();
+        $('#played-matches').fadeIn();
+    });
+}
+
+function addAdminViewListener(){
+    $('#admin-view').on('click', function(e){
+        e.preventDefault();
+        $('#ladder, #played-matches, #challenges, #registration, #login').fadeOut();
+        $('#admin').fadeIn();
+    });
+}
+
 
 function addIndexListeners(){
-    $('#sign-in').on('click', function(e){
+    $('#login-view').on('click', function(e){
         e.preventDefault();
-        $('#welcome').fadeOut();
+        $('#ladder, #played-matches, #challenges, #registration, #login').fadeOut();
         $('#login').fadeIn();
         addLoginListener();
     });
-    $('#sign-up').on('click', function(e){
+    $('#register-view').on('click', function(e){
         e.preventDefault();
-        $('#welcome').fadeOut();
+        $('#ladder, #played-matches, #challenges, #admin, #login').fadeOut();
         $('#registration').fadeIn();
         addRegisterListener();
     });
@@ -73,7 +114,6 @@ function addRegisterListener(){
         postNewUser(userObj);
         //console.log(userObj);
     });
-    
 }
 
 function postNewUser(userObj){
@@ -92,20 +132,22 @@ function postNewUser(userObj){
         // console.log("data is: ");
         // console.log(data);
         //add new user to the bottom of ladder
-        add2BottomRung(data.id);
+        // add2BottomRung(data.id);
+        const ladderObj = {"id": ladderID, "isActive": true, "new": data.id};
+        updateLadder(ladderObj);
     })
     .fail(function(err){
         console.log(err);
     })
 }
 
-function add2BottomRung(userID){
-    let ladderRankingsID = ladderRankings.map(user => user._id);
-    ladderRankingsID.push(userID);
-    const ladderObj = {"id": ladderID, "rankings": ladderRankingsID};
-    // console.log(ladderObj);
-    updateLadder(ladderObj);
-}
+// function add2BottomRung(userID){
+//     let ladderRankingsID = ladderRankings.map(user => user._id);
+//     ladderRankingsID.push(userID);
+//     const ladderObj = {"id": ladderID, "rankings": ladderRankingsID};
+//     // console.log(ladderObj);
+//     updateLadder(ladderObj);
+// }
 
 function getUsers(userName){
     $.ajax({
@@ -147,11 +189,13 @@ function showUsers(usersData){
         $('#players').append(playerDiv);
     });
     addUserEditListener();
+    addUserDeleteListener();
 }
 
 function createPlayerHTML(name, id){
     return `<div class="player-show" data-attr=${id}>${name}
-            <button type="button" class="user-edit">Edit</button>`
+            <button type="button" class="user-edit">Edit</button>
+            <button type="button" class="user-delete">Delete</button>`;
 }
 
 function addUserEditListener(){
@@ -186,13 +230,14 @@ function createUserEdit(user){
     $('#users').fadeOut();
     $('#user-edit').append(userForm).fadeIn();
     addUserPutListener(user);
-    addUserDeleteListener(user.id);
 }
 
-function addUserDeleteListener(ID){
-    $('#user-delete').on('click', function(e){
-        alert('Are you sure you want to delete this user?');
-        userDelete(ID);
+function addUserDeleteListener(){
+    $('.user-delete').on('click', function(e){
+        e.preventDefault();
+        const playerID = $(this).parent().attr('data-attr');
+        console.log(`going to delete users/${playerID} `);
+        userDelete(playerID);
     });
 }
 
@@ -244,7 +289,7 @@ function putUser(ID, userObj){
         console.log(data);
     })
     .fail(function(err){
-        console.error(err);
+        console.log(err);
     })
 }
 
@@ -269,10 +314,9 @@ function generateUserFormHTML(name, username, age, email){
   <button type="button" id="user-delete">Delete this User</button>`;
 }
 
-
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
 //MATCHES
-
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
 function addChallengeListener(rank){
     $('.challenge').on("click", function(event){
         event.stopPropagation();
@@ -314,14 +358,24 @@ function createMatch(matchObj){
 }
 
 function addUsersMatch(matchID, matchObj){
-    const defObj = {"id": matchObj.defender, "matches": matchID };
-    const chalObj = {"id": matchObj.challenger, "matches": matchID };
+    const defObj = {"id": matchObj.defender, "matches": matchID, "action": "add" };
+    const chalObj = {"id": matchObj.challenger, "matches": matchID, "action": "add" };
     // console.log(defObj);
     // console.log(chalObj);
     putUser(matchObj.defender, defObj);
     putUser(matchObj.challenger, chalObj);
 }
 
+function deleteUsersMatch(matchID, matchObj){
+    const defObj = {"id": matchObj.defender, "matches": matchID, "action": "delete" };
+    const chalObj = {"id": matchObj.challenger, "matches": matchID, "action": "delete"};
+    // console.log(defObj);
+    // console.log(chalObj);
+    putUser(matchObj.defender, defObj);
+    putUser(matchObj.challenger, chalObj);
+}
+
+//click registers for each record?????????
 function addRecordListener(){
     $('.record').on('click', function(e){
         // e.stopPropagation();
@@ -333,12 +387,16 @@ function addRecordListener(){
     });
 }
 
-function addMatchDeleteListener(){
+//clicks register for each delete...why? how to stop
+function addMatchDeleteListener(defiID, chalID){
     $('.del-challenge').on('click', function(e){
+        console.log('delete match clicked');
         e.stopPropagation();
-        // e.preventDefault();
+        e.preventDefault();
         const matchID = $(this).parent().attr('data-attr');
-        //need a get for specific matches
+        //call to delete matchID for 2 competitors
+        //updateObj will contain the matchID and both userIDs
+        //need a get for specific matc
         deleteMatch(matchID);
     });
 }
@@ -351,20 +409,6 @@ function getMatch(matchID){
     })
     .done(function(data){
     showScoreboard(data);
-    })
-    .fail(function(err){
-        console.log(err);
-    })
-}
-
-function deleteMatch(matchID){
-    $.ajax({
-        url: `http://localhost:8080/matches/${matchID}`,
-        method: "DELETE",
-        dataType: 'json'
-    })
-    .done(function(data){
-    // showScoreboard(data);
     })
     .fail(function(err){
         console.log(err);
@@ -457,7 +501,10 @@ function tallyScore(match, def1, def2, def3, chal1, chal2, chal3){
     console.log(matchUpdateObj);
     matchUpdate(match.id, matchUpdateObj);
     if(rankingChange){
-        updateRankings( match.defender._id, match.challenger._id);
+        // updateRankings( match.defender._id, match.challenger._id);
+        const ladderObj = {"id": ladderID, "defender": match.defender._id, "challenger": match.challenger._id, "isActive": true};
+        console.log(ladderObj);
+        updateLadder(ladderObj);
     }
 }
 
@@ -495,12 +542,12 @@ function showMatches(matchData){
         } else  {  //unplayed challenge
             const defenderName = `${match.defender.name.firstName} ${match.defender.name.lastName}`;
             const challengerName = `${match.challenger.name.firstName} ${match.challenger.name.lastName}`;
-            // const challengerName = "Pete Sampras";
             const matchID = match.id;
             const challengeDiv = generateChallengeHTML(defenderName, challengerName, matchID);
-            $('#unplayed-matches').append(challengeDiv);
+            $('#challenges').html('');
+            $('#challenges').append(challengeDiv);
             addRecordListener();
-            addMatchDeleteListener();
+            addMatchDeleteListener(match.defender.id, match.challenger.id);
         }
     });
     $('#all-matches').fadeIn();
@@ -511,13 +558,6 @@ function generateChallengeHTML(defender, challenger, id){
             <button type="button" class="record">Record Score</button>
             <button type="button" class="del-challenge">Delete Challenge</button>
             </div>`;
-}
-
-function addShowLadderListener(){
-    $('.show-ladder').on('click', function(e){
-        $('#all-matches').fadeOut();
-        $('#ladder').fadeIn();
-    });
 }
 
 function getMatches(){
@@ -539,6 +579,23 @@ function generateMatchHTML(winner, loser, first, second, third){
     return `<div class="match">${winner} d. ${loser}: ${first}, ${second}, ${third}</div>`;
 }
 
+//DELETE MATCH
+//NOTE: HOW TO DELETE MATCHES FROM USER?  PULL???
+
+function deleteMatch(matchID){
+    $.ajax({
+        url: `http://localhost:8080/matches/${matchID}`,
+        method: "DELETE",
+        dataType: 'json'
+    })
+    .done(function(data){
+    // showScoreboard(data);
+    })
+    .fail(function(err){
+        console.log(err);
+    })
+}
+
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
 //LADDERS 
 function showLadder(ladderData){
@@ -555,17 +612,7 @@ function showLadder(ladderData){
             $('#ladder').append(rungDiv);
         }
     });
-    const showMatchesBtn = `<button type="button" class="show-matches">Show matches and challenges</button>`;
-    $('#ladder').append(showMatchesBtn);
     addChallengeListener(rank);
-    addShowMatchesListener();
-}
-
-function addShowMatchesListener(){
-    $('#show-matches').on('click', function(e){
-        $('#ladder').fadeOut();
-        getMatches();
-    });
 }
 
 function getLadder(ladder){
@@ -574,8 +621,7 @@ function getLadder(ladder){
         method: "GET",
         dataType: 'json'
     })
-    .done(function(data){
-        //Ladder Rankings Pretty - Need Ladder Rankings ID only for PUT 
+    .done(function(data){ 
         ladderRankings = data.rankings;
         showLadder(ladderRankings);
     })
@@ -620,12 +666,13 @@ function updateRankings(defender, challenger){
     console.log('currentLadder:');
     console.log(currentLadder);
     //put to the ladder
-    const ladderUpdateObj = {"id": ladderID, "rankings": currentLadder};
+    const ladderUpdateObj = {"id": `${ladderID}`, "rankings": `${currentLadder}`};
     console.log(ladderUpdateObj);
     // updateLadder(ladderUpdateObj);
 }
 
 function updateLadder(ladderUpdateObj){
+    console.log(ladderUpdateObj);
     $.ajax({
         url: `http://localhost:8080/ladders/${ladderID}`,
         method: "PUT",
@@ -642,14 +689,12 @@ function updateLadder(ladderUpdateObj){
     })
 }
 
-
 const ladderID = "5baa4da2f5e65ab65bdf50fc";
 let ladderRankings= [];
 
 // showMatches();
 
-//getUsers();
-addShowLadderListener();
+getUsers();
 getLadder(ladderID);
 
 

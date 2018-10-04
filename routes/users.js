@@ -176,7 +176,7 @@ router.get('/', (req, res) => {
   });
   
   //UPDATE A USER
-  //a user would be updated by adding matches, ladders, lastplayed, and isActive
+  //a user would be updated by adding/deleting matches, ladders, lastplayed, and isActive
   
   router.put('/:id', (req, res) => {
     res.send(`trying to post something to ${req.params.id}`);
@@ -195,19 +195,42 @@ router.get('/', (req, res) => {
           toUpdate[field] = req.body[field];
         }
       });
-   //if the update field is a match then handle differently    
+   //if the update field is a match then handle differently   
+   // object contains a match type: delete or add 
       if("matches" in toUpdate){
         console.log("USER PUT called from match creation");
-        
-        User
-          .findById(req.params.id, function(err, user){
-              user.matches.push(toUpdate.matches);
-              user.save(function(err, updatedUser){
-                console.log(err);
-              });
-          })
-          .then(user => res.status(204).end())
-          .catch(err => res.status(500).json ({ message: "Internal server error"}));
+        const action = toUpdate.matches.action;
+        delete toUpdate.matches.action;
+        if(toUpdate.matches.action === "add"){
+          User
+            .findById(req.params.id, function(err, user){
+                user.matches.push(toUpdate.matches);
+                user.save(function(err, updatedUser){
+                  console.log(err);
+                });
+            })
+            .then(user => res.status(204).end())
+            .catch(err => res.status(500).json ({ message: "Internal server error"}));
+        }else if(action === "delete") {
+          //pull the match from users match array
+          const match = toUpdate.matches
+          User
+            .findByIdAndUpdate(req.params.id, 
+              {$pull: {matches: match}},
+              {safe: true, upsert: true},
+              function(err, doc) {
+                  if(err){
+                  console.log(err);
+                  }else{
+                  //do stuff
+                  console.log('Not sure what to do here');
+                  return res.send(doc);
+                  }
+              }  
+            );
+
+        } //it's a delete
+
       }else {
         User
           .findByIdAndUpdate(req.params.id, { $set: toUpdate})

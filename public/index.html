@@ -9,15 +9,19 @@
   <link rel="stylesheet" type="text/css" href="./main.css">
 </head>
 <body>
-    <section id="welcome">
-        <h1>MK Tennis Ladder App</h1>
-      <p>Tennis Ladder App sign in or register</p>
-      <!-- <a href="/ladder.html"><button id="sign-in">Sign in</button></a>
-      <a href="/registration.html"><button id="sign-up">Register</button></a> -->
-
-      <button id="sign-in" type="button">Sign-in</button>
-      <button id="sign-up" type="button">Register</button>
-  </section>
+<section id="navbar">
+  <h1>MK Tennis Ladder App</h1>
+  <div class="tab">
+    <button class="tablinks" id="ladder-view">Ladder</button>
+    <button class="tablinks" id="challenge-view">Challenges</button>
+    <button class="tablinks" id="matches-view">Matches</button>
+    <!-- <button class="tablinks" id="player-view">Players</button> -->
+    <button class="tablinks" id="admin-view">Admin</button>
+    <button class="tablinks" id="login-view">Sign-in</button>
+    <button class="tablinks" id="logout-view" hidden>Logout</button>
+    <button class="tablinks" id="register-view">Register</button>
+  </div>
+</section>
   <section id="login" hidden>
     <form id="login-form">
       <div class="container">
@@ -64,26 +68,18 @@
       </form>
   </section>
 
-  <section id="users" hidden>
-    <h1>Registered Users:</h1>
+  <section id="admin" hidden>
     <div id="players"></div>
   </section>
 
-  <section id="user-edit" hidden></section>
-
-  <section id="ladder" hidden>
-    <p>This section will show the ladder!</p>
-  </section>
+  <section id="ladder" hidden></section>
     
- 
-
-  <section id="all-matches" hidden>
-    <div id="played-matches">
+  <section id="played-matches" hidden>
       <h2>Completed Matches:</h2>
-    </div>
-    <div id="unplayed-matches">
+  </section>
+  <section id="challenges" hidden>
       <h2>Active Challenges:</h2>
-    </div>
+  </section>
     <div id="scoreboard" hidden>
         <form id="record-score">
           <fieldset>
@@ -101,7 +97,6 @@
           <button type="submit">Submit</button>
         </form>
       </div>
-      <button type="button" id="show-ladder">Show Ladder</button>
   </section>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
 	<script type="text/javascript" src="app.js"></script>

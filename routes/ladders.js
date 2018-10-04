@@ -65,8 +65,7 @@ router.post('/', jsonParser, (req, res) => {
 //updating a ladder would a occur when adding/removing players and when recording successful challenge
 //If it's a new player simply push to end of rankings array.  rank = array.length + 1
 //If it's a challenge or shuffle the rankings array would have to 
-router.put('/:id', (req, res) => {
-    console.log(req.body);
+router.put('/:id', jsonParser, (req, res) => {
   if (!(req.params.id && req.body.id && req.params.id === req.body.id)) {  //if they both are not undefined and are equal
     const message =
       `Request path id (${req.params.id}) and request body id ` +
@@ -78,33 +77,45 @@ router.put('/:id', (req, res) => {
   
   //Replace the entire rankings array
     const toUpdate = {};
-    const updateableFields = ["name", "region", "rankings", "isActive"];
+    const updateableFields = ["name", "region", "rankings", "minAge", "isActive"];
 
     updateableFields.forEach(field => {
       if (field in req.body) {
         toUpdate[field] = req.body[field];
       }
     });
-
-    // if("rankings" in toUpdate){
-    //     // console.log("LADDER PUT replace rankings");
-        
-    //     Ladder
-    //       .findById(req.params.id, function(err, ladder){
-    //           ladder.rankings = [];
-    //           ladder.rankings = toUpdate.rankings;
-    //           ladder.save(function(err, updatedLadderr){
-    //             console.log(err);
-    //           });
-    //       })
-    //       .then(ladder => res.status(204).end())
-    //       .catch(err => res.status(500).json ({ message: "Internal server error"}));
-    //   }else {
+    //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    //If new player then push to end of ladder
+    //If rankings update: $pull challenger then $push challenger @ $position indexOf(defender)
+    //This should be all that is needed for a won challenge
+    //!!!!!!!!!!!!!!!!!!!
+    if(req.body.new){
+      //push "new" id to the rankings array
+      console.log("into the NEW");
+      const newID = req.body.new;
+      console.log(newID);
+      Ladder
+      .findByIdAndUpdate(req.params.id, 
+        {$push: {rankings: newID}})
+        .then(ladder => res.status(204).end())
+        .catch(err => res.status(500).json({ message: "Internal server error" }));
+    }else if(req.body.defender){
+      console.log("INTO ELSE IF");
+      const defenderIndex = ladder.rankings.indexOf(req.body.defender);
+      Ladder
+      .findByIdAndUpdate(req.param.id, 
+        // {$pull: {rankings: req.body.challenger}},
+        {$push: {rankings: req.body.challenger, $position: defenderIndex}})
+        .then(ladder => res.status(204).end())
+        .catch(err => res.status(500).json({ message: "Internal server error" }));
+    }else{
+      console.log("INTO THE ELSE");
+    //-----
         Ladder
         .findByIdAndUpdate(req.params.id, {$set: toUpdate})
         .then(ladder => res.status(204).end())
         .catch(err => res.status(500).json({ message: "Internal server error" }));
-    //   }
+    }
 });
 
 
