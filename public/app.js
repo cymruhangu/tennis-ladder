@@ -689,7 +689,7 @@ function updateLadder(ladderUpdateObj){
     })
 }
 
-const ladderID = "5baa4da2f5e65ab65bdf50fc";
+const ladderID = "5bb6d11f58fe56fcc9356b28";
 let ladderRankings= [];
 
 // showMatches();

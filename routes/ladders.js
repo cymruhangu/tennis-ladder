@@ -36,8 +36,8 @@ router.get('/:id', (req, res) => {
 
 //Create a new ladder
 router.post('/', jsonParser, (req, res) => {
-    console.log(`req.body is ${req.body}`);
-    const requiredFields = ['name', 'gender', 'region'];
+    console.log(req.body);
+    const requiredFields = [ 'gender', 'region'];
     for(let i=0; i<requiredFields.length; i++){
         const field = requiredFields[i];
         if(!(field in req.body)){
@@ -101,12 +101,25 @@ router.put('/:id', jsonParser, (req, res) => {
         .catch(err => res.status(500).json({ message: "Internal server error" }));
     }else if(req.body.defender){
       console.log("INTO ELSE IF");
-      const defenderIndex = ladder.rankings.indexOf(req.body.defender);
+      const defID = req.body.defender;
+      const chalID = req.body.challenger;
       Ladder
-      .findByIdAndUpdate(req.param.id, 
-        // {$pull: {rankings: req.body.challenger}},
-        {$push: {rankings: req.body.challenger, $position: defenderIndex}})
-        .then(ladder => res.status(204).end())
+      .findByIdAndUpdate(req.params.id,
+        {$pull: {rankings: chalID}},
+       {$push: {rankings: chalID}}) //Pulls but doesn't push. 
+        .then(ladder => {
+          // const chalIndex = ladder.rankings.indexOf(chalID.toString());
+          // console.log(`chalIndex is ${chalIndex}`);
+          // ladder.rankings.splice(chalIndex, 1);
+          // console.log(ladder.rankings);
+          // console.log(`defID is ${defID}`);
+          // const defIndex = ladder.rankings.indexOf(defID.toString());
+          // console.log(`defIndex is ${defIndex}`);
+          // ladder.rankings.splice(defIndex, 0, chalID);
+          // console.log(chalID);
+          console.log(ladder.rankings);
+          // ladder.save();
+          res.status(204).end()})
         .catch(err => res.status(500).json({ message: "Internal server error" }));
     }else{
       console.log("INTO THE ELSE");
