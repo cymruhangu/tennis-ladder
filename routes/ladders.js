@@ -87,11 +87,8 @@ router.put('/:id', jsonParser, (req, res) => {
     //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     //If new player then push to end of ladder
     //If rankings update: $pull challenger then $push challenger @ $position indexOf(defender)
-    //This should be all that is needed for a won challenge
-    //!!!!!!!!!!!!!!!!!!!
     if(req.body.new){
       //push "new" id to the rankings array
-      console.log("into the NEW");
       const newID = req.body.new;
       console.log(newID);
       Ladder
@@ -105,23 +102,16 @@ router.put('/:id', jsonParser, (req, res) => {
       const chalID = req.body.challenger;
       Ladder
       .findByIdAndUpdate(req.params.id,
-        {$pull: {rankings: chalID}},
-       {$push: {rankings: chalID}}) //Pulls but doesn't push. 
+        {$pull: {rankings: chalID}})
         .then(ladder => {
-          // const chalIndex = ladder.rankings.indexOf(chalID.toString());
-          // console.log(`chalIndex is ${chalIndex}`);
-          // ladder.rankings.splice(chalIndex, 1);
-          // console.log(ladder.rankings);
-          // console.log(`defID is ${defID}`);
-          // const defIndex = ladder.rankings.indexOf(defID.toString());
-          // console.log(`defIndex is ${defIndex}`);
-          // ladder.rankings.splice(defIndex, 0, chalID);
-          // console.log(chalID);
-          console.log(ladder.rankings);
-          // ladder.save();
-          res.status(204).end()})
+            const defIndex = ladder.rankings.indexOf(defID.toString());
+            console.log(`defIndex = ${defIndex}`);
+            Ladder.findByIdAndUpdate(ladder.id, 
+                {$push: {rankings:{$each: [chalID], $position: defIndex}} })
+                .then(ladder => res.status(204).end())
+            })
         .catch(err => res.status(500).json({ message: "Internal server error" }));
-    }else{
+    } else{
       console.log("INTO THE ELSE");
     //-----
         Ladder

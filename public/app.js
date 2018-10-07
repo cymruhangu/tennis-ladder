@@ -630,6 +630,7 @@ function getLadder(ladder){
     })
 }
 //NOTE: logic needs to be put in where if a challenge exists the challenge button doesn't show.
+//
 function createRungHTML(rank, player, ID){
     return `<div id="${rank}" class="ladder-rung" data-attr="${ID}">${rank}:  ${player}
              <button type="button" class="challenge">Challenge</button>
@@ -689,7 +690,7 @@ function updateLadder(ladderUpdateObj){
     })
 }
 
-const ladderID = "5bb6d11f58fe56fcc9356b28";
+const ladderID = "5baa4da2f5e65ab65bdf50fc";
 let ladderRankings= [];
 
 // showMatches();
