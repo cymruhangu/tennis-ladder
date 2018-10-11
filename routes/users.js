@@ -7,6 +7,7 @@ const {User} = require('../models/user');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
 const jsonParser = bodyParser.json();
+const middleware = require("../middleware");
 
 // Post to register a new user
 router.post('/', jsonParser, (req, res) => {

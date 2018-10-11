@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 const {Ladder} = require('../models/Ladder');
 const bodyParser = require('body-parser');
 const jsonParser = bodyParser.json();
+const middleware = require("../middleware");
 mongoose.Promise = global.Promise;
 
 //Show all ladders

@@ -6,6 +6,7 @@ addLadderViewListener();
 addChallengeViewListener();
 addMatchesViewListener();
 addAdminViewListener();
+addLogoutListener();
 
 function addLadderViewListener(){
     $('#ladder-view').on('click', function(e){
@@ -17,7 +18,7 @@ function addLadderViewListener(){
 
 function addChallengeViewListener(){
     $('#challenge-view').on('click', function(e){
-        // e.preventDefault();
+        e.preventDefault();
         console.log('challenge view clicked');
         getMatches();
         $('#ladder, #played-matches, #admin').fadeOut();
@@ -43,17 +44,30 @@ function addAdminViewListener(){
     });
 }
 
+function addLogoutListener(){
+    $('#logout-view').on('click', function(e){
+        console.log('logout-view clicked');
+        e.preventDefault();
+        sessionStorage.removeItem('userToken');
+        sessionStorage.removeItem('userName');
+        sessionStorage.removeItem('currentUserID');
+        sessionStorage.removeItem('currentUserRank');
+        $('#logout-view').fadeOut();
+        $('#login-view').fadeIn();
+
+    })
+}
 
 function addIndexListeners(){
     $('#login-view').on('click', function(e){
         e.preventDefault();
-        $('#ladder, #played-matches, #challenges, #registration, #login').fadeOut();
-        $('#login').fadeIn();
+        $('#ladder, #played-matches, #challenges, #registration, #login-view').fadeOut();
+        $('#login, #logut-view').fadeIn();
         addLoginListener();
     });
     $('#register-view').on('click', function(e){
         e.preventDefault();
-        $('#ladder, #played-matches, #challenges, #admin, #login').fadeOut();
+        $('#ladder, #played-matches, #challenges, #admin, #login-view').fadeOut();
         $('#registration').fadeIn();
         addRegisterListener();
     });
@@ -68,6 +82,7 @@ function addLoginListener(){
         $('#uname').val('');
         $('#passwd').val('');
         userAuth(authObj, userName);
+        $('#logout-view').fadeIn();
     });
 }
 
@@ -131,8 +146,6 @@ function postNewUser(userObj){
         $('#welcome').fadeIn();
         // console.log("data is: ");
         // console.log(data);
-        //add new user to the bottom of ladder
-        // add2BottomRung(data.id);
         const ladderObj = {"id": ladderID, "isActive": true, "new": data.id};
         updateLadder(ladderObj);
     })
@@ -140,14 +153,6 @@ function postNewUser(userObj){
         console.log(err);
     })
 }
-
-// function add2BottomRung(userID){
-//     let ladderRankingsID = ladderRankings.map(user => user._id);
-//     ladderRankingsID.push(userID);
-//     const ladderObj = {"id": ladderID, "rankings": ladderRankingsID};
-//     // console.log(ladderObj);
-//     updateLadder(ladderObj);
-// }
 
 function getUsers(userName){
     $.ajax({
@@ -170,7 +175,6 @@ function getUsers(userName){
 
 function setUserID(usersData){
     //find the ID of the username in sessionStorage
-    // console.log(usersData);
     const userName = sessionStorage.getItem('userName');
     const userArr = usersData.filter(user => {
         return user.username === userName;
@@ -178,7 +182,18 @@ function setUserID(usersData){
     const currentUser = userArr[0];
     console.log(currentUser.name);
     sessionStorage.setItem('currentUserID', currentUser.id);
-    sessionStorage.setItem('currentUserName', currentUser.name);
+    // sessionStorage.setItem('currentUserName', currentUser.name);
+    setCurrentUserRank(currentUser.id);
+}
+
+function setCurrentUserRank(userID){
+    getLadder(ladderID);
+    const rankings = ladderRankings.map(player => player._id);
+    // const currentUserRank = rankings.indexOf(userID);
+    // console.log(`userID is ${userID}`);
+    // console.log(ladderRankings);
+    // console.log(`currentUserRank = ${currentUserRank}`);
+    sessionStorage.setItem('currentUserRank', rankings.indexOf(userID));
 }
 
 function showUsers(usersData){
@@ -580,8 +595,6 @@ function generateMatchHTML(winner, loser, first, second, third){
 }
 
 //DELETE MATCH
-//NOTE: HOW TO DELETE MATCHES FROM USER?  PULL???
-
 function deleteMatch(matchID){
     $.ajax({
         url: `http://localhost:8080/matches/${matchID}`,
@@ -630,48 +643,17 @@ function getLadder(ladder){
     })
 }
 //NOTE: logic needs to be put in where if a challenge exists the challenge button doesn't show.
-//
+//What is the rank of the current player?
+//Hide challenge button for all but current player - 5
 function createRungHTML(rank, player, ID){
+    const chalRank = sessionStorage.getItem('currentUserRank');
     return `<div id="${rank}" class="ladder-rung" data-attr="${ID}">${rank}:  ${player}
-             <button type="button" class="challenge">Challenge</button>
+             <button type="button" class="challenge" ${rank > chalRank|| rank <= chalRank - 5?'hidden':''}>Challenge</button>
              <span id="challenged" hidden>Already challenged</span>
     </div>`
 }
 
 //Update ladder rankings
-function updateRankings(defender, challenger){
-    //get current ladder rankings and map the with only IDs
-    let currentLadder = ladderRankings.map(user => user._id);
-
-    //find the affected section
-    //defender and challenger ranks
-    const defIndex = currentLadder.indexOf(defender);
-    const chalIndex = currentLadder.indexOf(challenger);
-    const affectedPositions = chalIndex - defIndex;
-    //create an array with changed rankings
-    let ladderSplice = [challenger, defender];
-    let index = defIndex + 2;
-    while (affectedPositions >1){
-        ladderSplice.push(currentLadder[index]);
-        index++;
-    }
-    //NOT WORKING!!!! 
-    console.log('SPLICE:');
-    console.log(ladderSplice);
-    //splice into the array
-    let index2 = defIndex;
-    ladderSplice.forEach(function (player, index, array){
-        currentLadder.splice(index2, 1, player);
-        index2++;
-    });
-    console.log('currentLadder:');
-    console.log(currentLadder);
-    //put to the ladder
-    const ladderUpdateObj = {"id": `${ladderID}`, "rankings": `${currentLadder}`};
-    console.log(ladderUpdateObj);
-    // updateLadder(ladderUpdateObj);
-}
-
 function updateLadder(ladderUpdateObj){
     console.log(ladderUpdateObj);
     $.ajax({
@@ -683,20 +665,18 @@ function updateLadder(ladderUpdateObj){
         processData: false
     })
     .done(function(data){
-    // showMatches(data.matches);
+        getLadder(ladderID);
     })
     .fail(function(err){
         console.log(err); 
     })
 }
 
-const ladderID = "5baa4da2f5e65ab65bdf50fc";
+// const ladderID = "5baa4da2f5e65ab65bdf50fc"; //iMac
+const ladderID = "5bb6d11f58fe56fcc9356b28"; //MacBook
 let ladderRankings= [];
-
-// showMatches();
 
 getUsers();
 getLadder(ladderID);
-
 
 });

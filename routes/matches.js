@@ -6,6 +6,7 @@ const { Match } = require('../models/match');
 const { User } = require('../models/user');
 const bodyParser = require('body-parser');
 const jsonParser = bodyParser.json();
+const middleware = require("../middleware");
 mongoose.Promise = global.Promise;
 
 const passport = require('passport');
