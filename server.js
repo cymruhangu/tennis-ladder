@@ -62,7 +62,7 @@ function runServer(databaseUrl, port = PORT) {
       if (err) {
         return reject(err);
       }
-      mongoose.set('debug', true);
+      // mongoose.set('debug', true);
       server = app.listen(port, () => {
         console.log(`Your app is listening on port ${port}`);
         resolve();

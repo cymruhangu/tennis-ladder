@@ -6,11 +6,14 @@ const mongoose = require('mongoose');
 const {Ladder} = require('../models/Ladder');
 const bodyParser = require('body-parser');
 const jsonParser = bodyParser.json();
+const passport = require('passport');
+const jwt = require('jsonwebtoken');
 const middleware = require("../middleware");
 mongoose.Promise = global.Promise;
 
+const jwtAuth = passport.authenticate('jwt', {session: false});
 //Show all ladders
-router.get('/', (req, res) => {
+router.get('/', jwtAuth, (req, res) => {
     Ladder
         .find()
         .then(ladders => {

@@ -1,15 +1,87 @@
 $(function(){
 'use strict';
 
+const ladderID = "5baa4da2f5e65ab65bdf50fc"; //iMac
+// const ladderID = "5bb6d11f58fe56fcc9356b28"; //MacBook
+let ladderRankings= [];
+
+
+clearSessionStorage();
+getLadder(ladderID);
+addEnterListener();
+addNavLogin();
+addNavReg();
+addNavAdmin();
+getLadder(ladderID);
+addMyMatchesListener();
+
+//upon refresh user information from sessionStorage
+function clearSessionStorage(){
+    sessionStorage.removeItem('userToken');
+    sessionStorage.removeItem('userName');
+    sessionStorage.removeItem('currentUserID');
+    sessionStorage.removeItem('currentUserRank');
+}
+
+function addEnterListener(){
+    $('.enter-btn').on('click', function(e){
+        console.log("Enter button clicked");
+        $('#landing').fadeOut();
+        $('#ladder').fadeIn();
+    });
+}
+
+function addNavLogin(){
+    $('.nav-login, #login-link').on('click', function(e){
+        e.preventDefault();
+        $('#ladder, #register').fadeOut();
+        $('#login').fadeIn();
+        addLoginListener();
+    });
+}
+
+function addNavReg(){
+    $('.nav-register, #register-link').on('click', function(e){
+        console.log('show register clicked');
+        e.preventDefault();
+        $('#ladder, #login').fadeOut();
+        $('#registration').fadeIn();
+        addRegisterListener();
+    });
+}
+
+function addNavLogout(){
+    $('.nav-logout').on('click', function(e){
+        console.log('logout clicked');
+        e.preventDefault();
+        clearSessionStorage();
+        getLadder(ladderID);
+        $('#ladder').fadeOut();
+        $('.nav-logout').css('visibility', 'hidden');
+        $('.nav-register, .nav-login').css('visibility', 'visible');
+        $('#ladder').fadeIn();
+    });
+}
+
+function addNavAdmin(){
+    $('.admin-view').on('click', function(e){
+        console.log('admin view clicked');
+        e.preventDefault();
+        getUsers();
+        $('#ladder, #played-matches, #challenges, #registration, #login').fadeOut();
+        $('#admin').fadeIn();
+    });
+}
+
+
 addIndexListeners();
 addLadderViewListener();
 addChallengeViewListener();
-addMatchesViewListener();
-addAdminViewListener();
+addMatchesListener();
 addLogoutListener();
 
 function addLadderViewListener(){
-    $('#ladder-view').on('click', function(e){
+    $('.ladder-view').on('click', function(e){
         e.preventDefault();
         $('#played-matches, #admin, #challenges').fadeOut();
         $('#ladder').fadeIn();
@@ -17,7 +89,7 @@ function addLadderViewListener(){
 }
 
 function addChallengeViewListener(){
-    $('#challenge-view').on('click', function(e){
+    $('.challenge-view').on('click', function(e){
         e.preventDefault();
         console.log('challenge view clicked');
         getMatches();
@@ -26,23 +98,16 @@ function addChallengeViewListener(){
     });
 }
 
-function addMatchesViewListener(){
-    $('#matches-view').on('click', function(e){
+function addMatchesListener(){
+    $('.match-view').on('click', function(e){
         console.log('matches view clicked');
         e.preventDefault();
-        $('#ladder, #admin, #challenges, #challenges, #login, #registration').fadeOut();
+        $('#ladder, #challenges, #admin').fadeOut();
         getMatches();
         $('#played-matches').fadeIn();
     });
 }
 
-function addAdminViewListener(){
-    $('#admin-view').on('click', function(e){
-        e.preventDefault();
-        $('#ladder, #played-matches, #challenges, #registration, #login').fadeOut();
-        $('#admin').fadeIn();
-    });
-}
 
 function addLogoutListener(){
     $('#logout-view').on('click', function(e){
@@ -82,7 +147,17 @@ function addLoginListener(){
         $('#uname').val('');
         $('#passwd').val('');
         userAuth(authObj, userName);
-        $('#logout-view').fadeIn();
+        $('.nav-login, .nav-register').css('visibility', 'hidden');
+        $('.nav-logout').css('visibility', 'visible');
+        $('#ladder').fadeIn();
+        addNavLogout();
+        clearForm('#login-form');
+    });
+}
+
+function clearForm(formName){
+    $(`${formName}`).each(function(){
+        this.reset();
     });
 }
 
@@ -98,14 +173,15 @@ function userAuth(authObj, userName){
         .done(function(data){
             $('#login').fadeOut();
             console.log(data);
-            sessionStorage.setItem('userToken', data.authToken);
+            sessionStorage.setItem('userToken', `Bearer ${data.authToken}`);
             sessionStorage.setItem('userName', userName);
-            //get users and find the current user's ID
-            getUsers(userName);
+            //get users and find the current user's 
             getLadder(ladderID);
             //Get the ladder and create HTML
             //fadeIn the Ladder
+            $('#login').fadeOut();
             $('#ladder').fadeIn();
+            getUsers(userName);
         })
         .fail(function(err){
             console.log(err);
@@ -127,7 +203,10 @@ function addRegisterListener(){
             "password": `${password}`
         };
         postNewUser(userObj);
-        //console.log(userObj);
+        //show login form
+        $('#registration').fadeOut();
+        $('#login').fadeIn();
+        clearForm('#ladderReg');
     });
 }
 
@@ -155,13 +234,17 @@ function postNewUser(userObj){
 }
 
 function getUsers(userName){
+    console.log('ran getUsers');
     $.ajax({
         url: 'http://localhost:8080/users',
         method: "GET",
-        dataType: 'json'
+        dataType: 'json',
+        headers: {
+            'Authorization': sessionStorage.getItem('userToken')
+        }
     })
     .done(function(data){
-        // console.log(data);
+        console.log(data);
         if(userName){
             setUserID(data.users);
         } else {
@@ -189,19 +272,16 @@ function setUserID(usersData){
 function setCurrentUserRank(userID){
     getLadder(ladderID);
     const rankings = ladderRankings.map(player => player._id);
-    // const currentUserRank = rankings.indexOf(userID);
-    // console.log(`userID is ${userID}`);
-    // console.log(ladderRankings);
-    // console.log(`currentUserRank = ${currentUserRank}`);
     sessionStorage.setItem('currentUserRank', rankings.indexOf(userID));
 }
 
 function showUsers(usersData){
+    $('#players-container').html('');
     usersData.forEach(function(user){
         const playerName = `${user.name}`;
         const playerID = `${user.id}`;
         const playerDiv =createPlayerHTML(playerName, playerID);
-        $('#players').append(playerDiv);
+        $('#players-container').append(playerDiv);
     });
     addUserEditListener();
     addUserDeleteListener();
@@ -220,6 +300,7 @@ function addUserEditListener(){
         console.log(`going to edit users/${playerID} `);
         //ajax call for specific user
         getPlayer(playerID);
+        $('#edit-user').fadeIn();
     });
 }
 
@@ -230,7 +311,7 @@ function getPlayer(ID){
         dataType: 'json'
     })
     .done(function(data){
-        // console.log(data);
+        console.log(data);
         //render player PUT Form
         createUserEdit(data);
     })
@@ -241,10 +322,24 @@ function getPlayer(ID){
 
 function createUserEdit(user){
     console.log(`${user.name} ${user.username} ${user.gender} isActive:${user.isActive}`);
-    const userForm = generateUserFormHTML(user.name, user.username, user.age, user.email);
-    $('#users').fadeOut();
-    $('#user-edit').append(userForm).fadeIn();
+    const tmpName = user.name.split(' ');
+    const first = tmpName[0];
+    const last = tmpName[1];
+    const userForm = generateUserFormHTML(user.name, first, last,  user.username, user.age, user.email);
+    // $('#users').fadeOut();
+    $('#edit-user').append(userForm).fadeIn();
+    addCancelListener();
     addUserPutListener(user);
+}
+
+function addCancelListener(){
+    $('.edit-cancel').on('click', function(e){
+        e.preventDefault();
+        console.log('cancel clicked');
+        //clear form
+        clearForm('.userEditForm');
+        $('#edit-user').fadeOut();
+    })
 }
 
 function addUserDeleteListener(){
@@ -264,7 +359,6 @@ function userDelete(ID){
     .done(function(data){
         getUsers();
         $('#user-edit').fadeOut();
-        $('#users').fadeIn();
     })
     .fail(function(err){
         console.log(err)
@@ -272,21 +366,29 @@ function userDelete(ID){
 }
 
 function addUserPutListener(user){
-    $('#user-edit').submit(function(e){
+    $('.userEditForm').submit(function(e){
         console.log('addUserPutListener called');
         e.preventDefault();
+        const firstName = $('input[id=new-first]').val();
+        const lastName = $('input[id=new-last]').val();
         const userName = $('input[id=new-username]').val();
         const age = $('input[id=new-age]').val();
         const email = $('input[id=new-email]').val();
         console.log(`updating ${user.id} ${userName}  ${age}  ${email} `);
         const userObj = {
             "id": `${user.id}`,
+            "name":{
+                "firstName": `${firstName}`,
+                "lastName": `${lastName}`
+            },
             "username": `${userName}`,
             "email": `${email}`,
             "age": `${age}`
         }
         console.log(userObj);
         putUser(user.id, userObj);
+        $('#edit-user').fadeOut();
+        clearForm('.userEditForm');
     });
 }
 
@@ -308,37 +410,43 @@ function putUser(ID, userObj){
     })
 }
 
-function generateUserFormHTML(name, username, age, email){
-    return `<form id="user-edit">
-    <h1>Edit Player Profile for ${name}<h1>
+function generateUserFormHTML(name, firstname, lastname, username, age, email){
+    return `<form class="userEditForm">
       <fieldset>
-        <legend></legend>
+        <legend><h2>Edit Player Profile for ${name}<h2></legend>
+        <label for="firstname"><strong>First Name</strong></label>
+        <input id="new-first" type="text" name="firstname" value="${firstname}">
+
+        <label for="lastname"><strong>Last Name</strong></label>
+        <input id="new-last" type="text" value="${lastname}" name="lastname">
+
         <label for="new-username"><b>Username</b></label>
-        <input id="new-username" type="text" placeholder="${username}" name="new-username">
+        <input id="new-username" type="text" value="${username}" name="new-username">
         
         <label for="new-email"><b>Email</b></label>
-        <input id="new-email" type="text" placeholder="${email}" name="new-email">
+        <input id="new-email" type="email" value="${email}" name="new-email">
     
         <label for="new-age"><b>Age</b></label>
-        <input id="new-age" type="text" placeholder="${age}" name="age">
-    
-        <input type="submit" id="user-edit-btn" value="Submit">
+        <input id="new-age" type="text" value="${age}" name="age">
       </fieldset>
+      <div class="btn-group"> 
+        <button type="submit" class="edit-submit">Submit</button>
+        <button type="button" class="edit-cancel">Cancel</button>
+      </div>
     </div>
-  </form> 
-  <button type="button" id="user-delete">Delete this User</button>`;
+  </form> `;
 }
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
 //MATCHES
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
 function addChallengeListener(rank){
-    $('.challenge').on("click", function(event){
+    $('.chalBtn').on("click", function(event){
         event.stopPropagation();
         const defender = $(this).parent().attr('data-attr');
         // console.log(`challenge to ${defender} will be created`);
         $(this).fadeOut();
-        $(this).next('#challenged').fadeIn();
+        $(this).next('.challenged').fadeIn();
         
         //create Match
         const challenger = sessionStorage.getItem('currentUserID');
@@ -381,6 +489,7 @@ function addUsersMatch(matchID, matchObj){
     putUser(matchObj.challenger, chalObj);
 }
 
+//WHERE IS SUPPOSED TO BE CALLED? *****************************************
 function deleteUsersMatch(matchID, matchObj){
     const defObj = {"id": matchObj.defender, "matches": matchID, "action": "delete" };
     const chalObj = {"id": matchObj.challenger, "matches": matchID, "action": "delete"};
@@ -390,15 +499,24 @@ function deleteUsersMatch(matchID, matchObj){
     putUser(matchObj.challenger, chalObj);
 }
 
-//click registers for each record?????????
+function addMyMatchesListener(){
+    $('.my-matches').on('click', function(e){
+        console.log("My Matches clicked");
+        e.preventDefault();
+        $('#ladder, #matches, #challenges, #admin').fadeOut();
+        $('#my-space').fadeIn();
+    })
+}
+
+//click registers for each
 function addRecordListener(){
     $('.record').on('click', function(e){
-        // e.stopPropagation();
+        console.log('record match clicked');
         e.preventDefault();
         const matchID = $(this).parent().attr('data-attr');
         //need a get for specific matches
         getMatch(matchID);
-        $('#score').fadeIn();
+        $('#scoreboard').fadeIn();
     });
 }
 
@@ -542,8 +660,11 @@ function tallyScore(match, def1, def2, def3, chal1, chal2, chal3){
 
 function showMatches(matchData){
     //clear match div
-    $('#played-matches').html('');
-    $('#unplayed-matches').html('');
+    $('#match-container').html('');
+    $('#match-container').append('<h3>Completed Matches:</h3>');
+    $('#challenge-container').html('');
+    $('#challenge-container').append('<h3>Current Challenges:</h3>');
+
 
     matchData.forEach(function(match){
         if(match.matchPlayed){
@@ -553,25 +674,24 @@ function showMatches(matchData){
             const secondSet = `${match.score[1].winnerGames}-${match.score[1].loserGames}`;
             const thirdSet = `${match.score[2].winnerGames}-${match.score[2].loserGames}`;
             const matchDiv = generateMatchHTML(winnerName, loserName, firstSet, secondSet, thirdSet);
-            $('#played-matches').append(matchDiv);
+            $('#match-container').append(matchDiv);
         } else  {  //unplayed challenge
             const defenderName = `${match.defender.name.firstName} ${match.defender.name.lastName}`;
             const challengerName = `${match.challenger.name.firstName} ${match.challenger.name.lastName}`;
             const matchID = match.id;
             const challengeDiv = generateChallengeHTML(defenderName, challengerName, matchID);
-            $('#challenges').html('');
-            $('#challenges').append(challengeDiv);
+            $('#challenge-container').append(challengeDiv);
             addRecordListener();
             addMatchDeleteListener(match.defender.id, match.challenger.id);
         }
     });
-    $('#all-matches').fadeIn();
+    // $('#all-matches').fadeIn();
 }
 
 function generateChallengeHTML(defender, challenger, id){
     return `<div class="challenge" data-attr=${id}>${challenger} challenged ${defender}
-            <button type="button" class="record">Record Score</button>
-            <button type="button" class="del-challenge">Delete Challenge</button>
+            <button type="button" class="record">Record</button>
+            <button type="button" class="del-challenge">Delete</button>
             </div>`;
 }
 
@@ -613,7 +733,8 @@ function deleteMatch(matchID){
 //LADDERS 
 function showLadder(ladderData){
     //clear ladder div
-    $('#ladder').html('');
+    $('#ladder-container').html('');
+    $('#ladder-container').append('<h3>Current Standings for <span>Men&#39;s Open:</span>');
     let rank;
     ladderData.forEach(function(place, index) {
         if(place.name){
@@ -622,7 +743,7 @@ function showLadder(ladderData){
             //console.log(place.name.firstName);
             rank = index + 1;
             const rungDiv = createRungHTML(rank, playerName, playerID);
-            $('#ladder').append(rungDiv);
+            $('#ladder-container').append(rungDiv);
         }
     });
     addChallengeListener(rank);
@@ -647,9 +768,10 @@ function getLadder(ladder){
 //Hide challenge button for all but current player - 5
 function createRungHTML(rank, player, ID){
     const chalRank = sessionStorage.getItem('currentUserRank');
-    return `<div id="${rank}" class="ladder-rung" data-attr="${ID}">${rank}:  ${player}
-             <button type="button" class="challenge" ${rank > chalRank|| rank <= chalRank - 5?'hidden':''}>Challenge</button>
-             <span id="challenged" hidden>Already challenged</span>
+    return `<div id="${rank}" class="ladder-rung" data-attr="${ID}"><span><font color=${ID==sessionStorage.getItem('currentUserID')?"yellow":"white"}>
+        ${rank}:  ${player}</font></span>
+             <button type="button" class="chalBtn" ${rank > chalRank|| rank <= chalRank - 5?'hidden':''}>Challenge</button>
+             <span class="challenged" hidden>Challenged</span>
     </div>`
 }
 
@@ -671,12 +793,4 @@ function updateLadder(ladderUpdateObj){
         console.log(err); 
     })
 }
-
-// const ladderID = "5baa4da2f5e65ab65bdf50fc"; //iMac
-const ladderID = "5bb6d11f58fe56fcc9356b28"; //MacBook
-let ladderRankings= [];
-
-getUsers();
-getLadder(ladderID);
-
 });

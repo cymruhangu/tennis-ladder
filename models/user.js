@@ -58,6 +58,7 @@ userSchema.methods.serialize = function() {
         name: this.playerName,
         username: this.username,
         age: this.age,
+        email: this.email,
         gender: this.gender,
         ladders: this.ladders,
         matches: this.matches,

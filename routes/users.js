@@ -150,7 +150,8 @@ router.post('/', jsonParser, (req, res) => {
 const jwtAuth = passport.authenticate('jwt', {session: false});
 //READ USERS
 //Show all users
-router.get('/', (req, res) => {
+router.get('/', jwtAuth, (req, res) => {
+  console.log(req.headers);
     User
         .find()
         .then(users => {
@@ -189,7 +190,7 @@ router.get('/', (req, res) => {
       return res.status(400).json({ message: message });
     }
       const toUpdate = {};
-      const updateableFields = ["age", "username", "email", "matches", "ladders"];
+      const updateableFields = ["age", "username", "name", "email", "matches", "ladders"];
 
       updateableFields.forEach(field => {
         if (field in req.body) {
