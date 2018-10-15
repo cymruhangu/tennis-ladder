@@ -1,8 +1,8 @@
 $(function(){
 'use strict';
 
-const ladderID = "5baa4da2f5e65ab65bdf50fc"; //iMac
-// const ladderID = "5bb6d11f58fe56fcc9356b28"; //MacBook
+// const ladderID = "5baa4da2f5e65ab65bdf50fc"; //iMac
+const ladderID = "5bb6d11f58fe56fcc9356b28"; //MacBook
 let ladderRankings= [];
 
 
@@ -33,8 +33,9 @@ function addEnterListener(){
 
 function addNavLogin(){
     $('.nav-login, #login-link').on('click', function(e){
+        console.log('login link clicked');
         e.preventDefault();
-        $('#ladder, #register').fadeOut();
+        $('#ladder, #registration').fadeOut();
         $('#login').fadeIn();
         addLoginListener();
     });
@@ -68,7 +69,7 @@ function addNavAdmin(){
         console.log('admin view clicked');
         e.preventDefault();
         getUsers();
-        $('#ladder, #played-matches, #challenges, #registration, #login').fadeOut();
+        $('#ladder, #played-matches, #challenges, #my-matches, #registration, #login').fadeOut();
         $('#admin').fadeIn();
     });
 }
@@ -83,7 +84,7 @@ addLogoutListener();
 function addLadderViewListener(){
     $('.ladder-view').on('click', function(e){
         e.preventDefault();
-        $('#played-matches, #admin, #challenges').fadeOut();
+        $('#played-matches, #admin, #my-matches, #challenges').fadeOut();
         $('#ladder').fadeIn();
     });
 }
@@ -93,7 +94,7 @@ function addChallengeViewListener(){
         e.preventDefault();
         console.log('challenge view clicked');
         getMatches();
-        $('#ladder, #played-matches, #admin').fadeOut();
+        $('#ladder, #played-matches, #my-matches, #admin').fadeOut();
         $('#challenges').fadeIn();
     });
 }
@@ -126,7 +127,7 @@ function addLogoutListener(){
 function addIndexListeners(){
     $('#login-view').on('click', function(e){
         e.preventDefault();
-        $('#ladder, #played-matches, #challenges, #registration, #login-view').fadeOut();
+        $('#ladder, #played-matches, #challenges, #my-matches, #registration, #login-view').fadeOut();
         $('#login, #logut-view').fadeIn();
         addLoginListener();
     });
@@ -660,13 +661,14 @@ function tallyScore(match, def1, def2, def3, chal1, chal2, chal3){
 
 function showMatches(matchData){
     //clear match div
-    $('#match-container').html('');
-    $('#match-container').append('<h3>Completed Matches:</h3>');
-    $('#challenge-container').html('');
-    $('#challenge-container').append('<h3>Current Challenges:</h3>');
-
-
+    $('#match-container, #my-matches-container').html('');
+    $('#match-container, #my-matches-container').append('<h3>Completed Matches:</h3>');
+    $('#challenge-container, #my-challenges-container').html('');
+    $('#challenge-container, #my-challenges-container').append('<h3>Current Challenges:</h3>');
+    const user = sessionStorage.getItem('currentUserID');
+    
     matchData.forEach(function(match){
+        const myMatch = user === match.challenger._id || user === match.defender._id?true:false;
         if(match.matchPlayed){
             const winnerName = `${match.winner.name.firstName} ${match.winner.name.lastName}`;
             const loserName = `${match.loser.name.firstName} ${match.loser.name.lastName}`;
@@ -675,23 +677,36 @@ function showMatches(matchData){
             const thirdSet = `${match.score[2].winnerGames}-${match.score[2].loserGames}`;
             const matchDiv = generateMatchHTML(winnerName, loserName, firstSet, secondSet, thirdSet);
             $('#match-container').append(matchDiv);
+            //handle my-matches
+            // console.log(match);
+            // console.log(`user is ${user} chal/def are ${match.challenger._id} ${match.defender._id}`);
+            if(myMatch){
+                $('#my-matches-container').append(matchDiv);
+            }
         } else  {  //unplayed challenge
             const defenderName = `${match.defender.name.firstName} ${match.defender.name.lastName}`;
             const challengerName = `${match.challenger.name.firstName} ${match.challenger.name.lastName}`;
             const matchID = match.id;
-            const challengeDiv = generateChallengeHTML(defenderName, challengerName, matchID);
+            const challengeDiv = generateChallengeHTML(myMatch, defenderName, challengerName, matchID);
             $('#challenge-container').append(challengeDiv);
+            //handle my-matches
+            if(myMatch){
+                $('#my-challenges-container').append(challengeDiv);
+            }
             addRecordListener();
-            addMatchDeleteListener(match.defender.id, match.challenger.id);
+            addMatchDeleteListener(match.defender._id, match.challenger._id);
         }
     });
-    // $('#all-matches').fadeIn();
 }
 
-function generateChallengeHTML(defender, challenger, id){
+//my matches
+
+//-----------
+
+function generateChallengeHTML(myMatch, defender, challenger, id){
     return `<div class="challenge" data-attr=${id}>${challenger} challenged ${defender}
-            <button type="button" class="record">Record</button>
-            <button type="button" class="del-challenge">Delete</button>
+            <button type="button" class="record" style=${!myMatch?"display:none":"display:inline"}>Record</button>
+            <button type="button" class="del-challenge" style=${!myMatch?"display:none":"display:inline"}>Delete</button>
             </div>`;
 }
 

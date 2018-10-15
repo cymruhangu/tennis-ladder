@@ -105,7 +105,7 @@
             <li class="ladder-view">Ladder</li>
             <li class="match-view">Matches</li>
             <li class="challenge-view">Challenges</li>
-            <li class="my-challenges">My Matches</li>
+            <li class="my-matches">My Matches</li>
             <li class="admin-view">Admin</li>
           </ul>
       </div>
@@ -202,23 +202,28 @@
             <li class="nav-login">Login</li>
           </ul>
       </div> 
-      <!-- <div id="scoreboard">
+      <div id="scoreboard">
           <form id="record-score">
             <fieldset id="defender-score">
               <legend><span id="defender">Defender:</span></legend>
-              <input type="number" class="games" id="def-set1" min="0" max="7">
-              <input type="number" class="games" id="def-set2" min="0" max="7">
-              <input type="number" class="games" id="def-set3" min="0" max="7">
+              <div id="defender-score">
+                <input type="number" class="games" id="def-set1" min="0" max="7">
+                <input type="number" class="games" id="def-set2" min="0" max="7">
+                <input type="number" class="games" id="def-set3" min="0" max="7">
+              </div>
             </fieldset>  
-            <fieldset id="challenger-score">
-                <legend><span id="challenger">Challenger:</span></legend>
-              <input type="number" class="games" id="chal-set1" min="0" max="7">
-              <input type="number" class="games" id="chal-set2" min="0" max="7">
-              <input type="number" class="games" id="chal-set3" min="0" max="7">
+            <fieldset >
+              <legend><span id="challenger">Challenger:</span></legend>
+                <div id="challenger-score">
+                  <input type="number" class="games" id="chal-set1" min="0" max="7">
+                  <input type="number" class="games" id="chal-set2" min="0" max="7">
+                  <input type="number" class="games" id="chal-set3" min="0" max="7">
+                </div>
             </fieldset>
-            <button type="submit">Submit</button>
+          
+            <button type="submit" id="score-submit">Submit</button>
           </form>
-      </div>-->
+      </div>
     </section>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
     <script type="text/javascript" src="app.js"></script>
