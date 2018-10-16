@@ -172,6 +172,9 @@ button, li {
     padding-bottom: 8px;
 }
 
+#new-player{
+    border: 1px solid white;
+}
 .challenged {
     float: right;
     font-size: 75%;

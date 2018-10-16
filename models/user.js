@@ -22,7 +22,7 @@ const userSchema = new mongoose.Schema({
     gender: {type: String, enum: ["male", "female"], default: "male"},
     ladders: [{type: mongoose.Schema.Types.ObjectId, ref: 'Ladder', default: "5b8b17c354c1e18445736711"}],
     dateJoined: {type: Date, default: Date.now},
-    isActive: {type: Boolean, default: true},
+    isActive: {type: Boolean, default: false},
     matches: [{type: mongoose.Schema.Types.ObjectId, ref: 'Match'}],
     lastMatch: {type: Date}
 });

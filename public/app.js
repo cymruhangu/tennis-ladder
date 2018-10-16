@@ -1,12 +1,13 @@
 $(function(){
 'use strict';
 
-const ladderID = "5baa4da2f5e65ab65bdf50fc"; //iMac
-// const ladderID = "5bb6d11f58fe56fcc9356b28"; //MacBook
+// const ladderID = "5baa4da2f5e65ab65bdf50fc"; //iMac
+const ladderID = "5bb6d11f58fe56fcc9356b28"; //MacBook
 let ladderRankings= [];
-let tmpAuth = {};
+let isActive = true;
 
-const adminID = "5baa6d04ae44dfb8095dcafe";
+// const adminID = "5baa6d04ae44dfb8095dcafe";//iMac
+const adminID = "5bc5c73b837af33ac9bf8a5e"; //MacBook
 
 clearSessionStorage();
 getLadder(ladderID);
@@ -76,7 +77,6 @@ function addNavAdmin(){
     });
 }
 
-
 addIndexListeners();
 addLadderViewListener();
 addChallengeViewListener();
@@ -120,6 +120,7 @@ function addLogoutListener(){
         sessionStorage.removeItem('userName');
         sessionStorage.removeItem('currentUserID');
         sessionStorage.removeItem('currentUserRank');
+        sessionStorage.removeItem('currentName');
         $('#logout-view').fadeOut();
         $('#login-view').fadeIn();
 
@@ -231,8 +232,8 @@ function postNewUser(userObj){
         // console.log("data is: ");
         // console.log(data);
         // userAuth(data.username, tmpAuth);
-        const ladderObj = {"id": ladderID, "isActive": true, "new": data.id};
-        updateLadder(ladderObj);
+        // const ladderObj = {"id": ladderID, "isActive": true, "new": data.id};
+        // updateLadder(ladderObj);
     })
     .fail(function(err){
         console.log(err);
@@ -270,7 +271,10 @@ function setUserID(usersData){
     });
     const currentUser = userArr[0];
     console.log(currentUser.name);
+    console.log(currentUser.isActive);
+    isActive = currentUser.isActive;
     sessionStorage.setItem('currentUserID', currentUser.id);
+    sessionStorage.setItem('currentName', currentUser.name);
     checkAdmin(currentUser.id);
     setCurrentUserRank(currentUser.id);
 }
@@ -285,7 +289,12 @@ function checkAdmin(id){
 function setCurrentUserRank(userID){
     getLadder(ladderID);
     const rankings = ladderRankings.map(player => player._id);
-    sessionStorage.setItem('currentUserRank', rankings.indexOf(userID));
+    const activePlayer = rankings.includes(userID);
+    if(activePlayer){
+        sessionStorage.setItem('currentUserRank', rankings.indexOf(userID));
+    }else {
+        sessionStorage.setItem('currentUserRank', rankings.length);
+    }
 }
 
 function showUsers(usersData){
@@ -766,6 +775,7 @@ function showLadder(ladderData){
     $('#ladder-container').html('');
     $('#ladder-container').append('<h3>Current Standings for <span>Men&#39;s Open:</span>');
     let rank;
+    const finalRung  = ladderData.length + 1;
     ladderData.forEach(function(place, index) {
         if(place.name){
             const playerName = `${place.name.firstName} ${place.name.lastName}`;
@@ -775,7 +785,13 @@ function showLadder(ladderData){
             const rungDiv = createRungHTML(rank, playerName, playerID);
             $('#ladder-container').append(rungDiv);
         }
+        //if player is new/inActive append as last rung with no ranking
     });
+    if(!isActive){
+        rank = ladderData.length + 1;
+        const lastRung = createRungHTML(rank, sessionStorage.getItem('currentName'), sessionStorage.getItem('currentUserID'));
+        $('#ladder-container').append(lastRung);
+    }
     addChallengeListener(rank);
 }
 
@@ -793,11 +809,11 @@ function getLadder(ladder){
         console.log(err);
     })
 }
-//NOTE: logic needs to be put in where if a challenge exists the challenge button doesn't show.
-//What is the rank of the current player?
-//Hide challenge button for all but current player - 5
+
 function createRungHTML(rank, player, ID){
-    const chalRank = sessionStorage.getItem('currentUserRank');
+    let chalRank = sessionStorage.getItem('currentUserRank');
+        
+
     return `<div id="${rank}" class="ladder-rung" data-attr="${ID}"><span><font color=${ID==sessionStorage.getItem('currentUserID')?"yellow":"white"}>
         ${rank}:&nbsp;&nbsp; ${player}</font></span>
              <button type="button" class="chalBtn" ${rank > chalRank|| rank <= chalRank - 5?'hidden':''}>Challenge</button>
@@ -806,6 +822,7 @@ function createRungHTML(rank, player, ID){
 }
 
 //Update ladder rankings
+//NOTE: If unranked challenger loses they should be set to active and go at the bottom of the ladder /////
 function updateLadder(ladderUpdateObj){
     console.log(ladderUpdateObj);
     $.ajax({
