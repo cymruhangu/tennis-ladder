@@ -39,7 +39,7 @@ router.get('/:id', (req, res) => {
 });
 
 //Create a new ladder
-router.post('/', jsonParser, (req, res) => {
+router.post('/', jwtAuth, (req, res) => {
     console.log(req.body);
     const requiredFields = [ 'gender', 'region'];
     for(let i=0; i<requiredFields.length; i++){
@@ -69,7 +69,7 @@ router.post('/', jsonParser, (req, res) => {
 //updating a ladder would a occur when adding/removing players and when recording successful challenge
 //If it's a new player simply push to end of rankings array.  rank = array.length + 1
 //If it's a challenge or shuffle the rankings array would have to 
-router.put('/:id', jsonParser, (req, res) => {
+router.put('/:id', (req, res) => {
   if (!(req.params.id && req.body.id && req.params.id === req.body.id)) {  //if they both are not undefined and are equal
     const message =
       `Request path id (${req.params.id}) and request body id ` +
@@ -127,7 +127,7 @@ router.put('/:id', jsonParser, (req, res) => {
 
 
 //Delete a ladder 
-router.delete('/:id', (req, res) => {
+router.delete('/:id', jwtAuth, (req, res) => {
     console.log(req.params.id);
     Ladder
     .findByIdAndRemove(req.params.id)

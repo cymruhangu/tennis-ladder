@@ -1,10 +1,12 @@
 $(function(){
 'use strict';
 
-// const ladderID = "5baa4da2f5e65ab65bdf50fc"; //iMac
-const ladderID = "5bb6d11f58fe56fcc9356b28"; //MacBook
+const ladderID = "5baa4da2f5e65ab65bdf50fc"; //iMac
+// const ladderID = "5bb6d11f58fe56fcc9356b28"; //MacBook
 let ladderRankings= [];
+let tmpAuth = {};
 
+const adminID = "5baa6d04ae44dfb8095dcafe";
 
 clearSessionStorage();
 getLadder(ladderID);
@@ -57,7 +59,7 @@ function addNavLogout(){
         e.preventDefault();
         clearSessionStorage();
         getLadder(ladderID);
-        $('#ladder').fadeOut();
+        $('#ladder, .admin-view').fadeOut();
         $('.nav-logout').css('visibility', 'hidden');
         $('.nav-register, .nav-login').css('visibility', 'visible');
         $('#ladder').fadeIn();
@@ -69,7 +71,7 @@ function addNavAdmin(){
         console.log('admin view clicked');
         e.preventDefault();
         getUsers();
-        $('#ladder, #played-matches, #challenges, #my-matches, #registration, #login').fadeOut();
+        $('#ladder, #played-matches, #challenges, #my-space, #registration, #login').fadeOut();
         $('#admin').fadeIn();
     });
 }
@@ -84,7 +86,7 @@ addLogoutListener();
 function addLadderViewListener(){
     $('.ladder-view').on('click', function(e){
         e.preventDefault();
-        $('#played-matches, #admin, #my-matches, #challenges').fadeOut();
+        $('#played-matches, #admin, #my-space, #challenges').fadeOut();
         $('#ladder').fadeIn();
     });
 }
@@ -94,7 +96,7 @@ function addChallengeViewListener(){
         e.preventDefault();
         console.log('challenge view clicked');
         getMatches();
-        $('#ladder, #played-matches, #my-matches, #admin').fadeOut();
+        $('#ladder, #played-matches, #my-space, #admin').fadeOut();
         $('#challenges').fadeIn();
     });
 }
@@ -103,7 +105,7 @@ function addMatchesListener(){
     $('.match-view').on('click', function(e){
         console.log('matches view clicked');
         e.preventDefault();
-        $('#ladder, #challenges, #admin').fadeOut();
+        $('#ladder, #challenges, #my-space, #admin').fadeOut();
         getMatches();
         $('#played-matches').fadeIn();
     });
@@ -133,7 +135,7 @@ function addIndexListeners(){
     });
     $('#register-view').on('click', function(e){
         e.preventDefault();
-        $('#ladder, #played-matches, #challenges, #admin, #login-view').fadeOut();
+        $('#ladder, #played-matches, #challenges, #admin, #my-matches, #login-view').fadeOut();
         $('#registration').fadeIn();
         addRegisterListener();
     });
@@ -208,6 +210,8 @@ function addRegisterListener(){
         $('#registration').fadeOut();
         $('#login').fadeIn();
         clearForm('#ladderReg');
+        //Automatically login user using username and password
+        tmpAuth = {"username": userName, "password": password};
     });
 }
 
@@ -226,6 +230,7 @@ function postNewUser(userObj){
         $('#welcome').fadeIn();
         // console.log("data is: ");
         // console.log(data);
+        // userAuth(data.username, tmpAuth);
         const ladderObj = {"id": ladderID, "isActive": true, "new": data.id};
         updateLadder(ladderObj);
     })
@@ -266,9 +271,16 @@ function setUserID(usersData){
     const currentUser = userArr[0];
     console.log(currentUser.name);
     sessionStorage.setItem('currentUserID', currentUser.id);
-    // sessionStorage.setItem('currentUserName', currentUser.name);
+    checkAdmin(currentUser.id);
     setCurrentUserRank(currentUser.id);
 }
+
+function checkAdmin(id){
+    if(id === adminID){
+        $('.admin-view').css("display", "block");
+    }
+}
+
 
 function setCurrentUserRank(userID){
     getLadder(ladderID);
@@ -466,6 +478,9 @@ function createMatch(matchObj){
         contentType: 'application/json',
         data: JSON.stringify(matchObj),
         processData: false,
+        headers: {
+            'Authorization': sessionStorage.getItem('userToken')
+        },
         success: function(response){
             console.log(response.id);
             // getMatches();
@@ -784,7 +799,7 @@ function getLadder(ladder){
 function createRungHTML(rank, player, ID){
     const chalRank = sessionStorage.getItem('currentUserRank');
     return `<div id="${rank}" class="ladder-rung" data-attr="${ID}"><span><font color=${ID==sessionStorage.getItem('currentUserID')?"yellow":"white"}>
-        ${rank}:  ${player}</font></span>
+        ${rank}:&nbsp;&nbsp; ${player}</font></span>
              <button type="button" class="chalBtn" ${rank > chalRank|| rank <= chalRank - 5?'hidden':''}>Challenge</button>
              <span class="challenged" hidden>Challenged</span>
     </div>`
@@ -799,6 +814,9 @@ function updateLadder(ladderUpdateObj){
         dataType: 'json',
         contentType: 'application/json',
         data: JSON.stringify(ladderUpdateObj),
+        // headers: {
+        //     'Authorization': sessionStorage.getItem('userToken')
+        // },
         processData: false
     })
     .done(function(data){

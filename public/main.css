@@ -99,6 +99,10 @@ body, html {
     font-size:20pt;
 }
 
+.admin-view{
+    display: none;
+}
+
 .log-nav{
     display: inline-block;
     position: absolute;
@@ -160,6 +164,7 @@ button, li {
     margin-right: 20px;
     padding-left: 10px;
     border-radius: 15px;
+    height: 95%;
     overflow: scroll;
 }
 
@@ -220,7 +225,7 @@ button, li {
 
 
 #challenges{
-    background-image: url(assets/court_tee.jpg);
+    background-image: url(assets/frenchopen1.jpg?auto=format&fit=crop&w=1350&q=8);
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
@@ -235,7 +240,7 @@ button, li {
     position: relative;;
     left: 25%;
     top: 50px;
-    background-color: rgba(147, 219, 249, 0.3);
+    background-color: rgba(147, 219, 249, 0.4);
     margin-top: 0;
     margin-left: 20px;
     margin-right: 20px;
@@ -246,7 +251,7 @@ button, li {
 
 /* ADMIN SECTION */
 #admin {
-    background-image: url(assets/court_net.jpg);
+    background-image: url(assets/court_net.jpg?auto=format&fit=crop&w=1350&q=8);
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
@@ -254,7 +259,7 @@ button, li {
 
 #players-container {
     display: inline-block;
-    width: 40%;
+    width: 30%;
     color: white;
     text-shadow: 2px 2px 4px #000000;
     position: relative;;
@@ -266,11 +271,12 @@ button, li {
     margin-right: 20px;
     padding-left: 10px;
     border-radius: 15px;
+    height: 95%;
     overflow: scroll;
 }
 
 .player-show {
-    font-size: 2em;
+    font-size: 1.8em;
 }
 
 .user-edit, .user-delete{
@@ -450,7 +456,7 @@ li{
   } */
 
   .slideshow li:nth-child(1) span { 
-    background-image: url(assets/federer-halle-2018-saturday.jpg) 
+    background-image: url(assets/federer-halle-2018-saturday.jpg?auto=format&fit=crop&w=1350&q=8) 
     /* background-image: url(http://cdn.cnn.com/cnnnext/dam/assets/170830113302-federer-first-round-us-open-exlarge-169.jpg?auto=format&fit=crop&w=1350&q=80)  */
   }
   .slideshow li:nth-child(2) span{ 
@@ -562,7 +568,7 @@ h1, #welcome{
 }
 
 #my-space {
-    background-image: url(assets/rodlaver.jpg);
+    background-image: url(assets/rodlaver.jpg?auto=format&fit=crop&w=1350&q=8);
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;

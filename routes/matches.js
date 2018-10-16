@@ -49,7 +49,7 @@ router.get('/:id', (req, res) => {
 
 //Create a new match
 //matches are created when the challenge is posted
-router.post('/', jsonParser, (req, res) => {
+router.post('/', jwtAuth, (req, res) => {
     console.log(`req.body is ${req.body}`);
     const requiredFields = ['ladder', 'defender', 'challenger'];
     for(let i=0; i<requiredFields.length; i++){
