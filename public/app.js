@@ -1,15 +1,15 @@
 $(function(){
 'use strict';
 
-// const ladderID = "5baa4da2f5e65ab65bdf50fc"; //iMac
-const ladderID = "5bb6d11f58fe56fcc9356b28"; //MacBook
+const ladderID = "5baa4da2f5e65ab65bdf50fc"; //iMac
+// const ladderID = "5bb6d11f58fe56fcc9356b28"; //MacBook
 let ladderRankings= [];
 let isActive = true;
 
-// const adminID = "5baa6d04ae44dfb8095dcafe";//iMac
-const adminID = "5bc5c73b837af33ac9bf8a5e"; //MacBook
+const adminID = "5baa6d04ae44dfb8095dcafe";//iMac
+// const adminID = "5bc5c73b837af33ac9bf8a5e"; //MacBook
 
-clearSessionStorage();
+checkToken();
 getLadder(ladderID);
 addEnterListener();
 addNavLogin();
@@ -18,6 +18,21 @@ addNavAdmin();
 getLadder(ladderID);
 addMyMatchesListener();
 addMyProfileListener();
+addIndexListeners();
+addLadderViewListener();
+addChallengeViewListener();
+addMatchesListener();
+
+function checkToken(){
+    const token = sessionStorage.getItem('userToken');
+    if(token){
+        $('.nav-logout').css('visibility', 'visible');
+        $('.nav-register, .nav-login').css('visibility', 'hidden');
+        addNavLogout();
+    }else {
+        clearSessionStorage();
+    }
+}
 
 //upon refresh user information from sessionStorage
 function clearSessionStorage(){
@@ -82,7 +97,6 @@ addIndexListeners();
 addLadderViewListener();
 addChallengeViewListener();
 addMatchesListener();
-addLogoutListener();
 
 function addLadderViewListener(){
     $('.ladder-view').on('click', function(e){
@@ -114,20 +128,20 @@ function addMatchesListener(){
 }
 
 
-function addLogoutListener(){
-    $('#logout-view').on('click', function(e){
-        console.log('logout-view clicked');
-        e.preventDefault();
-        sessionStorage.removeItem('userToken');
-        sessionStorage.removeItem('userName');
-        sessionStorage.removeItem('currentUserID');
-        sessionStorage.removeItem('currentUserRank');
-        sessionStorage.removeItem('currentName');
-        $('#logout-view').fadeOut();
-        $('#login-view').fadeIn();
+// function addLogoutListener(){
+//     $('#logout-view').on('click', function(e){
+//         console.log('logout-view clicked');
+//         e.preventDefault();
+//         sessionStorage.removeItem('userToken');
+//         sessionStorage.removeItem('userName');
+//         sessionStorage.removeItem('currentUserID');
+//         sessionStorage.removeItem('currentUserRank');
+//         sessionStorage.removeItem('currentName');
+//         $('#logout-view').fadeOut();
+//         $('#login-view').fadeIn();
 
-    })
-}
+//     })
+// }
 
 function addIndexListeners(){
     $('#login-view').on('click', function(e){

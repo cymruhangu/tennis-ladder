@@ -19,6 +19,7 @@ const {TEST_DATABASE_URL} = require('../config');
 // app.use('/matches', matchRoutes);
 // app.use('/auth', authRouter);
 
+//prehook to login and get a token before running tests
 chai.use(chaiHttp);
 
 describe('Root return', function(){

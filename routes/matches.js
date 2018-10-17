@@ -104,7 +104,7 @@ router.put('/:id', jwtAuth, (req, res) => {
 
 
 //Delete a ladder 
-router.delete('/:id', jwtAuth, (req, res) => {
+router.delete('/:id',  (req, res) => {
     console.log(req.params.id);
     Match
     .findByIdAndDelete(req.params.id)
