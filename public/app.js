@@ -1,13 +1,14 @@
 $(function(){
 'use strict';
 
-const ladderID = "5baa4da2f5e65ab65bdf50fc"; //iMac
-// const ladderID = "5bb6d11f58fe56fcc9356b28"; //MacBook
+// const ladderID = "5baa4da2f5e65ab65bdf50fc"; //iMac
+const ladderID = "5bb6d11f58fe56fcc9356b28"; //MacBook
 let ladderRankings= [];
+let currentMatches=[];
 let isActive = true;
 
-const adminID = "5baa6d04ae44dfb8095dcafe";//iMac
-// const adminID = "5bc5c73b837af33ac9bf8a5e"; //MacBook
+// const adminID = "5baa6d04ae44dfb8095dcafe";//iMac
+const adminID = "5bc5c73b837af33ac9bf8a5e"; //MacBook
 
 checkToken();
 getLadder(ladderID);
@@ -93,10 +94,6 @@ function addNavAdmin(){
     });
 }
 
-addIndexListeners();
-addLadderViewListener();
-addChallengeViewListener();
-addMatchesListener();
 
 function addLadderViewListener(){
     $('.ladder-view').on('click', function(e){
@@ -126,22 +123,6 @@ function addMatchesListener(){
         $('#played-matches').fadeIn();
     });
 }
-
-
-// function addLogoutListener(){
-//     $('#logout-view').on('click', function(e){
-//         console.log('logout-view clicked');
-//         e.preventDefault();
-//         sessionStorage.removeItem('userToken');
-//         sessionStorage.removeItem('userName');
-//         sessionStorage.removeItem('currentUserID');
-//         sessionStorage.removeItem('currentUserRank');
-//         sessionStorage.removeItem('currentName');
-//         $('#logout-view').fadeOut();
-//         $('#login-view').fadeIn();
-
-//     })
-// }
 
 function addIndexListeners(){
     $('#login-view').on('click', function(e){
@@ -382,6 +363,7 @@ function addUserDeleteListener(){
         e.preventDefault();
         const playerID = $(this).parent().attr('data-attr');
         console.log(`going to delete users/${playerID} `);
+        deleteUserMatches(playerID);
         userDelete(playerID);
     });
 }
@@ -402,6 +384,14 @@ function userDelete(ID){
         console.log(err)
     })
 }
+
+function deleteUserMatches(playerID){
+    const userMatches = currentMatches.filter(match => {
+        return match.defender._id === playerID || match.challenger._id === playerID;
+    });
+    userMatches.forEach(match => deleteMatch(match.id));
+}
+
 
 function addUserPutListener(user){
     $('.userEditForm').submit(function(e){
@@ -533,15 +523,6 @@ function addUsersMatch(matchID, matchObj){
     putUser(matchObj.challenger, chalObj);
 }
 
-//WHERE IS SUPPOSED TO BE CALLED? *****************************************
-function deleteUsersMatch(matchID, matchObj){
-    const defObj = {"id": matchObj.defender, "matches": matchID, "action": "delete" };
-    const chalObj = {"id": matchObj.challenger, "matches": matchID, "action": "delete"};
-    // console.log(defObj);
-    // console.log(chalObj);
-    putUser(matchObj.defender, defObj);
-    putUser(matchObj.challenger, chalObj);
-}
 
 function addMyMatchesListener(){
     $('.my-matches').on('click', function(e){
@@ -574,15 +555,12 @@ function addRecordListener(){
 }
 
 //clicks register for each delete...why? how to stop
-function addMatchDeleteListener(defiID, chalID){
+function addMatchDeleteListener(defID, chalID){
     $('.del-challenge').on('click', function(e){
         console.log('delete match clicked');
         e.stopPropagation();
         e.preventDefault();
         const matchID = $(this).parent().attr('data-attr');
-        //call to delete matchID for 2 competitors
-        //updateObj will contain the matchID and both userIDs
-        //need a get for specific matc
         deleteMatch(matchID);
     });
 }
@@ -784,6 +762,7 @@ function getMatches(){
         dataType: 'json'
     })
     .done(function(data){
+    currentMatches = data.matches;
     showMatches(data.matches);
     })
     .fail(function(err){

@@ -14,10 +14,6 @@ const { app, runServer, closeServer} = require('../server');
 const {TEST_DATABASE_URL} = require('../config');
 
 
-// app.use('/users', userRoutes);
-// app.use('/ladders', ladderRoutes);
-// app.use('/matches', matchRoutes);
-// app.use('/auth', authRouter);
 
 //prehook to login and get a token before running tests
 chai.use(chaiHttp);
@@ -26,7 +22,7 @@ describe('Root return', function(){
   it('should exist and return 200', function(){
     let res;
       return chai.request(app)
-        .get('/matches')
+        .get('/')
         .then(function(_res) {
           // so subsequent .then blocks can access response object
           res = _res;
