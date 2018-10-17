@@ -1,15 +1,15 @@
 $(function(){
 'use strict';
 
-// const ladderID = "5baa4da2f5e65ab65bdf50fc"; //iMac
-const ladderID = "5bb6d11f58fe56fcc9356b28"; //MacBook
+const ladderID = "5baa4da2f5e65ab65bdf50fc"; //iMac
+// const ladderID = "5bb6d11f58fe56fcc9356b28"; //MacBook
 let ladderRankings= [];
 let isActive = true;
 
-// const adminID = "5baa6d04ae44dfb8095dcafe";//iMac
-const adminID = "5bc5c73b837af33ac9bf8a5e"; //MacBook
+const adminID = "5baa6d04ae44dfb8095dcafe";//iMac
+// const adminID = "5bc5c73b837af33ac9bf8a5e"; //MacBook
 
-clearSessionStorage();
+// clearSessionStorage();
 getLadder(ladderID);
 addEnterListener();
 addNavLogin();
@@ -17,6 +17,7 @@ addNavReg();
 addNavAdmin();
 getLadder(ladderID);
 addMyMatchesListener();
+addMyProfileListener();
 
 //upon refresh user information from sessionStorage
 function clearSessionStorage(){
@@ -86,6 +87,7 @@ addLogoutListener();
 function addLadderViewListener(){
     $('.ladder-view').on('click', function(e){
         e.preventDefault();
+        getLadder(ladderID);
         $('#played-matches, #admin, #my-space, #challenges').fadeOut();
         $('#ladder').fadeIn();
     });
@@ -211,8 +213,7 @@ function addRegisterListener(){
         $('#registration').fadeOut();
         $('#login').fadeIn();
         clearForm('#ladderReg');
-        //Automatically login user using username and password
-        tmpAuth = {"username": userName, "password": password};
+        
     });
 }
 
@@ -231,7 +232,7 @@ function postNewUser(userObj){
         $('#welcome').fadeIn();
         // console.log("data is: ");
         // console.log(data);
-        // userAuth(data.username, tmpAuth);
+        userAuth(data.username, tmpAuth);
         // const ladderObj = {"id": ladderID, "isActive": true, "new": data.id};
         // updateLadder(ladderObj);
     })
@@ -376,7 +377,10 @@ function addUserDeleteListener(){
 function userDelete(ID){
     $.ajax({
         url: `http://localhost:8080/users/${ID}`,
-        method: 'DELETE'
+        method: 'DELETE',
+        headers: {
+            'Authorization': sessionStorage.getItem('userToken')
+        }
     })
     .done(function(data){
         getUsers();
@@ -422,6 +426,9 @@ function putUser(ID, userObj){
         dataType: 'json',
         contentType: 'application/json',
         data: JSON.stringify(userObj),
+        headers: {
+            'Authorization': sessionStorage.getItem('userToken')
+        },
         processData: false
     })
     .done(function(data){
@@ -528,9 +535,18 @@ function addMyMatchesListener(){
     $('.my-matches').on('click', function(e){
         console.log("My Matches clicked");
         e.preventDefault();
+        getMatches();
         $('#ladder, #matches, #challenges, #admin').fadeOut();
         $('#my-space').fadeIn();
     })
+}
+
+function addMyProfileListener(){
+    $('.my-profile').on('click', function(e){
+        e.preventDefault();
+        $('#ladder, #matches, #challenges, #admin, #my-space').fadeOut();
+        $('#my-profile').fadeIn();
+    });
 }
 
 //click registers for each
@@ -663,6 +679,14 @@ function tallyScore(match, def1, def2, def3, chal1, chal2, chal3){
         const ladderObj = {"id": ladderID, "defender": match.defender._id, "challenger": match.challenger._id, "isActive": true};
         console.log(ladderObj);
         updateLadder(ladderObj);
+    } 
+    if(!isActive){
+        //set challenger isActive to true
+        const userObj = {"id": match.challenger._id,"isActive": true};
+        putUser(match.challenger._id, userObj)
+        //put challenger on bottom rung
+        const ladderObj = {"id": ladderID, "isActive": true, "new": match.challenger._id};
+        updateLadder(ladderObj);
     }
 }
 
@@ -673,6 +697,9 @@ function tallyScore(match, def1, def2, def3, chal1, chal2, chal3){
         dataType: 'json',
         contentType: 'application/json',
         data: JSON.stringify(matchUpdateObj),
+        headers: {
+            'Authorization': sessionStorage.getItem('userToken')
+        },
         processData: false
     })
     .done(function(data){
@@ -758,7 +785,10 @@ function deleteMatch(matchID){
     $.ajax({
         url: `http://localhost:8080/matches/${matchID}`,
         method: "DELETE",
-        dataType: 'json'
+        dataType: 'json',
+        headers: {
+            'Authorization': sessionStorage.getItem('userToken')
+        }
     })
     .done(function(data){
     // showScoreboard(data);
@@ -775,7 +805,7 @@ function showLadder(ladderData){
     $('#ladder-container').html('');
     $('#ladder-container').append('<h3>Current Standings for <span>Men&#39;s Open:</span>');
     let rank;
-    const finalRung  = ladderData.length + 1;
+    // const finalRung  = ladderData.length + 1;
     ladderData.forEach(function(place, index) {
         if(place.name){
             const playerName = `${place.name.firstName} ${place.name.lastName}`;
@@ -811,7 +841,7 @@ function getLadder(ladder){
 }
 
 function createRungHTML(rank, player, ID){
-    let chalRank = sessionStorage.getItem('currentUserRank');
+    let chalRank = sessionStorage.getItem('currentUserRank'); // Not updated 
         
 
     return `<div id="${rank}" class="ladder-rung" data-attr="${ID}"><span><font color=${ID==sessionStorage.getItem('currentUserID')?"yellow":"white"}>
@@ -831,9 +861,9 @@ function updateLadder(ladderUpdateObj){
         dataType: 'json',
         contentType: 'application/json',
         data: JSON.stringify(ladderUpdateObj),
-        // headers: {
-        //     'Authorization': sessionStorage.getItem('userToken')
-        // },
+        headers: {
+            'Authorization': sessionStorage.getItem('userToken')
+        },
         processData: false
     })
     .done(function(data){

@@ -13,7 +13,7 @@ mongoose.Promise = global.Promise;
 
 const jwtAuth = passport.authenticate('jwt', {session: false});
 //Show all ladders
-router.get('/', jwtAuth, (req, res) => {
+router.get('/',  (req, res) => {
     Ladder
         .find()
         .then(ladders => {
@@ -69,7 +69,7 @@ router.post('/', jwtAuth, (req, res) => {
 //updating a ladder would a occur when adding/removing players and when recording successful challenge
 //If it's a new player simply push to end of rankings array.  rank = array.length + 1
 //If it's a challenge or shuffle the rankings array would have to 
-router.put('/:id', (req, res) => {
+router.put('/:id', jwtAuth, (req, res) => {
   if (!(req.params.id && req.body.id && req.params.id === req.body.id)) {  //if they both are not undefined and are equal
     const message =
       `Request path id (${req.params.id}) and request body id ` +

@@ -35,6 +35,7 @@ app.use(function (req, res, next) {
   next();
 });
 
+
 app.use('/users', userRoutes);
 app.use('/ladders', ladderRoutes);
 app.use('/matches', matchRoutes);

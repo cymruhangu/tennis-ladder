@@ -8,127 +8,133 @@ const mongoose = require('mongoose');
 const expect = chai.expect;
 
 const {User} = require('../models/user');
-const {Ladder} = require('../models/ladder');
+// const {Ladder} = require('../models/ladder');
 const {Match} = require('../models/match');
 const { app, runServer, closeServer} = require('../server');
 const {TEST_DATABASE_URL} = require('../config');
 
+
+// app.use('/users', userRoutes);
+// app.use('/ladders', ladderRoutes);
+// app.use('/matches', matchRoutes);
+// app.use('/auth', authRouter);
+
 chai.use(chaiHttp);
 
-// describe('Root return', function(){
-//   it('should exist and return 200', function(){
-//     let res;
-//       return chai.request(app)
-//         .get('/')
-//         .then(function(_res) {
-//           // so subsequent .then blocks can access response object
-//           res = _res;
-//           console.log(`res is ${res}`);
-//           expect(res).to.have.status(200);
-//         })
-//   });
-// });
-
-function seedUserData(){
-  console.info('seeding user data');
-  const seedData = [];
-
-  for(let i=1; i<=10; i++){
-    seedData.push(generateUserData())
-  }
-  return User.insertMany(seedData);
-}
-
-
-function generateUserData(){
-  const randAge = Math.floor(Math.random() * 18) + 60;
-  return {
-    name: {
-      firstName: faker.name.firstName(),
-      lastName: faker.name.lastName()
-    },
-    username: faker.name.firstName(),
-    age: randAge,
-    gender: "male",
-    isActive: true,
-    ladders: [ "5b8b17c354c1e18445736711" ],
-    matches:[ "5b8b17c3e62428d45fe1f9ab"]
-  }
-}
-
-function tearDownDb() {
-  console.warn('Deleting database');
-  return mongoose.connection.dropDatabase();
-}
-
-describe('Users API resource', function() {
-
-  before(function() {
-    return runServer(TEST_DATABASE_URL);
-  });
-
-  beforeEach(function() {
-    return seedUserData();
-  });
-
-  afterEach(function() {
-    return tearDownDb();
-  });
-
-  after(function() {
-    return closeServer();
-  });
-
-  describe('GET endpoint', function() {
-    console.log("here!");
-    it('should return all existing users', function() {
-      let res;
+describe('Root return', function(){
+  it('should exist and return 200', function(){
+    let res;
       return chai.request(app)
-        .get('/users')
+        .get('/matches')
         .then(function(_res) {
           // so subsequent .then blocks can access response object
           res = _res;
-          console.log("here!");
+          console.log(`res is ${res}`);
           expect(res).to.have.status(200);
-          // otherwise our db seeding didn't work
-          expect(res.body.users).to.have.lengthOf.at.least(1);
-          return User.count();
         })
-        .then(function(count) {
-          expect(res.body.users).to.have.lengthOf(count);
-        });
-    });
-    it('should return  with right fields', function() {
-      // Strategy: Get back all users, and ensure they have expected keys
-
-      let resUser;
-      return chai.request(app)
-        .get('/users')
-        .then(function(res) {
-          expect(res).to.have.status(200);
-          expect(res).to.be.json;
-          expect(res.body.users).to.be.a('array');
-          expect(res.body.users).to.have.lengthOf.at.least(1);
-
-          res.body.users.forEach(function(user) {
-            expect(user).to.be.a('object');
-            expect(user).to.include.keys(
-              'id', 'name', 'username', 'age', 'gender', 'isActive', 'ladders', 'matches');
-          });
-          resUser = res.body.users[0];
-          return User.findById(resUser.id);
-        })
-        .then(function(user) {
-          expect(resUser.id).to.equal(`${user._id}`);
-          expect(resUser.name.firstName).to.equal(user.name.firstName);
-          expect(resUser.username).to.equal(user.username);
-          expect(resUser.age).to.equal(user.age);
-          expect(resUser.gender).to.equal(user.gender);
-          expect(resUser.isActive).to.equal(user.isActive);
-          expect(resUser.matches).to.have.same.members(user.matches);   //Comparing arrays??
-        });
-    });
   });
+});
+
+// function seedUserData(){
+//   console.info('seeding user data');
+//   const seedData = [];
+
+//   for(let i=1; i<=10; i++){
+//     seedData.push(generateUserData())
+//   }
+//   return User.insertMany(seedData);
+// }
+
+
+// function generateUserData(){
+//   const randAge = Math.floor(Math.random() * 18) + 60;
+//   return {
+//     name: {
+//       firstName: faker.name.firstName(),
+//       lastName: faker.name.lastName()
+//     },
+//     username: faker.name.firstName(),
+//     age: randAge,
+//     gender: "male",
+//     isActive: true,
+//     ladders: [ "5b8b17c354c1e18445736711" ],
+//     matches:[ "5b8b17c3e62428d45fe1f9ab"]
+//   }
+// }
+
+// function tearDownDb() {
+//   console.warn('Deleting database');
+//   return mongoose.connection.dropDatabase();
+// }
+
+// describe('Users API resource', function() {
+
+//   before(function() {
+//     return runServer(TEST_DATABASE_URL);
+//   });
+
+//   beforeEach(function() {
+//     return seedUserData();
+//   });
+
+//   afterEach(function() {
+//     return tearDownDb();
+//   });
+
+//   after(function() {
+//     return closeServer();
+//   });
+
+//   describe('GET endpoint', function() {
+//     console.log("here!");
+//     it('should return all existing users', function() {
+//       let res;
+//       return chai.request(app)
+//         .get('/users')
+//         .then(function(_res) {
+//           // so subsequent .then blocks can access response object
+//           res = _res;
+//           console.log("here!");
+//           expect(res).to.have.status(200);
+//           // otherwise our db seeding didn't work
+//           expect(res.body.users).to.have.lengthOf.at.least(1);
+//           return User.count();
+//         })
+//         .then(function(count) {
+//           expect(res.body.users).to.have.lengthOf(count);
+//         });
+//     });
+//     it('should return  with right fields', function() {
+//       // Strategy: Get back all users, and ensure they have expected keys
+
+//       let resUser;
+//       return chai.request(app)
+//         .get('/users')
+//         .then(function(res) {
+//           expect(res).to.have.status(200);
+//           expect(res).to.be.json;
+//           expect(res.body.users).to.be.a('array');
+//           expect(res.body.users).to.have.lengthOf.at.least(1);
+
+//           res.body.users.forEach(function(user) {
+//             expect(user).to.be.a('object');
+//             expect(user).to.include.keys(
+//               'id', 'name', 'username', 'age', 'gender', 'isActive', 'ladders', 'matches');
+//           });
+//           resUser = res.body.users[0];
+//           return User.findById(resUser.id);
+//         })
+//         .then(function(user) {
+//           expect(resUser.id).to.equal(`${user._id}`);
+//           expect(resUser.name.firstName).to.equal(user.name.firstName);
+//           expect(resUser.username).to.equal(user.username);
+//           expect(resUser.age).to.equal(user.age);
+//           expect(resUser.gender).to.equal(user.gender);
+//           expect(resUser.isActive).to.equal(user.isActive);
+//           expect(resUser.matches).to.have.same.members(user.matches);   //Comparing arrays??
+//         });
+//     });
+//   });
 
   // describe('POST endpoint', function() {
    
@@ -229,4 +235,4 @@ describe('Users API resource', function() {
   //   });
   // });
 //
-});
+// });

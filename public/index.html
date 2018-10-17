@@ -12,7 +12,6 @@
 <body>
   <main>
     <section id="landing">
-        </div>
               <ul class="slideshow">
                 <li>
                   <span></span>
@@ -29,20 +28,20 @@
                   <span></span>
                   <div>
                     <h3>Improve Your Game in Friendly Competition</h3>
-                    <button type="button"class="btn enter-btn">Enter</button>
-                  </div>
-                </li>
-                <li>
-                  <span></span>
-                  <div>
-                    <h3>Register...Login...</h3>
                     <button type="button" class="btn enter-btn">Enter</button>
                   </div>
                 </li>
                 <li>
                   <span></span>
                   <div>
-                    <h3>Challenge...</h3>
+                    <h3>Register...Login</h3>
+                    <button type="button" class="btn enter-btn">Enter</button>
+                  </div>
+                </li>
+                <li>
+                  <span></span>
+                  <div>
+                    <h3>Challenge</h3>
                     <button type="button" class="btn enter-btn">Enter</button>
                   </div>
                 </li>
@@ -118,7 +117,7 @@
             <li class="nav-login">Login</li>
           </ul>
       </div>
-      <div id="edit-user">
+      <div id="edit-user-admin" class="edit-user">
         <!-- Edit User Form: change email, username, age, password? -->
       </div>
     </section>
@@ -229,6 +228,29 @@
             <button type="submit" id="score-submit">Submit</button>
           </form>
       </div>
+    </section>
+    <section id="my-profile">
+        <div class="left-nav">
+            <ul>
+              <li class="ladder-view">Ladder</li>
+              <li class="match-view">Matches</li>
+              <li class="challenge-view">Challenges</li>
+              <li class="my-matches">My Matches</li>
+              <li class="my-profile">My Profile</li>
+              <li class="admin-view">Admin</li>
+            </ul>
+        </div>
+        <div id="my-edit-container"></div>
+        <div class="log-nav">
+            <ul>
+              <li class="nav-logout">Logout</li>
+              <li class="nav-register">Register</li>
+              <li class="nav-login">Login</li>
+            </ul>
+        </div> 
+        <div id="edit-my-user" class="edit-user">
+            <!-- Edit User Form: change email, username, age, password? -->
+          </div>
     </section>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
     <script type="text/javascript" src="app.js"></script>

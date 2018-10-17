@@ -77,7 +77,7 @@ router.post('/', jwtAuth, (req, res) => {
 
 //Update a match
 //updating a match would a occur when the score is posted.
-router.put('/:id', (req, res) => {
+router.put('/:id', jwtAuth, (req, res) => {
     console.log(req.body);
     res.send(`trying to post something to ${req.params.id}`);
   if (!(req.params.id && req.body.id && req.params.id === req.body.id)) {  //if they both are not undefined and are equal
@@ -104,7 +104,7 @@ router.put('/:id', (req, res) => {
 
 
 //Delete a ladder 
-router.delete('/:id', (req, res) => {
+router.delete('/:id', jwtAuth, (req, res) => {
     console.log(req.params.id);
     Match
     .findByIdAndDelete(req.params.id)

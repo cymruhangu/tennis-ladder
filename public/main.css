@@ -14,7 +14,7 @@ body, html {
 
 /* ------------------- */
 
-#navbar, #login, #registration, #admin, #played-matches, #challenges, #ladder, #my-space, #scoreboard {
+#navbar, #login, #registration, #admin, #played-matches, #challenges, #ladder, #my-space, #my-profile, #scoreboard {
     display: none;
     height: 100%;
 }
@@ -335,7 +335,13 @@ button, li {
     color: white;
     font-size: 1em;
 }
-
+/* My Profile */
+#my-profile {
+    background-image: url(assets/court_tee.jpg?auto=format&fit=crop&w=1350&q=8);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
 
 /* ---------------- */
 .record, .del-challenge {
