@@ -1,15 +1,15 @@
 $(function(){
 'use strict';
 
-const ladderID = "5baa4da2f5e65ab65bdf50fc"; //iMac
-// const ladderID = "5bb6d11f58fe56fcc9356b28"; //MacBook
+// const ladderID = "5baa4da2f5e65ab65bdf50fc"; //iMac
+const ladderID = "5bb6d11f58fe56fcc9356b28"; //MacBook
 let ladderRankings= [];
 let isActive = true;
 
-const adminID = "5baa6d04ae44dfb8095dcafe";//iMac
-// const adminID = "5bc5c73b837af33ac9bf8a5e"; //MacBook
+// const adminID = "5baa6d04ae44dfb8095dcafe";//iMac
+const adminID = "5bc5c73b837af33ac9bf8a5e"; //MacBook
 
-// clearSessionStorage();
+clearSessionStorage();
 getLadder(ladderID);
 addEnterListener();
 addNavLogin();
@@ -229,8 +229,6 @@ function postNewUser(userObj){
     .done(function(data){
         getUsers();
         $('#registration').fadeOut();
-        $('#welcome').fadeIn();
-        // console.log("data is: ");
         // console.log(data);
         userAuth(data.username, tmpAuth);
         // const ladderObj = {"id": ladderID, "isActive": true, "new": data.id};
@@ -536,7 +534,7 @@ function addMyMatchesListener(){
         console.log("My Matches clicked");
         e.preventDefault();
         getMatches();
-        $('#ladder, #matches, #challenges, #admin').fadeOut();
+        $('#ladder, #played-matches, #challenges, #admin').fadeOut();
         $('#my-space').fadeIn();
     })
 }
@@ -544,7 +542,7 @@ function addMyMatchesListener(){
 function addMyProfileListener(){
     $('.my-profile').on('click', function(e){
         e.preventDefault();
-        $('#ladder, #matches, #challenges, #admin, #my-space').fadeOut();
+        $('#ladder, #played-matches, #challenges, #admin, #my-space').fadeOut();
         $('#my-profile').fadeIn();
     });
 }
@@ -675,10 +673,16 @@ function tallyScore(match, def1, def2, def3, chal1, chal2, chal3){
     console.log(matchUpdateObj);
     matchUpdate(match.id, matchUpdateObj);
     if(rankingChange){
-        // updateRankings( match.defender._id, match.challenger._id);
+        // what is defender's rank? 
+        const rankings = ladderRankings.map(player => player._id);
+        const defenderRank = rankings.indexOf(match.defender._id);
+        console.log(match.defender._id);
+        console.log(defenderRank);
         const ladderObj = {"id": ladderID, "defender": match.defender._id, "challenger": match.challenger._id, "isActive": true};
-        console.log(ladderObj);
+        //console.log(ladderObj);
         updateLadder(ladderObj);
+        console.log(`changing ${sessionStorage.getItem('currentUserRank')} to ${defenderRank}`);
+        sessionStorage.setItem('currentUserRank', defenderRank);
     } 
     if(!isActive){
         //set challenger isActive to true
@@ -750,9 +754,6 @@ function showMatches(matchData){
     });
 }
 
-//my matches
-
-//-----------
 
 function generateChallengeHTML(myMatch, defender, challenger, id){
     return `<div class="challenge" data-attr=${id}>${challenger} challenged ${defender}
