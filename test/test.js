@@ -18,11 +18,12 @@ const {TEST_DATABASE_URL} = require('../config');
 //prehook to login and get a token before running tests
 chai.use(chaiHttp);
 
+//unprotected get routes
 describe('Root return', function(){
   it('should exist and return 200', function(){
     let res;
       return chai.request(app)
-        .get('/')
+        .get('/ladders')
         .then(function(_res) {
           // so subsequent .then blocks can access response object
           res = _res;
@@ -31,6 +32,35 @@ describe('Root return', function(){
         })
   });
 });
+
+
+// describe('ladders return', function(){
+//   it('should exist and return 200', function(){
+//     let res;
+//       return chai.request(app)
+//         .get('/ladders')
+//         .then(function(_res) {
+//           // so subsequent .then blocks can access response object
+//           res = _res;
+//           console.log(`res is ${res}`);
+//           expect(res).to.have.status(200);
+//         })
+//   });
+// });
+
+// describe('matches return', function(){
+//   it('should exist and return 200', function(){
+//     let res;
+//       return chai.request(app)
+//         .get('/matches')
+//         .then(function(_res) {
+//           // so subsequent .then blocks can access response object
+//           res = _res;
+//           console.log(`res is ${res}`);
+//           expect(res).to.have.status(200);
+//         })
+//   });
+// });
 
 // function seedUserData(){
 //   console.info('seeding user data');

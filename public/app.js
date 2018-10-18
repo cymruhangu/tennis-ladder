@@ -1,14 +1,15 @@
 $(function(){
 'use strict';
 
-const ladderID = "5baa4da2f5e65ab65bdf50fc"; //iMac
-// const ladderID = "5bb6d11f58fe56fcc9356b28"; //MacBook
+// const ladderID = "5baa4da2f5e65ab65bdf50fc"; //iMac
+const ladderID = "5bb6d11f58fe56fcc9356b28"; //MacBook
 let ladderRankings= [];
 let currentMatches=[];
 let isActive = true;
 
-const adminID = "5baa6d04ae44dfb8095dcafe";//iMac
-// const adminID = "5bc5c73b837af33ac9bf8a5e"; //MacBook
+// const adminID = "5baa6d04ae44dfb8095dcafe";//iMac
+const adminID = "5bc5c73b837af33ac9bf8a5e"; //MacBook - Mlab
+
 
 checkToken();
 getLadder(ladderID);
@@ -47,7 +48,8 @@ function addEnterListener(){
     $('.enter-btn').on('click', function(e){
         console.log("Enter button clicked");
         $('#landing').fadeOut();
-        $('#ladder').fadeIn();
+        $('#ladder').fadeIn(90, function(){
+            $('#ladder-container').fadeIn(2200)});
     });
 }
 

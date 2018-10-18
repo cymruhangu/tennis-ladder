@@ -150,7 +150,7 @@ button, li {
 }
 
 #ladder-container {
-    display: inline-block;
+    display: none;
     width: 30%;
     color: white;
     text-shadow: 2px 2px 4px #000000;
@@ -159,7 +159,7 @@ button, li {
     left: 35%;
     top: 50px;
     /* background-color: rgba(147, 219, 249, 0.2); */
-    background-color: rgb(131, 136, 64);
+    background-color: rgb(24, 66, 24);
     border: 2px solid white;
     margin-top: 0;
     margin-left: 20px;
@@ -237,6 +237,13 @@ button, li {
     background-repeat: no-repeat;
     background-size: cover;
 }
+#challenge-container {
+    background-color: #C04410;
+}
+
+#my-all-matches {
+    background-color: #405EBE;
+}
 
 #challenge-container , #my-all-matches{
     display: inline-block;
@@ -247,7 +254,10 @@ button, li {
     position: relative;;
     left: 25%;
     top: 50px;
-    background-color: rgba(147, 219, 249, 0.4);
+    /* background-color: rgba(147, 219, 249, 0.4);
+     */
+    
+    border: 4px solid white;
     margin-top: 0;
     margin-left: 20px;
     margin-right: 20px;
