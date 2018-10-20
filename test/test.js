@@ -8,258 +8,123 @@ const mongoose = require('mongoose');
 const expect = chai.expect;
 
 const {User} = require('../models/user');
-// const {Ladder} = require('../models/ladder');
+const {Ladder} = require('../models/ladder');
 const {Match} = require('../models/match');
 const { app, runServer, closeServer} = require('../server');
 const {TEST_DATABASE_URL} = require('../config');
 
+// const seedLadder = require('./ladders');
+const seedOneUser = require('./users');
 
-
+//before({()=>seedDatabase()})   /utils 
 //prehook to login and get a token before running tests
+
+
+
 chai.use(chaiHttp);
 
-//unprotected get routes
-describe('Root return', function(){
-  it('should exist and return 200', function(){
-    let res;
+const { router: authRouter, localStrategy, jwtStrategy } = require('../auth');
+const passport = require('passport');
+passport.use(localStrategy);
+passport.use(jwtStrategy);
+const jwtAuth = passport.authenticate('jwt', { session: false });
+
+
+
+//Seed Ladder
+function seedUserData(){
+  console.info('seeding user data');
+  // seedFirstUser();
+  
+  const newUserData = [];
+
+  for(let i=0; i<=10; i++){
+    newUserData.push(generateUsers());
+  }
+  console.log(newUserData);
+  return User.insertMany(newUserData);
+}
+
+// function seedFirstUser(){
+//   console.info('seeding first user');
+//   return User.insertMany(seedOneUser);
+// }
+
+function generateUsers(){
+  return {
+    name: {
+      firstName: faker.name.firstName(),
+      lastName: faker.name.lastName()
+    },
+    username: faker.name.lastName(),
+    password: '1qazxsw23e'
+  }
+}
+
+//Seed Ladder
+// function seedLadderData(){
+//   console.info('seeding ladder data');
+//   return Ladder.insertMany(seedLadder);
+// }
+
+function tearDownDb() {
+  console.warn('Deleting database');
+  return mongoose.connection.dropDatabase();
+}
+
+// // we need each of these hook functions to return a promise
+//   // otherwise we'd need to call a `done` callback. `runServer`,
+//   // `seedData and `tearDownDb` each return a promise,
+//   // so we return the value returned by these function calls.
+
+  describe('Tennis Ladder API resource', function() {
+
+    before(function() {
+      return runServer(TEST_DATABASE_URL);
+    });
+  
+    // beforeEach(function() {
+    //   return seedLadderData();
+    // });
+  
+    beforeEach(function() {
+      return seedUserData();
+    });
+  
+  
+    afterEach(function() {
+      return tearDownDb();
+    });
+  
+    after(function() {
+      return closeServer();
+    });
+
+  //GET USERS
+  describe('GET Users endpoint', function(){
+    it('should return all existing users', function() {
+      let res;
       return chai.request(app)
-        .get('/ladders')
+        .get('/users')
         .then(function(_res) {
-          // so subsequent .then blocks can access response object
           res = _res;
-          console.log(`res is ${res}`);
           expect(res).to.have.status(200);
+          expect(res.body.users).to.have.lengthOf.at.least(1);
+          return User.count();
         })
+        .then(function(count){
+          expect(res.body.users).to.have.lengthOf(count);
+        })
+    });
   });
-});
 
-
-// describe('ladders return', function(){
-//   it('should exist and return 200', function(){
-//     let res;
-//       return chai.request(app)
-//         .get('/ladders')
-//         .then(function(_res) {
-//           // so subsequent .then blocks can access response object
-//           res = _res;
-//           console.log(`res is ${res}`);
-//           expect(res).to.have.status(200);
-//         })
-//   });
-// });
-
-// describe('matches return', function(){
-//   it('should exist and return 200', function(){
-//     let res;
-//       return chai.request(app)
-//         .get('/matches')
-//         .then(function(_res) {
-//           // so subsequent .then blocks can access response object
-//           res = _res;
-//           console.log(`res is ${res}`);
-//           expect(res).to.have.status(200);
-//         })
-//   });
-// });
-
-// function seedUserData(){
-//   console.info('seeding user data');
-//   const seedData = [];
-
-//   for(let i=1; i<=10; i++){
-//     seedData.push(generateUserData())
-//   }
-//   return User.insertMany(seedData);
-// }
-
-
-// function generateUserData(){
-//   const randAge = Math.floor(Math.random() * 18) + 60;
-//   return {
-//     name: {
-//       firstName: faker.name.firstName(),
-//       lastName: faker.name.lastName()
-//     },
-//     username: faker.name.firstName(),
-//     age: randAge,
-//     gender: "male",
-//     isActive: true,
-//     ladders: [ "5b8b17c354c1e18445736711" ],
-//     matches:[ "5b8b17c3e62428d45fe1f9ab"]
-//   }
-// }
-
-// function tearDownDb() {
-//   console.warn('Deleting database');
-//   return mongoose.connection.dropDatabase();
-// }
-
-// describe('Users API resource', function() {
-
-//   before(function() {
-//     return runServer(TEST_DATABASE_URL);
-//   });
-
-//   beforeEach(function() {
-//     return seedUserData();
-//   });
-
-//   afterEach(function() {
-//     return tearDownDb();
-//   });
-
-//   after(function() {
-//     return closeServer();
-//   });
-
-//   describe('GET endpoint', function() {
-//     console.log("here!");
-//     it('should return all existing users', function() {
-//       let res;
-//       return chai.request(app)
-//         .get('/users')
-//         .then(function(_res) {
-//           // so subsequent .then blocks can access response object
-//           res = _res;
-//           console.log("here!");
-//           expect(res).to.have.status(200);
-//           // otherwise our db seeding didn't work
-//           expect(res.body.users).to.have.lengthOf.at.least(1);
-//           return User.count();
-//         })
-//         .then(function(count) {
-//           expect(res.body.users).to.have.lengthOf(count);
-//         });
-//     });
-//     it('should return  with right fields', function() {
-//       // Strategy: Get back all users, and ensure they have expected keys
-
-//       let resUser;
-//       return chai.request(app)
-//         .get('/users')
-//         .then(function(res) {
-//           expect(res).to.have.status(200);
-//           expect(res).to.be.json;
-//           expect(res.body.users).to.be.a('array');
-//           expect(res.body.users).to.have.lengthOf.at.least(1);
-
-//           res.body.users.forEach(function(user) {
-//             expect(user).to.be.a('object');
-//             expect(user).to.include.keys(
-//               'id', 'name', 'username', 'age', 'gender', 'isActive', 'ladders', 'matches');
-//           });
-//           resUser = res.body.users[0];
-//           return User.findById(resUser.id);
-//         })
-//         .then(function(user) {
-//           expect(resUser.id).to.equal(`${user._id}`);
-//           expect(resUser.name.firstName).to.equal(user.name.firstName);
-//           expect(resUser.username).to.equal(user.username);
-//           expect(resUser.age).to.equal(user.age);
-//           expect(resUser.gender).to.equal(user.gender);
-//           expect(resUser.isActive).to.equal(user.isActive);
-//           expect(resUser.matches).to.have.same.members(user.matches);   //Comparing arrays??
-//         });
-//     });
-//   });
-
-  // describe('POST endpoint', function() {
-   
-  //   it('should add a new user', function() {
-
-  //     const newUser = generateUserData();
-  //     console.info(newUser);
-  //     return chai.request(app)
-  //       .post('/users')
-  //       .send(newUser)
-  //       .then(function(res) {
-  //         expect(res).to.have.status(201);
-  //         expect(res).to.be.json;
-  //         expect(res.body).to.be.a('object');
-  //         expect(res.body).to.include.keys(
-  //           'id', 'name.firstName', 'name.lastName', 'username', 'age', 'gender');
-  //         expect(res.body.name.firstName).to.equal(newUser.name.firstName);
-  //         expect(res.body.name.lastName).to.equal(newUser.name.lastName);
-  //         // cause Mongo should have created id on insertion
-  //         expect(res.body.id).to.not.be.null;
-  //         expect(res.body.username).to.equal(newUser.username);
-  //         expect(res.body.gender).to.equal(newUser.gender);
-
-  //         return User.findById(res.body.id);
-  //       })
-  //       .then(function(user) {
-  //         expect(user.name.firstName).to.equal(newUser.name.firstName);
-  //         expect(user.name.lastName).to.equal(newUser.name.lastName);
-  //         expect(user.username).to.equal(newUser.username);
-  //         expect(user.age).to.equal(newUser.age);
-  //         expect(user.gender).to.equal(newUser.gender);
-  //       });
-  //   });
-  // });
-
-  // describe('PUT endpoint', function() {
-  //   // strategy:
-  //   //  1. Get an existing restaurant from db
-  //   //  2. Make a PUT request to update that restaurant
-  //   //  3. Prove restaurant returned by request contains data we sent
-  //   //  4. Prove restaurant in db is correctly updated
-  //   it('should update fields you send over', function() {
-  //     const updateData = {
-  //       name: {
-  //         firstName: 'Philip',
-  //         lastName: 'Kohlschreiber'
-  //       },
-  //       age: 34
-  //     };
-
-  //     return User
-  //       .findOne()
-  //       .then(function(user) {
-  //         updateData.id = user.id;
-
-  //         // make request then inspect it to make sure it reflects
-  //         // data we sent
-  //         return chai.request(app)
-  //           .put(`/users/${user.id}`)
-  //           .send(updateData);
-  //       })
-  //       .then(function(res) {
-  //         expect(res).to.have.status(204);
-
-  //         return User.findById(updateData.id);
-  //       })
-  //       .then(function(user) {
-  //         expect(user.name.firstName).to.equal(updateData.name.firstName);
-  //         expect(user.name.lastName).to.equal(updateData.name.lastName);
-  //         expect(user.age).to.equal(updateData.age);
-  //       });
-  //   });
-  // });
-
-  // describe('DELETE endpoint', function() {
-  //   // strategy:
-  //   //  1. get a user
-  //   //  2. make a DELETE request for that user's id
-  //   //  3. assert that response has right status code
-  //   //  4. prove that user with the id doesn't exist in db anymore
-  //   it('delete a user by id', function() {
-
-  //     let user;
-
-  //     return User
-  //       .findOne()
-  //       .then(function(_user) {
-  //         user = _user;
-  //         return chai.request(app).delete(`/users/${user.id}`);
-  //       })
-  //       .then(function(res) {
-  //         expect(res).to.have.status(204);
-  //         return User.findById(restaurant.id);
-  //       })
-  //       .then(function(_user) {
-  //         expect(_user).to.be.null;
-  //       });
-  //   });
-  // });
-//
-// });
+    // Confirm static page is served
+    describe('splash page', function() {
+      it('should exist', function() {
+        return chai.request(app)
+          .get('/', function(res) {
+            expect(res).to.have.status(200);
+        });
+      });
+    })
+  })

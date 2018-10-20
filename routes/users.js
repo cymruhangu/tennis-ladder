@@ -140,7 +140,7 @@ router.post('/', jsonParser, (req, res) => {
 const jwtAuth = passport.authenticate('jwt', {session: false});
 //READ USERS
 //Show all users
-router.get('/', jwtAuth, (req, res) => {
+router.get('/',  (req, res) => {
   console.log(req.headers);
     User
         .find()
@@ -233,7 +233,7 @@ router.get('/', jwtAuth, (req, res) => {
   
   
   //DELETE A USER
-  router.delete('/:id', (req, res) => {
+  router.delete('/:id', jwtAuth, (req, res) => {
     console.log(req.params.id);
     User
     .findByIdAndRemove(req.params.id)
