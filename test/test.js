@@ -13,7 +13,7 @@ const {Match} = require('../models/match');
 const { app, runServer, closeServer} = require('../server');
 const {TEST_DATABASE_URL} = require('../config');
 
-// const seedLadder = require('./ladders');
+const seedLadder = require('./ladders');
 const seedOneUser = require('./users');
 
 //before({()=>seedDatabase()})   /utils 
@@ -34,21 +34,21 @@ const jwtAuth = passport.authenticate('jwt', { session: false });
 //Seed Ladder
 function seedUserData(){
   console.info('seeding user data');
-  // seedFirstUser();
+  seedFirstUser();
   
   const newUserData = [];
 
   for(let i=0; i<=10; i++){
     newUserData.push(generateUsers());
   }
-  console.log(newUserData);
+  // console.log(newUserData);
   return User.insertMany(newUserData);
 }
 
-// function seedFirstUser(){
-//   console.info('seeding first user');
-//   return User.insertMany(seedOneUser);
-// }
+function seedFirstUser(){
+  console.info('seeding first user');
+  return User.insertMany(seedOneUser);
+}
 
 function generateUsers(){
   return {
@@ -62,10 +62,11 @@ function generateUsers(){
 }
 
 //Seed Ladder
-// function seedLadderData(){
-//   console.info('seeding ladder data');
-//   return Ladder.insertMany(seedLadder);
-// }
+//Create a ladder
+function seedLadderData(){
+  console.info('seeding ladder data');
+  return Ladder.insertMany(seedLadder);
+}
 
 function tearDownDb() {
   console.warn('Deleting database');
@@ -83,9 +84,9 @@ function tearDownDb() {
       return runServer(TEST_DATABASE_URL);
     });
   
-    // beforeEach(function() {
-    //   return seedLadderData();
-    // });
+    beforeEach(function() {
+      return seedLadderData();
+    });
   
     beforeEach(function() {
       return seedUserData();
@@ -108,12 +109,32 @@ function tearDownDb() {
         .get('/users')
         .then(function(_res) {
           res = _res;
+          console.log(res.body.users);
           expect(res).to.have.status(200);
           expect(res.body.users).to.have.lengthOf.at.least(1);
           return User.count();
         })
         .then(function(count){
           expect(res.body.users).to.have.lengthOf(count);
+        })
+    });
+  });
+
+//Ladders
+  describe('GET Ladders endpoint', function(){
+    it('should return all existing ladders', function() {
+      let res;
+      return chai.request(app)
+        .get('/ladders')
+        .then(function(_res) {
+          res = _res;
+          console.log(res.body.ladders);
+          expect(res).to.have.status(200);
+          expect(res.body.ladders).to.have.lengthOf.at.least(1);
+          return Ladder.count();
+        })
+        .then(function(count){
+          expect(res.body.ladders).to.have.lengthOf(count);
         })
     });
   });
