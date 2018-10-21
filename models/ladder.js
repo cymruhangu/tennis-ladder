@@ -33,7 +33,8 @@ ladderSchema.methods.serialize = function() {
         minAge: this.minAge,
         region: this.region,
         rankings: this.rankings,
-        isActive: this.isActive
+        isActive: this.isActive,
+        gender: this.gender
     }
 }
 
