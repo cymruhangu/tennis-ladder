@@ -49,7 +49,7 @@ function addEnterListener(){
         console.log("Enter button clicked");
         $('#landing').fadeOut();
         $('#ladder').fadeIn(90, function(){
-            $('#ladder-container').fadeIn(2200)});
+            $('#ladder-container').fadeIn(2500)});
     });
 }
 
@@ -82,7 +82,8 @@ function addNavLogout(){
         $('#ladder, .admin-view').fadeOut();
         $('.nav-logout').css('visibility', 'hidden');
         $('.nav-register, .nav-login').css('visibility', 'visible');
-        $('#ladder').fadeIn();
+        $('#ladder').fadeIn(90, function(){
+            $('#ladder-container').fadeIn(2200)});
     });
 }
 
@@ -91,18 +92,18 @@ function addNavAdmin(){
         console.log('admin view clicked');
         e.preventDefault();
         getUsers();
-        $('#ladder, #played-matches, #challenges, #my-space, #registration, #login').fadeOut();
+        $('#ladder,#ladder-container, #match-container, #played-matches, #challenges, #challenge-container, #my-space, #registration, #login').fadeOut();
         $('#admin').fadeIn();
     });
 }
-
 
 function addLadderViewListener(){
     $('.ladder-view').on('click', function(e){
         e.preventDefault();
         getLadder(ladderID);
-        $('#played-matches, #admin, #my-space, #challenges').fadeOut();
-        $('#ladder').fadeIn();
+        $('#played-matches, #match-container, #admin, #my-space, #challenges, #challenge-container').fadeOut();
+        $('#ladder').fadeIn(90, function(){
+            $('#ladder-container').fadeIn(2500)});
     });
 }
 
@@ -111,8 +112,10 @@ function addChallengeViewListener(){
         e.preventDefault();
         console.log('challenge view clicked');
         getMatches();
-        $('#ladder, #played-matches, #my-space, #admin').fadeOut();
-        $('#challenges').fadeIn();
+        $('#ladder, #ladder-container, #played-matches, #match-container, #my-space, #admin').fadeOut();
+        $('#challenges').fadeIn(90, function(){
+            $('#challenge-container').fadeIn(2000);
+        });
     });
 }
 
@@ -120,9 +123,11 @@ function addMatchesListener(){
     $('.match-view').on('click', function(e){
         console.log('matches view clicked');
         e.preventDefault();
-        $('#ladder, #challenges, #my-space, #admin').fadeOut();
+        $('#ladder, #ladder-container, #challenges, #my-space, #admin').fadeOut();
         getMatches();
-        $('#played-matches').fadeIn();
+        $('#played-matches').fadeIn(90, function(){
+            $('#match-container').fadeIn(2200);
+        });
     });
 }
 
@@ -326,7 +331,10 @@ function getPlayer(ID){
     $.ajax({
         url: `http://localhost:8080/users/${ID}`,
         method: 'GET',
-        dataType: 'json'
+        dataType: 'json',
+        headers: {
+            'Authorization': sessionStorage.getItem('userToken')
+        }
     })
     .done(function(data){
         console.log(data);

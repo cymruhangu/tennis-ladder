@@ -140,7 +140,7 @@ router.post('/', jsonParser, (req, res) => {
 const jwtAuth = passport.authenticate('jwt', {session: false});
 //READ USERS
 //Show all users
-router.get('/',  (req, res) => {
+router.get('/', jwtAuth, (req, res) => {
   console.log(req.headers);
     User
         .find()
@@ -170,7 +170,7 @@ router.get('/',  (req, res) => {
   //UPDATE A USER
   //a user would be updated by adding/deleting matches, ladders, lastplayed, and isActive
   
-  router.put('/:id', (req, res) => {
+  router.put('/:id', jwtAuth, (req, res) => {
     res.send(`trying to post something to ${req.params.id}`);
     if (!(req.params.id && req.body.id && req.params.id === req.body.id)) {
       const message =

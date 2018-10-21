@@ -96,64 +96,27 @@ function tearDownDb() {
       return closeServer();
     });
 
-  //GET USERS
-  describe('GET Users endpoint', function(){
+  // //GET USERS
+  // describe('GET Users endpoint', function(){
 
-    it('should return all existing users', function() {
+  //   it('should return all existing users', function() {
 
-      let res;
-      return chai.request(app)
-        .get('/users')
-        .then(function(_res) {
-          res = _res;
-          console.log(res.body.users[0]);
-          expect(res).to.have.status(200);
-          expect(res.body.users).to.have.lengthOf.at.least(1);
-          return User.count();
-        })
-        .then(function(count){
-          expect(res.body.users).to.have.lengthOf(count);
-        })
-    });
+  //     let res;
+  //     return chai.request(app)
+  //       .get('/users')
+  //       .then(function(_res) {
+  //         res = _res;
+  //         console.log(res.body.users[0]);
+  //         expect(res).to.have.status(200);
+  //         expect(res.body.users).to.have.lengthOf.at.least(1);
+  //         return User.count();
+  //       })
+  //       .then(function(count){
+  //         expect(res.body.users).to.have.lengthOf(count);
+  //       })
+  //   });
 
-    it('should return users with the right fields', function(){
-      let resUser;
-      return chai.request(app)
-        .get('/users')
-        .then(function(res) {
-          // console.log(res.body.users[0]);
-          expect(res).to.have.status(200);
-          expect(res).to.be.json;
-          expect(res.body.users).to.be.a('array');
-          expect(res.body.users).to.have.lengthOf.at.least(1);
-
-          res.body.users.forEach(function(user){
-            expect(user).to.be.a('object');
-            expect(user).to.include.keys(
-              'id', 'name', 'username', 'age', 'email', 'gender', 'isActive', 'ladders', 'matches');
-          });
-          resUser = res.body.users[1];
-          return User.findById(resUser.id);
-        })
-        .then(function(user){
-          console.log(resUser.name);
-          const resNameSplit = resUser.name.split(' ');
-          const resFirst =resNameSplit[0];
-          const resLast =resNameSplit[1];
-          expect(resUser.id).to.equal(user.id);
-          expect(resFirst).to.equal(user.name.firstName);
-          expect(resLast).to.equal(user.name.lastName);
-          expect(resUser.username).to.equal(user.username);
-          expect(resUser.age).to.equal(user.age);
-          expect(resUser.email).to.equal(user.email);
-          expect(resUser.gender).to.equal(user.gender);
-          expect(resUser.isActive).to.equal(user.isActive);
-          expect(resUser.ladders).to.have.same.members(user.ladders);
-          expect(resUser.matches).to.have.same.members(user.matches);
-        })
-    });
-
-  });
+  // });
 
 //Ladders
   describe('GET Ladders endpoint', function(){
