@@ -231,10 +231,7 @@ function postNewUser(userObj){
     .done(function(data){
         getUsers();
         $('#registration').fadeOut();
-        // console.log(data);
         userAuth(data.username, tmpAuth);
-        // const ladderObj = {"id": ladderID, "isActive": true, "new": data.id};
-        // updateLadder(ladderObj);
     })
     .fail(function(err){
         console.log(err);
@@ -323,7 +320,7 @@ function addUserEditListener(){
         console.log(`going to edit users/${playerID} `);
         //ajax call for specific user
         getPlayer(playerID);
-        $('#edit-user').fadeIn();
+        $('#edit-user-admin').fadeIn();
     });
 }
 
@@ -347,13 +344,12 @@ function getPlayer(ID){
 }
 
 function createUserEdit(user){
-    console.log(`${user.name} ${user.username} ${user.gender} isActive:${user.isActive}`);
+    // console.log(`${user.name} ${user.username} ${user.gender} isActive:${user.isActive}`);
     const tmpName = user.name.split(' ');
     const first = tmpName[0];
     const last = tmpName[1];
     const userForm = generateUserFormHTML(user.name, first, last,  user.username, user.age, user.email);
-    // $('#users').fadeOut();
-    $('#edit-user').append(userForm).fadeIn();
+    $('#edit-user-admin').append(userForm).fadeIn();
     addCancelListener();
     addUserPutListener(user);
 }
@@ -425,7 +421,7 @@ function addUserPutListener(user){
         }
         console.log(userObj);
         putUser(user.id, userObj);
-        $('#edit-user').fadeOut();
+        $('#edit-user-admin').fadeOut();
         clearForm('.userEditForm');
     });
 }
@@ -710,6 +706,7 @@ function tallyScore(match, def1, def2, def3, chal1, chal2, chal3){
     })
     .done(function(data){
     showMatches(data.matches);
+    showMyMatches(data.matches);
     })
     .fail(function(err){
         console.log(err);
@@ -718,14 +715,14 @@ function tallyScore(match, def1, def2, def3, chal1, chal2, chal3){
 
 function showMatches(matchData){
     //clear match div
-    $('#match-container, #my-matches-container').html('');
-    $('#match-container, #my-matches-container').append('<h3>Completed Matches:</h3>');
-    $('#challenge-container, #my-challenges-container').html('');
-    $('#challenge-container, #my-challenges-container').append('<h3>Current Challenges:</h3>');
+    $('#match-container').html('');
+    $('#match-container').append('<h3>Completed Matches:</h3>');
+    $('#challenge-container').html('');
+    $('#challenge-container').append('<h3>Current Challenges:</h3>');
     const user = sessionStorage.getItem('currentUserID');
     
     matchData.forEach(function(match){
-        const myMatch = user === match.challenger._id || user === match.defender._id?true:false;
+        const myMatch = false;
         if(match.matchPlayed){
             const winnerName = `${match.winner.name.firstName} ${match.winner.name.lastName}`;
             const loserName = `${match.loser.name.firstName} ${match.loser.name.lastName}`;
@@ -734,16 +731,12 @@ function showMatches(matchData){
             const thirdSet = `${match.score[2].winnerGames}-${match.score[2].loserGames}`;
             const matchDiv = generateMatchHTML(winnerName, loserName, firstSet, secondSet, thirdSet);
             $('#match-container').append(matchDiv);
-            //handle my-matches
-            // console.log(match);
-            // console.log(`user is ${user} chal/def are ${match.challenger._id} ${match.defender._id}`);
-            if(myMatch){
-                $('#my-matches-container').append(matchDiv);
-            }
+
         } else  {  //unplayed challenge
             const defenderName = `${match.defender.name.firstName} ${match.defender.name.lastName}`;
             const challengerName = `${match.challenger.name.firstName} ${match.challenger.name.lastName}`;
             const matchID = match.id;
+            console.log(`myMatch is ${myMatch}`);
             const challengeDiv = generateChallengeHTML(myMatch, defenderName, challengerName, matchID);
             $('#challenge-container').append(challengeDiv);
             //handle my-matches
@@ -764,6 +757,44 @@ function generateChallengeHTML(myMatch, defender, challenger, id){
             </div>`;
 }
 
+//-----------------
+function showMyMatches(matchData){
+    //clear match div
+    $('#my-matches-container').html('');
+    $('#my-matches-container').append('<h3>Completed Matches:</h3>');
+    $('#my-challenges-container').html('');
+    $('#my-challenges-container').append('<h3>Current Challenges:</h3>');
+    const user = sessionStorage.getItem('currentUserID');
+    
+    matchData.forEach(function(match){
+        const myMatch = user === match.challenger._id || user === match.defender._id?true:false;
+        if(myMatch){ 
+            if(match.matchPlayed){
+                const winnerName = `${match.winner.name.firstName} ${match.winner.name.lastName}`;
+                const loserName = `${match.loser.name.firstName} ${match.loser.name.lastName}`;
+                const firstSet = `${match.score[0].winnerGames}-${match.score[0].loserGames}`;
+                const secondSet = `${match.score[1].winnerGames}-${match.score[1].loserGames}`;
+                const thirdSet = `${match.score[2].winnerGames}-${match.score[2].loserGames}`;
+                const matchDiv = generateMatchHTML(winnerName, loserName, firstSet, secondSet, thirdSet);
+            $('#my-matches-container').append(matchDiv);
+            } else  {  //unplayed challenge
+                const defenderName = `${match.defender.name.firstName} ${match.defender.name.lastName}`;
+                const challengerName = `${match.challenger.name.firstName} ${match.challenger.name.lastName}`;
+                const matchID = match.id;
+                console.log(`myMatch is ${myMatch}`);
+                const challengeDiv = generateChallengeHTML(myMatch, defenderName, challengerName, matchID);
+                $('#my-challenges-container').append(challengeDiv);
+                addRecordListener();
+                addMatchDeleteListener(match.defender._id, match.challenger._id);
+            }
+        }
+    });
+    
+}
+
+
+//-----------------
+
 function getMatches(){
     $.ajax({
         url: 'http://localhost:8080/matches',
@@ -774,6 +805,7 @@ function getMatches(){
     .done(function(data){
     currentMatches = data.matches;
     showMatches(data.matches);
+    showMyMatches(data.matches);
     })
     .fail(function(err){
         console.log(err);
