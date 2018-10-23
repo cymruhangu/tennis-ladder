@@ -3,8 +3,10 @@ const app = express();
 const router = express.Router();
 const mongoose = require('mongoose');
 const { Match } = require('../models/match');
+const { User } = require('../models/user');
 const bodyParser = require('body-parser');
 const jsonParser = bodyParser.json();
+const middleware = require("../middleware");
 mongoose.Promise = global.Promise;
 
 const passport = require('passport');
@@ -13,7 +15,7 @@ const jwtAuth = passport.authenticate('jwt', {session: false});
 
 
 //Show all matches
-router.get('/',jwtAuth, (req, res) => {
+router.get('/', (req, res) => {
     Match
         .find()
         .populate('defender', 'name')
@@ -47,7 +49,7 @@ router.get('/:id', (req, res) => {
 
 //Create a new match
 //matches are created when the challenge is posted
-router.post('/', jsonParser, (req, res) => {
+router.post('/', jwtAuth, (req, res) => {
     console.log(`req.body is ${req.body}`);
     const requiredFields = ['ladder', 'defender', 'challenger'];
     for(let i=0; i<requiredFields.length; i++){
@@ -64,8 +66,8 @@ router.post('/', jsonParser, (req, res) => {
     challenger: req.body.challenger
   })
   .then(match => { 
-      res.status(201).json(match.serialize());
-    //   res.end(match.id);
+    res.status(201).json(match.serialize());
+    console.log(`new match ID is ${match.id}`); 
   })
   .catch(err => {
     console.log(err);
@@ -75,10 +77,10 @@ router.post('/', jsonParser, (req, res) => {
 
 //Update a match
 //updating a match would a occur when the score is posted.
-router.put('/:id', (req, res) => {
+router.put('/:id', jwtAuth, (req, res) => {
     console.log(req.body);
     res.send(`trying to post something to ${req.params.id}`);
-  if (!(req.params.id && req.body.id && req.params.id === req.body.id)) {
+  if (!(req.params.id && req.body.id && req.params.id === req.body.id)) {  //if they both are not undefined and are equal
     const message =
       `Request path id (${req.params.id}) and request body id ` +
       `(${req.body.id}) must match`;
@@ -96,16 +98,16 @@ router.put('/:id', (req, res) => {
 
     Match
       .findByIdAndUpdate(req.params.id, { $set: toUpdate})
-      .then(user => res.status(204).end())
+      .then(match => res.status(204).end())   //????
       .catch(err => res.status(500).json({ message: "Internal server error" }));
 });
 
 
 //Delete a ladder 
-router.delete('/:id', (req, res) => {
+router.delete('/:id',  (req, res) => {
     console.log(req.params.id);
     Match
-    .findByIdAndRemove(req.params.id)
+    .findByIdAndDelete(req.params.id)
     .then(match => res.status(204).end())
     .catch(err => res.status(500).json({message: "Internal server error"}));
   });

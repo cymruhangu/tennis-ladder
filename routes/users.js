@@ -7,6 +7,7 @@ const {User} = require('../models/user');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
 const jsonParser = bodyParser.json();
+const middleware = require("../middleware");
 
 // Post to register a new user
 router.post('/', jsonParser, (req, res) => {
@@ -134,22 +135,13 @@ router.post('/', jsonParser, (req, res) => {
     });
 });
 
-// Never expose all your users like below in a prod application
-// we're just doing this so we have a quick way to see
-// if we're creating users. keep in mind, you can also
-// verify this in the Mongo shell.
-// router.get('/', (req, res) => {
-//   return User.find()
-//     .then(users => res.json(users.map(user => user.serialize())))
-//     .catch(err => res.status(500).json({message: 'Internal server error'}));
-// });
-
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //Created before auth
 const jwtAuth = passport.authenticate('jwt', {session: false});
 //READ USERS
 //Show all users
-router.get('/', (req, res) => {
+router.get('/', jwtAuth, (req, res) => {
+  console.log(req.headers);
     User
         .find()
         .then(users => {
@@ -176,9 +168,9 @@ router.get('/', (req, res) => {
   });
   
   //UPDATE A USER
-  //a user would be updated by adding matches, ladders, lastplayed, and isActive
+  //a user would be updated by adding/deleting matches, ladders, lastplayed, and isActive
   
-  router.put('/:id', (req, res) => {
+  router.put('/:id', jwtAuth, (req, res) => {
     res.send(`trying to post something to ${req.params.id}`);
     if (!(req.params.id && req.body.id && req.params.id === req.body.id)) {
       const message =
@@ -188,23 +180,60 @@ router.get('/', (req, res) => {
       return res.status(400).json({ message: message });
     }
       const toUpdate = {};
-      const updateableFields = ["age", "username", "email"];
-  
+      const updateableFields = ["age", "username", "name", "email", "matches", "ladders", "isActive"];
+
       updateableFields.forEach(field => {
         if (field in req.body) {
           toUpdate[field] = req.body[field];
         }
       });
-  
-      User
-        .findByIdAndUpdate(req.params.id, { $set: toUpdate})
-        .then(user => res.status(204).end())
-        .catch(err => res.status(500).json({ message: "Internal server error" }));
+   //if the update field is a match then handle differently   
+   // object contains a match type: delete or add 
+      if("matches" in toUpdate){
+        console.log("USER PUT called from match creation");
+        const action = toUpdate.matches.action;
+        delete toUpdate.matches.action;
+        if(toUpdate.matches.action === "add"){
+          User
+            .findById(req.params.id, function(err, user){
+                user.matches.push(toUpdate.matches);
+                user.save(function(err, updatedUser){
+                  console.log(err);
+                });
+            })
+            .then(user => res.status(204).end())
+            .catch(err => res.status(500).json ({ message: "Internal server error"}));
+        }else if(action === "delete") {
+          //pull the match from users match array
+          const match = toUpdate.matches
+          User
+            .findByIdAndUpdate(req.params.id, 
+              {$pull: {matches: match}},
+              {safe: true, upsert: true},
+              function(err, doc) {
+                  if(err){
+                  console.log(err);
+                  }else{
+                  //do stuff
+                  console.log('Not sure what to do here');
+                  return res.send(doc);
+                  }
+              }  
+            );
+
+        } //it's a delete
+
+      }else {
+        User
+          .findByIdAndUpdate(req.params.id, { $set: toUpdate})
+          .then(user => res.status(204).end())
+          .catch(err => res.status(500).json({ message: "Internal server error" }));
+      }
   });
   
   
   //DELETE A USER
-  router.delete('/:id', (req, res) => {
+  router.delete('/:id', jwtAuth, (req, res) => {
     console.log(req.params.id);
     User
     .findByIdAndRemove(req.params.id)

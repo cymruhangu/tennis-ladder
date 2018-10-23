@@ -1,26 +1,388 @@
 * {
-	box-sizing: border-box;
-}
+    -webkit-box-sizing: border-box;
+       -moz-box-sizing: border-box;
+            box-sizing: border-box;
+  }
+  
+html, body, main, .slideshow {margin:0;padding:0;height:100%;}
 
-body {
+body, html {
     font-family: Arial, Helvetica, sans-serif;
-    /* background-color: black; */
+    background-color: black;
+    height: 100%; 
 }
 
-/* Add padding to containers */
-.container {
+/* ------------------- */
+
+#navbar, #login, #registration, #admin, #played-matches, #challenges, #ladder, #my-space, #my-profile, #scoreboard {
+    display: none;
+    height: 100%;
+}
+
+#login {
+    background-image: url(assets/court_net.jpg?auto=format&fit=crop&w=1350&q=80);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+#login-form {
+    height: 40%;
+}
+
+#ladderReg {
+    height: 60%;
+}
+
+#login-form, #ladderReg {
+    width: 30%;
+    position: relative;
+    top: 300px;
+    left:30%;
+    border-radius: 15px;
     padding: 16px;
-    background-color: white;
+    background-color: rgb(164, 169, 170);
 }
 
+
+#login-submit, #register-submit {
+    margin-top: 25px;
+    width: 100px;
+    height: 50px;
+    background-color: #bbe015;
+    border-radius: 10px;
+    position: relative;
+    left: 42%;
+}
+
+#register-link, #login-link{
+    color: white;
+    font-size: 1em;
+    text-align: center;
+    margin-top: 50px;
+}
+
+#register-link:hover, #login-link:hover {
+    font-weight: bold;
+}
+
+/* Registration section */
+#registration{
+    background-image: url(assets/court_tee.jpg?auto=format&fit=crop&w=1350&q=80);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.left-nav {
+    display: inline-block;
+    position: absolute;
+    top: 50px;
+    left:2%;
+    width:250px;
+    color: white;
+    background-color: rgba(147, 219, 249, 0.1);
+    border-radius: 12px;
+    text-shadow: 2px 2px 4px #000000;
+    height: 25%;
+}
+.left-nav li {
+    height: 50px;
+}
+.left-nav li:hover {
+    font-weight: bold;
+    color: yellow;
+    list-style: disc;
+}
+
+.left-nav, .log-nav{
+    font-size:1.6em;
+}
+
+.admin-view{
+    display: none;
+}
+
+.log-nav{
+    display: inline-block;
+    position: absolute;
+    top: 50px;
+    right:2%;
+    width:350px;
+    color: white;
+    background-color: rgba(147, 219, 249, 0.1);
+    border-radius: 10px;
+    text-shadow: 2px 2px 4px #000000;
+}
+
+.log-nav ul {
+    margin: 0;
+    padding: 0;
+}
+.log-nav li {
+    float: right;
+    display: block;
+    padding-right: 25px;
+    cursor: pointer;
+}
+
+.log-nav li:hover{
+    color: yellow;
+}
+button, li {
+    cursor: pointer;
+}
+
+.nav-logout {
+    visibility: hidden;
+}
+#ladder {
+    background-image: url(assets/wimb_centre_court2.jpg?auto=format&fit=crop&w=1350&q=80);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+   
+}
+
+#ladder-container h3 {
+    margin: 0 auto;
+    padding-bottom: 15px;
+    padding-top: 15px;
+    text-align: center;
+
+}
+
+#ladder-container {
+    display: none;
+    width: 30%;
+    color: white;
+    text-shadow: 2px 2px 4px #000000;
+    font-size: 1.6em;
+    position: relative;;
+    left: 35%;
+    top: 50px;
+    /* background-color: rgba(147, 219, 249, 0.2); */
+    background-color: rgb(24, 66, 24);
+    border: 4px solid white;
+    margin-top: 0;
+    margin-left: 20px;
+    margin-right: 20px;
+    padding-left: 10px;
+    border-radius: 15px;
+    max-height: 90%;
+    overflow: scroll;
+}
+
+.ladder-rung {
+    padding-bottom: 8px;
+    padding-left: 5px;
+}
+
+#new-player{
+    border: 1px solid white;
+}
+.challenged {
+    float: right;
+    font-size: 75%;
+    color: royalblue;
+    padding-right:3px;
+}
+/* .num-align {
+    text-align: right;
+    display:inline;
+} */
+.chalBtn {
+    background-color: #888fad;
+    border-radius: 10px;
+    position: absolute;
+    right: 10px;
+    padding-right: 15px;
+    height: 28px;
+    font-size: 0.7em;
+}
+.chalBtn:hover{
+    color: yellow;
+    font-weight: bold;
+}
+
+#played-matches {
+    background-image: url(assets/Arthur-Ashe_02_sm.jpg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+#match-container {
+    display: none;
+    width: 40%;
+    color: white;
+    text-shadow: 2px 2px 4px #000000;
+    font-size: 1.5em;
+    position: relative;
+    line-height: 1.2;
+    left: 35%;
+    top: 50px;
+    /* background-color: rgba(147, 219, 249, 0.3); */
+    background-color: rgb(18, 92, 161);
+    border: 4px solid white;
+    margin-top: 0;
+    margin-left: 20px;
+    margin-right: 20px;
+    padding-left: 10px;
+    border-radius: 15px;
+    overflow: scroll;
+}
+
+
+#challenges{
+    background-image: url(assets/frenchopen1.jpg?auto=format&fit=crop&w=1350&q=8);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+#challenge-container {
+    background-color: #C04410;
+}
+
+#my-all-matches {
+    background-color: #405EBE;
+}
+
+#challenge-container {
+    display: none;
+}
+#challenge-container , #my-all-matches{
+    width: 40%;
+    color: white;
+    text-shadow: 2px 2px 4px #000000;
+    font-size: 1.4em;
+    position: relative;;
+    left: 25%;
+    top: 50px;
+    /* background-color: rgba(147, 219, 249, 0.4);
+     */
+    
+    border: 4px solid white;
+    margin-top: 0;
+    margin-left: 20px;
+    margin-right: 20px;
+    padding-left: 10px;
+    border-radius: 15px;
+    overflow: scroll;
+}
+
+/* ADMIN SECTION */
+#admin {
+    background-image: url(assets/court_net.jpg?auto=format&fit=crop&w=1350&q=8);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+#players-container {
+    display: inline-block;
+    width: 30%;
+    color: white;
+    text-shadow: 2px 2px 4px #000000;
+    position: relative;;
+    left: 25%;
+    top: 50px;
+    background-color: rgba(147, 219, 249, 0.5);
+    margin-top: 0;
+    margin-left: 20px;
+    margin-right: 20px;
+    padding-left: 10px;
+    border-radius: 15px;
+    height: 95%;
+    overflow: scroll;
+}
+
+.player-show {
+    font-size: 1.1em;
+}
+
+.user-edit, .user-delete{
+    background-color: grey;
+    height: 25px;
+    width: 90px;
+    margin-right: 10px;
+    border-radius: 10px;
+    font-size: .7em;
+}
+
+.user-edit {
+    position: absolute;
+    right: 15px;
+}
+
+.user-delete{
+    position: absolute;
+    right: 130px;
+}
+
+
+.user-edit:hover, .user-delete:hover,.edit-cancel:hover, .edit-submit:hover{
+    background-color: yellow;
+    font-weight: bold;
+}
+
+.edit-user {
+    display: none;
+    margin: 0 auto;
+}
+.userEditForm{
+    z-index: 5;
+    width: 30%;
+    height: 56%;
+    border-radius: 10px;
+    position: absolute;
+    top: 200px;
+    left: 30%;
+    margin: 0 auto;
+}
+
+.edit-cancel, .edit-submit{
+    background-color: gray;
+    border-radius: 10px;
+    width: 100px;
+    height: 40px;
+}
+.btn-group{
+    margin: 0 auto;
+    position: relative;
+    left: 30%;
+    color: white;
+    font-size: 1em;
+}
+/* My Profile */
+#my-profile {
+    background-image: url(assets/court_tee.jpg?auto=format&fit=crop&w=1350&q=8);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+/* ---------------- */
+.record, .del-challenge {
+    font-size: .7em;
+    background-color: #888fad;
+    width: 100px;
+    height: 30px;
+    border-radius: 10px;
+}
+.record:hover, .del-challenge:hover {
+    background-color: yellow;
+    color: white;
+}
 /* Full-width input fields */
-input[type=text], input[type=password] {
+input[type=text], input[type=password], input[type=email]{
     width: 100%;
     padding: 15px;
     margin: 5px 0 22px 0;
     display: inline-block;
     border: none;
     background: #f1f1f1;
+    border-radius: 10px;
 }
 
 input[type=text]:focus, input[type=password]:focus {
@@ -50,15 +412,180 @@ hr {
     opacity: 1;
 }
 
-/* Add a blue text color to links */
-a {
-    color: dodgerblue;
+li{
+    list-style: none;
+} 
+
+#landing h3 {
+    color: white;
+    font-size: 5em;
+    position: relative;
+    margin: 0 auto;
+    padding-top: 200px;
+    text-shadow: 2px 2px 4px #000000;
+}
+/* -------------------- */
+.slideshow, .slideshow:after { 
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0px;
+    left: 0px;
+    z-index: 0; 
 }
 
-/* Set a grey background color and center the text of the "sign in" section */
-.signin {
-    background-color: #f1f1f1;
+.slideshow li span{ 
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-size: cover;
+    background-position: 50% 50%;
+    background-repeat: no-repeat;
+    opacity: 0;
+    z-index: 0;
+    animation: imageAnimation 24s linear infinite 0s; 
+}
+
+.slideshow li div { 
+    z-index: 1000;
+    position: absolute;
+    bottom: 85px;
+    left: 0px;
+    width: 100%;
     text-align: center;
+    opacity: 0;
+    color: #fff;
+    animation: titleAnimation 24s linear infinite 0s; 
+}
+
+.slideshow li div h3{
+    font-family: 'Roboto', Arial, sans-serif;
+    font-size: 250px;
+    padding: 0;
+    line-height: 220px;  
+}
+
+.enter-btn {
+    width: 200px;
+    height: 60px;
+    background-color: #888fad;
+    border-radius: 10px;
+    padding: 10px;
+    font-size: 1.5em;
+    color: white;
+    cursor: pointer;
+} 
+
+/* .btn:hover{
+    font-weight: bold;
+    box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+  } */
+
+  .slideshow li:nth-child(1) span { 
+    background-image: url(assets/federer-halle-2018-saturday.jpg?auto=format&fit=crop&w=1350&q=8) 
+    /* background-image: url(http://cdn.cnn.com/cnnnext/dam/assets/170830113302-federer-first-round-us-open-exlarge-169.jpg?auto=format&fit=crop&w=1350&q=80)  */
+  }
+  .slideshow li:nth-child(2) span{ 
+    background-image: url(https://www.atpworldtour.com/en/news/www.atpworldtour.com/-/media/images/news/2017/05/29/13/16/nadal-roland-garros-2017-monday1.jpg?auto=format&fit=crop&w=1350&q=80);
+    /* background-image: url(assets/rodlaver.jpg); */
+    animation-delay: 4s; 
+  }
+  .slideshow li:nth-child(3) span{ 
+    background-image: url(https://si.wsj.net/public/resources/images/BN-MI241_2sCjb_M_20160128124142.jpg?auto=format&fit=crop&w=1350&q=80);
+    animation-delay: 8s; 
+  }
+  .slideshow li:nth-child(4) span{ 
+    background-image: url(https://www.atpworldtour.com/-/media/images/news/2017/10/21/16/17/del-potro-stockholm-2017-saturday.jpg?auto=format&fit=crop&w=1350&q=80);
+    animation-delay: 12s; 
+  }
+  .slideshow li:nth-child(5) span{ 
+    background-image: url(https://media.gq.com/photos/57d6cafcabdfd82b6a6a1d67/16:9/pass/stan-wawrinka.jpg?auto=format&fit=crop&w=1350&q=80);
+    animation-delay: 16s; 
+  }
+  .slideshow li:nth-child(6) span{ 
+    background-image: url(https://media.gq.com/photos/57d6cafcabdfd82b6a6a1d67/16:9/pass/stan-wawrinka.jpg?auto=format&fit=crop&w=1350&q=80);
+    animation-delay: 20s; 
+  }
+  
+  @keyframes imageAnimation { 
+    0% { 
+      opacity: 0; 
+      animation-timing-function: ease-in;
+    }
+    10% {
+      opacity: 1;
+      animation-timing-function: ease-out;
+    }
+    20% {
+      opacity: 1
+    }
+    30% {
+      opacity: 0
+    }
+  }
+  
+.slideshow li:nth-child(2) div { 
+    animation-delay: 4s; 
+}
+.slideshow li:nth-child(3) div { 
+    animation-delay: 8s; 
+}
+.slideshow li:nth-child(4) div { 
+    animation-delay: 12s; 
+}
+.slideshow li:nth-child(5) div { 
+    animation-delay: 16s; 
+}
+.slideshow li:nth-child(6) div { 
+    animation-delay: 20s; 
+}
+
+@keyframes titleAnimation { 
+    0% { opacity: 0 }
+    8% { opacity: 1 }
+    17% { opacity: 1 }
+    19% { opacity: 0 }
+    100% { opacity: 0 }
+}
+
+@keyframes lastSlide {
+    0% { opacity: 0; }
+    10% { opacity: 1; }
+    100% { opacity: 1; }
+}
+  /* Older browser support - .no-cssanimations class added by modernizr */
+  .no-cssanimations .slideshow li {
+      opacity: 1;
+  }
+/* ------------------- */
+/* Nav bar */
+.tab {
+    overflow: hidden;
+    border: 1px solid #ccc;
+    background-color: #f1f1f1;
+}
+
+/* Style the buttons that are used to open the tab content */
+.tab button {
+    background-color: inherit;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    transition: 0.3s;
+}
+
+/* Change background color of buttons on hover */
+.tab button:hover {
+    background-color: #ddd;
+}
+
+/* Create an active/current tablink class */
+.tab button.active {
+    background-color: #ccc;
 }
 
 #ladder, #matches, #score, #challenges {
@@ -68,16 +595,45 @@ h1, #welcome{
     text-align: center;
 }
 
-#scoreboard {
-    width: 35%;
-    position: absolute;
-    left: 40%;
-    top: 250px;
+#my-space {
+    background-image: url(assets/rodlaver.jpg?auto=format&fit=crop&w=1350&q=8);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
 }
 
-.games {
+#scoreboard {
+    position: absolute;
+    top: 30%;
+    left:30%;
+    height: 50%;
+}
+
+#record-score{
+    width: 400px;
+    height: 250px;
+    font-size: 18pt;
+    z-index: 5;
+    border-radius: 10px;
+    background-color: black;
+    color: yellow;
+}
+
+#record-score input[type=number] {
     width: 35px;
 }
+
+#defender-score, #challenger-score{
+    position: relative;
+    right: 10px;
+}
+
+#score-submit {
+    position: relative;
+    left: 150px;
+    top: 35px;
+}
+
 fieldset > legend {
     float: left;
     padding-right: 10px;
@@ -87,15 +643,7 @@ label {
     display: inline-block;
 }
 
-#matches, #ladder, #users, #challenges {
-   font-size: 1.5em;
-   padding-bottom: 30px;
-}
 
-a {
-    padding: 50px;
-    font-size: 1.3em;
-}
 
 form {
        background-color: rgb(180, 180, 192);
@@ -103,4 +651,222 @@ form {
 
 input {
     width: 200px;
+}
+
+/* *************/
+/* RESPONSIVE */
+
+@media only screen and (max-width: 1480px){
+    #landing h3 {
+        font-size: 2.5em;
+    }
+    h3 {
+        font-size: 1em;
+    }
+
+    #login-form {
+        top: 150px;
+        width: 30%;
+        left: 30%;
+        height: 65%;
+    }
+
+    #ladderReg {
+        top: 50px;
+        width: 35%;
+        height: 90%;
+    }
+
+    #register-submit{
+        top: 75%;
+        padding-top: 0;
+        margin-top: 0;
+    }
+
+    #login-submit, #register-submit{
+        left: 38%;
+    }
+
+    #ladder-container, #match-container, #challenge-container, #my-all-matches, #players-container {
+        font-size: 1.4em;
+        width: 40%;
+        left: 23%;
+    }
+    
+    .left-nav, .log-nav{
+        font-size: 1.4em;
+    }
+    .left-nav {
+        width: 170px;
+        height: 40%;
+    }
+    .log-nav {
+        width: 150px;
+    }
+    .log-nav li {
+        padding-right: 13px;
+        display: inline-block;
+    }
+    .challenge {
+        padding-bottom: 5px;
+    }
+    .del-challenge, .record {
+        width: 75px;
+        height: 25px;
+    }
+    #admin label {
+        font-size: .85em;
+    }
+    .userEditForm{
+        width: 40%;
+        height: 90%;
+        border-radius: 10px;
+        position: absolute;
+        top: 20px;
+        left: 30%;
+        font-size: 1.0em;
+    }
+    
+    /* .userEditForm input {
+        width: 80%;
+        height: 30px;
+    } */
+
+    .userEditForm label {
+        font-size: 1em;
+    }
+}
+
+@media only screen and (max-width: 1030px){
+    #landing h3 {
+        font-size: 2em;
+    }
+    h3 {
+        font-size: 1em;
+    }
+    #ladder-container, #match-container, #challenge-container, #my-all-matches {
+        font-size: 1.2em;
+        width: 60%;
+        left: 18%;
+    }
+    
+    .left-nav, .log-nav{
+        font-size: 1.2em;
+    }
+    .left-nav {
+        width: 120px;
+    }
+
+    .left-nav ul {
+        padding-left: 10px;
+    }
+    .log-nav {
+        width: 100px;
+    }
+    .log-nav li {
+        padding-right: 13px;
+        display: inline-block;
+    }
+   
+    .del-challenge, .record {
+        width: 55px;
+        height: 20px;
+    }
+    #login-form{
+        width: 40%;
+        height: 35%;
+    }
+    #login-form h1, #ladderReg h1{
+        font-size: 1.5em;
+    }
+    #login-submit, #register-submit{
+        left: 33%;
+    }
+
+    #ladderReg{
+        width:50%;
+        height:51%;
+        top: 100px;
+        left:25%;
+    }
+}
+
+@media only screen and (max-width: 780px){
+    #login-form{
+        height: 45%;
+    }
+    #ladderReg{
+        height: 68%;
+    }
+}
+
+@media only screen and (max-width: 416px){
+    .left-nav, .log-nav{
+        font-size: .8em;
+    }
+    .left-nav {
+        width: 28%;
+        height: 30%;
+    }
+    .log-nav {
+        width: 40%;
+        top: 5px;
+    }
+    .log-nav li {
+        padding-right: 10px;
+        display: inline-block;
+    }
+    #ladder-container, #match-container, #challenge-container, #my-all-matches {
+        font-size: .8em;
+        width: 68%;
+        left: 18%;
+    }
+    #login-form {
+        width: 70%;
+        height: 73%;
+        top: 50px;
+        left:45px;
+    }
+
+    #ladderReg {
+        width: 80%;
+        height: 80%;
+        top: 20px;
+        left:40px;
+    }
+
+    #ladderReg h1{
+        font-size:1em;
+        margin: 8px 0;
+    }
+
+    #ladderReg label {
+        font-size: .8em;
+    }
+    input[type=text], input[type=password], input[type=email]{
+        height: 14px;
+    }
+}
+
+@media only screen and (max-width: 325px){
+    #login-form {
+        width: 90%;
+        height: 80%;
+        top: 25px;
+        left:20px;
+    }
+
+    #ladderReg {
+        width: 90%;
+        height: 95%;
+        top: 15px;
+        left:15px;
+    }
+    #register-submit{
+        height: 20px;
+        left: 28%;
+    }
+    .log-nav {
+        width: 50%;
+    }
 }

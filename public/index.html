@@ -7,95 +7,253 @@
   <title>Tennis Ladder App Splash</title>
   <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.1.1/normalize.min.css">
   <link rel="stylesheet" type="text/css" href="./main.css">
+  <link href="https://fonts.googleapis.com/css?family=Anton|Roboto" rel="stylesheet">
 </head>
 <body>
-    <section id="welcome">
-        <h1>MK Tennis Ladder App</h1>
-      <p>Tennis Ladder App sign in or register</p>
-      <!-- <a href="/ladder.html"><button id="sign-in">Sign in</button></a>
-      <a href="/registration.html"><button id="sign-up">Register</button></a> -->
-
-      <button id="sign-in" type="button">Sign-in</button>
-      <button id="sign-up" type="button">Register</button>
-  </section>
-  <section id="login" hidden>
-    <form id="login-form">
-      <div class="container">
-          <h1>Login to the Tennis Ladder App</h1>
-          <fieldset>
-            <label for="uname">Username:</label>
-            <input type="text" id="uname" name="uname" placeholder="username" required>
-            <label for="passwd">password:</label>
-            <input type="password" id="passwd" name="passwd" placeholder="password" required>
-          </fieldset>
-          <button type="submit">Submit</button>
-      </div>
-    </form>
-  </section>
-  <section id="registration" hidden>
-      <form id="ladderReg">
-        <div class="container">
-          <h1>Register for the Tennis Ladder</h1>
-          <p>Please fill in this form to create an account.</p>
-          <hr>
-          <fieldset>
-            <label for="firstname"><b>First Name</b></label>
-            <input id="first" type="text" placeholder="Enter first name" name="firstname" required>
-
-            <label for="lastname"><b>Last Name</b></label>
-            <input id="last" type="text" placeholder="Enter last name" name="lastname" required>
-
-            <label for="username"><b>Username</b></label>
-            <input id="username" type="text" placeholder="Enter Username" name="username" required>
-        
-            <label for="psw"><b>Password</b></label>
-            <input id="pwd" type="password" placeholder="Enter Password" name="psw" required>
-        
-            <label for="psw-repeat"><b>Repeat Password</b></label>
-            <input id="pwd-rep" type="password" placeholder="Repeat Password" name="psw-repeat" required>
-            <hr>
-                   
-            <input type="submit" id="registerBtn" value="Register">
-          </fieldset>
-        </div>
-        <div class="container signin">
-          <p>Already have an account? <a href="/ladder.html">Sign in</a>.</p>
-        </div>
+  <main>
+    <section id="landing">
+              <ul class="slideshow">
+                <li>
+                  <span></span>
+                  <div><h3>The Tennis Ladder</h3></div>
+                </li>
+                <li>
+                  <span></span>
+                  <div>
+                    <h3>Meet New Players</h3>
+                    <button type="button" class="btn enter-btn">Enter</button>
+                  </div>
+                </li>
+                <li>
+                  <span></span>
+                  <div>
+                    <h3>Improve Your Game in Friendly Competition</h3>
+                    <button type="button" class="btn enter-btn">Enter</button>
+                  </div>
+                </li>
+                <li>
+                  <span></span>
+                  <div>
+                    <h3>Register...Login</h3>
+                    <button type="button" class="btn enter-btn">Enter</button>
+                  </div>
+                </li>
+                <li>
+                  <span></span>
+                  <div>
+                    <h3>Challenge</h3>
+                    <button type="button" class="btn enter-btn">Enter</button>
+                  </div>
+                </li>
+                <li>
+                    <span></span>
+                    <div>
+                      <h3>Climb!</h3>
+                      <button type="button" class="btn enter-btn">Enter</button>
+                      <!-- <button type="button" class="slide-register">Register</button>
+                      <button type="button" class="slide-login">Login</button> -->
+                    </div>
+                  </li>
+              </ul>
+    </section>
+    <section id="login">
+      <form id="login-form">
+            <h1>Login to the Tennis Ladder App</h1>
+            <fieldset>
+              <label for="uname">Username:</label>
+              <input type="text" id="uname" name="uname" placeholder="username" required>
+              <label for="passwd">password:</label>
+              <input type="password" id="passwd" name="passwd" placeholder="password" required>
+            </fieldset>
+            <button id="login-submit" type="submit">Submit</button>
+            <div id="register-link"><p>Not a member? Click to Register.</p></div>
       </form>
-  </section>
+    </section>
+    <section id="registration">
+        <form id="ladderReg">
+          <div class="container">
+            <h1>Register for the Tennis Ladder</h1>
+            <fieldset>
+              <label for="firstname"><b>First Name</b></label>
+              <input id="first" type="text" placeholder="Enter first name" name="firstname" required>
 
-  <section id="users" hidden>
-    <h1>Registered Users:</h1>
-    <div id="players"></div>
-  </section>
+              <label for="lastname"><b>Last Name</b></label>
+              <input id="last" type="text" placeholder="Enter last name" name="lastname" required>
 
-  <section id="user-edit" hidden></section>
+              <label for="username"><b>Username</b></label>
+              <input id="username" type="text" placeholder="Enter Username" name="username" required>
+          
+              <label for="psw"><b>Password</b></label>
+              <input id="pwd" type="password" placeholder="Enter Password" name="psw" required>
+          
+              <label for="psw-repeat"><b>Repeat Password</b></label>
+              <input id="pwd-rep" type="password" placeholder="Repeat Password" name="psw-repeat" required>
+                    
+              <input type="submit" id="register-submit" value="Register">
+            </fieldset>
+          </div>
+          <div id="login-link">
+            <p>Already a ladder member?  Sign in.</p>
+          </div>
+        </form>
+    </section>
 
-  <section id="ladder" hidden>
-    <p>This section will show the ladder!</p>
-  </section>
-    
-  <section id="score" hidden>
-    <form>
-      <fieldset>
-        <legend><span id="defender">Defender:</span></legend>
-        <input type="number" class="games" id="def-set1" min="0" max="7">
-        <input type="number" class="games" id="def-set2" min="0" max="7">
-        <input type="number" class="games" id="def-set3" min="0" max="7">
-      </fieldset>  
-      <fieldset>
-          <legend><span id="challenger">Challenger:</span></legend>
-        <input type="number" class="games" id="chal-set1" min="0" max="7">
-        <input type="number" class="games" id="chal-set2" min="0" max="7">
-        <input type="number" class="games" id="chal-set3" min="0" max="7">
-      </fieldset>
-      <button id="submit-score" type="submit">Submit</button>
-    </form>
-    <a href="/matches.html">View Match Results</a>
-  </section>
-  
-  <section id="matches" hidden></section>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-	<script type="text/javascript" src="app.js"></script>
+    <section id="admin">
+      <div class="left-nav">
+          <ul>
+            <li class="ladder-view">Ladder</li>
+            <li class="match-view">Matches</li>
+            <li class="challenge-view">Challenges</li>
+            <li class="my-matches">My Matches</li>
+            <li class="my-profile">My Profile</li>
+            <li class="admin-view">Admin</li>
+          </ul>
+      </div>
+      <div id="players-container"></div>
+      <div class="log-nav">
+          <ul>
+            <li class="nav-logout">Logout</li>
+            <li class="nav-register">Register</li>
+            <li class="nav-login">Login</li>
+          </ul>
+      </div>
+      <div id="edit-user-admin" class="edit-user">
+        <!-- Edit User Form: change email, username, age, password? -->
+      </div>
+    </section>
+
+    <section id="ladder">
+      <div class="left-nav">
+        <ul>
+          <li class="ladder-view">Ladder</li>
+          <li class="match-view">Matches</li>
+          <li class="challenge-view">Challenges</li>
+          <li class="my-matches">My Matches</li>
+          <li class="my-profile">My Profile</li>
+          <li class="admin-view">Admin</li>
+        </ul>
+      </div>
+      <div id="ladder-container"></div>
+      <div class="log-nav">
+          <ul>
+            <li class="nav-logout">Logout</li>
+            <li class="nav-register">Register</li>
+            <li class="nav-login">Login</li>
+          </ul>
+      </div>
+    </section>
+      
+    <section id="played-matches">
+        <div class="left-nav">
+            <ul>
+              <li class="ladder-view">Ladder</li>
+              <li class="match-view">Matches</li>
+              <li class="challenge-view">Challenges</li>
+              <li class="my-matches">My Matches</li>
+              <li class="my-profile">My Profile</li>
+              <li class="admin-view">Admin</li>
+            </ul>
+          </div>
+          <div id="match-container"></div>
+          <div class="log-nav">
+              <ul>
+                <li class="nav-logout">Logout</li>
+                <li class="nav-register">Register</li>
+                <li class="nav-login">Login</li>
+              </ul>
+          </div>
+    </section>
+
+    <section id="challenges">
+        <div class="left-nav">
+            <ul>
+              <li class="ladder-view">Ladder</li>
+              <li class="match-view">Matches</li>
+              <li class="challenge-view">Challenges</li>
+              <li class="my-matches">My Matches</li>
+              <li class="my-profile">My Profile</li>
+              <li class="admin-view">Admin</li>
+            </ul>
+          </div>
+          <div id="challenge-container"></div>
+          <div class="log-nav">
+              <ul>
+                <li class="nav-logout">Logout</li>
+                <li class="nav-register">Register</li>
+                <li class="nav-login">Login</li>
+              </ul>
+          </div>
+    </section>
+    <section id="my-space">
+      <div class="left-nav">
+          <ul>
+            <li class="ladder-view">Ladder</li>
+            <li class="match-view">Matches</li>
+            <li class="challenge-view">Challenges</li>
+            <li class="my-matches">My Matches</li>
+            <li class="my-profile">My Profile</li>
+            <li class="admin-view">Admin</li>
+          </ul>
+      </div>
+      <div id="my-all-matches">
+        <div id="my-matches-container"></div>
+        <div id="my-challenges-container"></div>
+      </div>
+      <div class="log-nav">
+          <ul>
+            <li class="nav-logout">Logout</li>
+            <li class="nav-register">Register</li>
+            <li class="nav-login">Login</li>
+          </ul>
+      </div> 
+      <div id="scoreboard">
+          <form id="record-score">
+            <fieldset id="defender-score">
+              <legend><span id="defender">Defender:</span></legend>
+              <div id="defender-score">
+                <input type="number" class="games" id="def-set1" min="0" max="7">
+                <input type="number" class="games" id="def-set2" min="0" max="7">
+                <input type="number" class="games" id="def-set3" min="0" max="7">
+              </div>
+            </fieldset>  
+            <fieldset >
+              <legend><span id="challenger">Challenger:</span></legend>
+                <div id="challenger-score">
+                  <input type="number" class="games" id="chal-set1" min="0" max="7">
+                  <input type="number" class="games" id="chal-set2" min="0" max="7">
+                  <input type="number" class="games" id="chal-set3" min="0" max="7">
+                </div>
+            </fieldset>
+          
+            <button type="submit" id="score-submit">Submit</button>
+          </form>
+      </div>
+    </section>
+    <section id="my-profile">
+        <div class="left-nav">
+            <ul>
+              <li class="ladder-view">Ladder</li>
+              <li class="match-view">Matches</li>
+              <li class="challenge-view">Challenges</li>
+              <li class="my-matches">My Matches</li>
+              <li class="my-profile">My Profile</li>
+              <li class="admin-view">Admin</li>
+            </ul>
+        </div>
+        <div id="my-edit-container"></div>
+        <div class="log-nav">
+            <ul>
+              <li class="nav-logout">Logout</li>
+              <li class="nav-register">Register</li>
+              <li class="nav-login">Login</li>
+            </ul>
+        </div> 
+        <div id="edit-my-user" class="edit-user">
+            <!-- Edit User Form: change email, username, age, password? -->
+          </div>
+    </section>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <script type="text/javascript" src="app.js"></script>
+  </main>
 </body>
 </html>
