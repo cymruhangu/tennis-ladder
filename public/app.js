@@ -799,6 +799,8 @@ function getMatches(){
     $.ajax({
         url: 'http://localhost:8080/matches',
         headers: {'Authorization': 'Bearer ' + sessionStorage.getItem('userToken')},
+        // beforeSend:function(xhr){ xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem("userToken")); },
+        headers: {"Authorization": "Bearer " + sessionStorage.getItem("userToken")},
         method: "GET",
         dataType: 'json'
     })
@@ -806,6 +808,8 @@ function getMatches(){
     currentMatches = data.matches;
     showMatches(data.matches);
     showMyMatches(data.matches);
+    $('#matches').fadeIn();
+    $('#challenges').fadeIn();
     })
     .fail(function(err){
         console.log(err);
