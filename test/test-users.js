@@ -51,7 +51,7 @@ describe('Protected User endpoints', function () {
         .get('/users')
         .then((response) => {
             console.log(response.status);
-        //   expect.fail(null, null, 'Request should not succeed')
+            expect.fail(null, null, 'Request should not succeed')
         })
         .catch(err => {
           if (err instanceof chai.AssertionError) {

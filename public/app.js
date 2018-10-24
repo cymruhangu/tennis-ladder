@@ -9,7 +9,7 @@ let isActive = true;
 
 // const adminID = "5baa6d04ae44dfb8095dcafe";//iMac
 const adminID = "5bc5c73b837af33ac9bf8a5e"; //MacBook - Mlab
-
+const BASE_URL = 'https://serene-shore-12858.herokuapp.com/';
 
 checkToken();
 getLadder(ladderID);
@@ -171,7 +171,7 @@ function clearForm(formName){
 
 function userAuth(authObj, userName){
     $.ajax({
-        url: `http://localhost:8080/auth/login`,
+        url: `${BASE_URL}/auth/login`,
         method: 'POST',
         dataType: 'json',
         contentType: 'application/json',
@@ -221,7 +221,7 @@ function addRegisterListener(){
 
 function postNewUser(userObj){
     $.ajax({
-        url: `http://localhost:8080/users`,
+        url: `${BASE_URL}/users`,
         method: 'POST',
         dataType: 'json',
         contentType: 'application/json',
@@ -241,7 +241,7 @@ function postNewUser(userObj){
 function getUsers(userName){
     console.log('ran getUsers');
     $.ajax({
-        url: 'http://localhost:8080/users',
+        url: `${BASE_URL}/users`,
         method: "GET",
         dataType: 'json',
         headers: {
@@ -326,7 +326,7 @@ function addUserEditListener(){
 
 function getPlayer(ID){
     $.ajax({
-        url: `http://localhost:8080/users/${ID}`,
+        url: `${BASE_URL}/users/${ID}`,
         method: 'GET',
         dataType: 'json',
         headers: {
@@ -376,7 +376,7 @@ function addUserDeleteListener(){
 
 function userDelete(ID){
     $.ajax({
-        url: `http://localhost:8080/users/${ID}`,
+        url: `${BASE_URL}/users/${ID}`,
         method: 'DELETE',
         headers: {
             'Authorization': sessionStorage.getItem('userToken')
@@ -429,7 +429,7 @@ function addUserPutListener(user){
 function putUser(ID, userObj){
     console.log('calling putUser');
     $.ajax({
-        url: `http://localhost:8080/users/${ID}`,
+        url: `${BASE_URL}/users/${ID}`,
         method: "PUT",
         dataType: 'json',
         contentType: 'application/json',
@@ -496,7 +496,7 @@ function addChallengeListener(rank){
 
 function createMatch(matchObj){
     $.ajax({
-        url: 'http://localhost:8080/matches',
+        url: `${BASE_URL}/matches`,
         method: "POST",
         dataType: 'json',
         contentType: 'application/json',
@@ -573,7 +573,7 @@ function addMatchDeleteListener(defID, chalID){
 
 function getMatch(matchID){
     $.ajax({
-        url: `http://localhost:8080/matches/${matchID}`,
+        url: `${BASE_URL}/matches/${matchID}`,
         method: "GET",
         dataType: 'json'
     })
@@ -694,7 +694,7 @@ function tallyScore(match, def1, def2, def3, chal1, chal2, chal3){
 
     function matchUpdate(matchID, matchUpdateObj){
     $.ajax({
-        url: `http://localhost:8080/matches/${matchID}`,
+        url: `${BASE_URL}/matches/${matchID}`,
         method: "PUT",
         dataType: 'json',
         contentType: 'application/json',
@@ -797,7 +797,7 @@ function showMyMatches(matchData){
 
 function getMatches(){
     $.ajax({
-        url: 'http://localhost:8080/matches',
+        url: `${BASE_URL}/matches`,
         headers: {'Authorization': 'Bearer ' + sessionStorage.getItem('userToken')},
         // beforeSend:function(xhr){ xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem("userToken")); },
         headers: {"Authorization": "Bearer " + sessionStorage.getItem("userToken")},
@@ -823,7 +823,7 @@ function generateMatchHTML(winner, loser, first, second, third){
 //DELETE MATCH
 function deleteMatch(matchID){
     $.ajax({
-        url: `http://localhost:8080/matches/${matchID}`,
+        url: `${BASE_URL}/matches/${matchID}`,
         method: "DELETE",
         dataType: 'json',
         headers: {
@@ -867,7 +867,7 @@ function showLadder(ladderData){
 
 function getLadder(ladder){
     $.ajax({
-        url: `http://localhost:8080/ladders/${ladder}`,
+        url: `${BASE_URL}/ladders/${ladder}`,
         method: "GET",
         dataType: 'json'
     })
@@ -896,7 +896,7 @@ function createRungHTML(rank, player, ID){
 function updateLadder(ladderUpdateObj){
     console.log(ladderUpdateObj);
     $.ajax({
-        url: `http://localhost:8080/ladders/${ladderID}`,
+        url: `${BASE_URL}/ladders/${ladderID}`,
         method: "PUT",
         dataType: 'json',
         contentType: 'application/json',

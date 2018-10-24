@@ -70,7 +70,7 @@ describe('Auth endpoints', function () {
     //     .post('/auth/login')
     //     .send({ username, password: 'wrongPassword' })
     //     .then(() =>
-    //       expect.fail(null, null, 'Request should not succeed')
+        //   expect.fail(null, null, 'Request should not succeed')
     //     )
     //     .catch(err => {
     //       if (err instanceof chai.AssertionError) {
