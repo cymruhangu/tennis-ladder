@@ -808,8 +808,8 @@ function getMatches(){
     currentMatches = data.matches;
     showMatches(data.matches);
     showMyMatches(data.matches);
-    $('#matches').fadeIn();
-    $('#challenges').fadeIn();
+    // $('#matches').fadeIn();
+    // $('#challenges').fadeIn();
     })
     .fail(function(err){
         console.log(err);
