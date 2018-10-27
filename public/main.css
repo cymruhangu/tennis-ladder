@@ -133,6 +133,14 @@ button, li {
     cursor: pointer;
 }
 
+
+.hamburger {
+    width: 50px;
+    height: 50px;
+    background:white;
+    visibility: hidden;
+    float: left;
+}
 .nav-logout {
     visibility: hidden;
 }
@@ -801,8 +809,13 @@ input {
 }
 
 @media only screen and (max-width: 416px){
+
+    .hamburger{
+        visibility: visible;
+    }
     .left-nav, .log-nav{
         font-size: .8em;
+        visibility: hidden;
     }
     .left-nav {
         width: 28%;

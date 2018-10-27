@@ -9,7 +9,8 @@ let isActive = true;
 
 // const adminID = "5baa6d04ae44dfb8095dcafe";//iMac
 const adminID = "5bc5c73b837af33ac9bf8a5e"; //MacBook - Mlab
-const BASE_URL = 'https://serene-shore-12858.herokuapp.com';
+// const BASE_URL = 'https://serene-shore-12858.herokuapp.com';
+const BASE_URL = 'localhost:8080'
 
 checkToken();
 getLadder(ladderID);
@@ -24,6 +25,15 @@ addIndexListeners();
 addLadderViewListener();
 addChallengeViewListener();
 addMatchesListener();
+addHamburgerListener();
+
+
+function addHamburgerListener(){
+    $('.hamburger').on('click', function(e){
+        $(this).css('visibility', 'hidden');
+        $('.left-nav, .log-nav').css('visibility', 'visible');
+    })
+}
 
 function checkToken(){
     const token = sessionStorage.getItem('userToken');
