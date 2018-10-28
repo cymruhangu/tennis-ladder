@@ -216,21 +216,21 @@
             <fieldset id="defender-score">
               <legend><span id="defender">Defender:</span></legend>
               <div id="defender-score">
-                <input type="number" class="games" id="def-set1" min="0" max="7">
-                <input type="number" class="games" id="def-set2" min="0" max="7">
-                <input type="number" class="games" id="def-set3" min="0" max="7">
+                <input type="number" class="games" id="def-set1" min="0" max="7" required>
+                <input type="number" class="games" id="def-set2" min="0" max="7" required>
+                <input type="number" class="games" id="def-set3" min="0" max="7" value=0>
               </div>
             </fieldset>  
-            <fieldset >
+            <fieldset id="challenger-score">
               <legend><span id="challenger">Challenger:</span></legend>
                 <div id="challenger-score">
-                  <input type="number" class="games" id="chal-set1" min="0" max="7">
-                  <input type="number" class="games" id="chal-set2" min="0" max="7">
-                  <input type="number" class="games" id="chal-set3" min="0" max="7">
+                  <input type="number" class="games" id="chal-set1" min="0" max="7" required>
+                  <input type="number" class="games" id="chal-set2" min="0" max="7" required>
+                  <input type="number" class="games" id="chal-set3" min="0" max="7" value=0>
                 </div>
             </fieldset>
-          
             <button type="submit" id="score-submit">Submit</button>
+            <span id="score-instructions">Leave 3rd set score 0-0 if not played.</span>
           </form>
       </div>
     </section>

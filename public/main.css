@@ -643,17 +643,20 @@ h1, #welcome{
     width: 35px;
 }
 
-#defender-score, #challenger-score{
-    position: relative;
-    right: 10px;
-}
 
 #score-submit {
     position: relative;
     left: 150px;
     top: 35px;
+    border-radius: 7px;
 }
 
+#score-instructions{
+    color: white;
+    font-size:12pt;
+    position: relative;
+    top: 90px;
+}
 fieldset > legend {
     float: left;
     padding-right: 10px;

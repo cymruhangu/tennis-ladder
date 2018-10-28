@@ -623,6 +623,11 @@ function addScoreListener(match){
         const chalSet1 = $('input[id=chal-set1]').val();
         const chalSet2 = $('input[id=chal-set2').val();
         const chalSet3 = $('input[id=chal-set3').val();
+        console.log(chalSet3);
+        if(defSet3 == null && chalSet3 == null ){
+            chalSet3 = defSet3 = 0;
+        }
+
         tallyScore(match, defSet1, defSet2, defSet3, chalSet1, chalSet2, chalSet3);
         $('#scoreboard').fadeOut();
     });
@@ -744,7 +749,6 @@ function showMatches(matchData){
     $('#match-container').append('<h3>Completed Matches:</h3>');
     $('#challenge-container').html('');
     $('#challenge-container').append('<h3>Current Challenges:</h3>');
-    const user = sessionStorage.getItem('currentUserID');
     
     matchData.forEach(function(match){
         const myMatch = false;
@@ -802,7 +806,7 @@ function showMyMatches(matchData){
                 const secondSet = `${match.score[1].winnerGames}-${match.score[1].loserGames}`;
                 const thirdSet = `${match.score[2].winnerGames}-${match.score[2].loserGames}`;
                 const matchDiv = generateMatchHTML(winnerName, loserName, firstSet, secondSet, thirdSet);
-            $('#my-matches-container').append(matchDiv);
+                $('#my-matches-container').append(matchDiv);
             } else  {  //unplayed challenge
                 const defenderName = `${match.defender.name.firstName.charAt(0)}. ${match.defender.name.lastName}`;
                 const challengerName = `${match.challenger.name.firstName.charAt(0)}. ${match.challenger.name.lastName}`;
@@ -828,7 +832,7 @@ function getMatches(){
         dataType: 'json'
     })
     .done(function(data){
-    console.log(data.matches);
+    // console.log(data.matches);
     currentMatches = data.matches;
     showMatches(data.matches);
     showMyMatches(data.matches);
@@ -881,7 +885,7 @@ function showLadder(ladderData){
         //if player is new/inActive append as last rung with no ranking
     });
     const playerName = sessionStorage.getItem('currentName');
-    if(playerName  && firstMatch){
+    if(playerName  && !isActive){
         rank = ladderData.length + 1;
         const lastRung = createRungHTML(rank, playerName, sessionStorage.getItem('currentUserID'));
         console.log(`last rung is ${lastRung}`);
