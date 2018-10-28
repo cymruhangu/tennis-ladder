@@ -10,8 +10,8 @@ let firstMatch = true;
 
 // const adminID = "5baa6d04ae44dfb8095dcafe";//iMac
 const adminID = "5bc5c73b837af33ac9bf8a5e"; //MacBook - Mlab
-// const BASE_URL = 'https://serene-shore-12858.herokuapp.com';
-const BASE_URL = 'http://localhost:8080'
+const BASE_URL = 'https://serene-shore-12858.herokuapp.com';
+// const BASE_URL = 'http://localhost:8080'
 
 checkToken();
 getLadder(ladderID);
