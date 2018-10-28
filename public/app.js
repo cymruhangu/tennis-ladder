@@ -6,6 +6,7 @@ const ladderID = "5bb6d11f58fe56fcc9356b28"; //MacBook
 let ladderRankings= [];
 let currentMatches=[];
 let isActive = false;
+let firstMatch = true;
 
 // const adminID = "5baa6d04ae44dfb8095dcafe";//iMac
 const adminID = "5bc5c73b837af33ac9bf8a5e"; //MacBook - Mlab
@@ -14,11 +15,11 @@ const BASE_URL = 'http://localhost:8080'
 
 checkToken();
 getLadder(ladderID);
+getMatches();
 addEnterListener();
 addNavLogin();
 addNavReg();
 addNavAdmin();
-getLadder(ladderID);
 addMyMatchesListener();
 addMyProfileListener();
 addIndexListeners();
@@ -63,6 +64,7 @@ function clearSessionStorage(){
     sessionStorage.removeItem('userName');
     sessionStorage.removeItem('currentUserID');
     sessionStorage.removeItem('currentUserRank');
+    sessionStorage.removeItem('currentName');
 }
 
 function addEnterListener(){
@@ -234,7 +236,7 @@ function addRegisterListener(){
         postNewUser(userObj);
         //show login form
         $('#registration').fadeOut();
-        $('#login').fadeIn();
+        $('#ladder').fadeIn();
         clearForm('#ladderReg');
         
     });
@@ -365,7 +367,6 @@ function getPlayer(ID){
 }
 
 function createUserEdit(user){
-    // console.log(`${user.name} ${user.username} ${user.gender} isActive:${user.isActive}`);
     const tmpName = user.name.split(' ');
     const first = tmpName[0];
     const last = tmpName[1];
@@ -390,7 +391,7 @@ function addUserDeleteListener(){
         e.preventDefault();
         const playerID = $(this).parent().attr('data-attr');
         console.log(`going to delete users/${playerID} `);
-        deleteUserMatches(playerID);  // NOT WORKING **********************  PROMISE??
+        deleteUserMatches(playerID); 
         userDelete(playerID);
     });
 }
@@ -418,7 +419,6 @@ function deleteUserMatches(playerID){
     });
     userMatches.forEach(match => deleteMatch(match.id));
 }
-
 
 function addUserPutListener(user){
     $('.userEditForm').submit(function(e){
@@ -630,6 +630,7 @@ function addScoreListener(match){
 
 function tallyScore(match, def1, def2, def3, chal1, chal2, chal3){
     let rankingChange = false;
+    firstMatch = false;
     let defSets = 0;
     let chalSets = 0;
     // let chalTB1 = chalTB2 =chalTB3 = defTB1 = defTB2 = defTB3 = 0;
@@ -689,7 +690,7 @@ function tallyScore(match, def1, def2, def3, chal1, chal2, chal3){
         "matchPlayed": true
         };
 
-    console.log(matchUpdateObj);
+    // console.log(matchUpdateObj);
     matchUpdate(match.id, matchUpdateObj);
     if(rankingChange){
         // what is defender's rank? 
@@ -703,10 +704,12 @@ function tallyScore(match, def1, def2, def3, chal1, chal2, chal3){
         console.log(`changing ${sessionStorage.getItem('currentUserRank')} to ${defenderRank}`);
         sessionStorage.setItem('currentUserRank', defenderRank);
         console.log(`current rank is now: ${sessionStorage.getItem('currentUserRank')}`);
-    } else if(!isActive){   //BROKEN HERE ************************************************************************
+    } else if(!isActive){  
         //set challenger isActive to true
+        console.log("challenger's first match. Setting to Active");
         isActive = true;
         const userObj = {"id": match.challenger._id,"isActive": true};
+        console.log(userObj);
         putUser(match.challenger._id, userObj)
         //put challenger on bottom rung
         const ladderObj = {"id": ladderID, "isActive": true, "new": match.challenger._id};
@@ -746,8 +749,8 @@ function showMatches(matchData){
     matchData.forEach(function(match){
         const myMatch = false;
         if(match.matchPlayed){
-            const winnerName = `${match.winner.name.firstName} ${match.winner.name.lastName}`;
-            const loserName = `${match.loser.name.firstName} ${match.loser.name.lastName}`;
+            const winnerName = `${match.winner.name.firstName.charAt(0)}. ${match.winner.name.lastName}`;
+            const loserName = `${match.loser.name.firstName.charAt(0)}. ${match.loser.name.lastName}`;
             const firstSet = `${match.score[0].winnerGames}-${match.score[0].loserGames}`;
             const secondSet = `${match.score[1].winnerGames}-${match.score[1].loserGames}`;
             const thirdSet = `${match.score[2].winnerGames}-${match.score[2].loserGames}`;
@@ -755,10 +758,10 @@ function showMatches(matchData){
             $('#match-container').append(matchDiv);
 
         } else  {  //unplayed challenge
-            const defenderName = `${match.defender.name.firstName} ${match.defender.name.lastName}`;
-            const challengerName = `${match.challenger.name.firstName} ${match.challenger.name.lastName}`;
+            const defenderName = `${match.defender.name.firstName.charAt(0)}. ${match.defender.name.lastName}`;
+            const challengerName = `${match.challenger.name.firstName.charAt(0)}. ${match.challenger.name.lastName}`;
             const matchID = match.id;
-            console.log(`myMatch is ${myMatch}`);
+            // console.log(`myMatch is ${myMatch}`);
             const challengeDiv = generateChallengeHTML(myMatch, defenderName, challengerName, matchID);
             $('#challenge-container').append(challengeDiv);
             //handle my-matches
@@ -792,16 +795,17 @@ function showMyMatches(matchData){
         const myMatch = user === match.challenger._id || user === match.defender._id?true:false;
         if(myMatch){ 
             if(match.matchPlayed){
-                const winnerName = `${match.winner.name.firstName} ${match.winner.name.lastName}`;
-                const loserName = `${match.loser.name.firstName} ${match.loser.name.lastName}`;
+                const winnerName = `${match.winner.name.firstName.charAt(0)}. ${match.winner.name.lastName}`;
+                console.log(winnerName);
+                const loserName = `${match.loser.name.firstName.charAt(0)}. ${match.loser.name.lastName}`;
                 const firstSet = `${match.score[0].winnerGames}-${match.score[0].loserGames}`;
                 const secondSet = `${match.score[1].winnerGames}-${match.score[1].loserGames}`;
                 const thirdSet = `${match.score[2].winnerGames}-${match.score[2].loserGames}`;
                 const matchDiv = generateMatchHTML(winnerName, loserName, firstSet, secondSet, thirdSet);
             $('#my-matches-container').append(matchDiv);
             } else  {  //unplayed challenge
-                const defenderName = `${match.defender.name.firstName} ${match.defender.name.lastName}`;
-                const challengerName = `${match.challenger.name.firstName} ${match.challenger.name.lastName}`;
+                const defenderName = `${match.defender.name.firstName.charAt(0)}. ${match.defender.name.lastName}`;
+                const challengerName = `${match.challenger.name.firstName.charAt(0)}. ${match.challenger.name.lastName}`;
                 const matchID = match.id;
                 console.log(`myMatch is ${myMatch}`);
                 const challengeDiv = generateChallengeHTML(myMatch, defenderName, challengerName, matchID);
@@ -824,6 +828,7 @@ function getMatches(){
         dataType: 'json'
     })
     .done(function(data){
+    console.log(data.matches);
     currentMatches = data.matches;
     showMatches(data.matches);
     showMyMatches(data.matches);
@@ -864,7 +869,6 @@ function showLadder(ladderData){
     $('#ladder-container').html('');
     $('#ladder-container').append('<h3>Current Standings for <span>Men&#39;s Open:</span>');
     let rank;
-    // const finalRung  = ladderData.length + 1;
     ladderData.forEach(function(place, index) {
         if(place.name){
             const playerName = `${place.name.firstName} ${place.name.lastName}`;
@@ -876,9 +880,11 @@ function showLadder(ladderData){
         }
         //if player is new/inActive append as last rung with no ranking
     });
-    if(!isActive){
+    const playerName = sessionStorage.getItem('currentName');
+    if(playerName  && firstMatch){
         rank = ladderData.length + 1;
-        const lastRung = createRungHTML(rank, sessionStorage.getItem('currentName'), sessionStorage.getItem('currentUserID'));
+        const lastRung = createRungHTML(rank, playerName, sessionStorage.getItem('currentUserID'));
+        console.log(`last rung is ${lastRung}`);
         $('#ladder-container').append(lastRung);
     }
     addChallengeListener(rank);
@@ -891,8 +897,9 @@ function getLadder(ladder){
         dataType: 'json'
     })
     .done(function(data){ 
-        ladderRankings = data.rankings;
-        showLadder(ladderRankings);
+        const ladderData = data.rankings;
+        ladderRankings = ladderData;
+        showLadder(ladderData);
     })
     .fail(function(err){
         console.log(err);
