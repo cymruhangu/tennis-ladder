@@ -5,12 +5,12 @@ $(function(){
 const ladderID = "5bb6d11f58fe56fcc9356b28"; //MacBook
 let ladderRankings= [];
 let currentMatches=[];
-let isActive = true;
+let isActive = false;
 
 // const adminID = "5baa6d04ae44dfb8095dcafe";//iMac
 const adminID = "5bc5c73b837af33ac9bf8a5e"; //MacBook - Mlab
 // const BASE_URL = 'https://serene-shore-12858.herokuapp.com';
-const BASE_URL = 'localhost:8080'
+const BASE_URL = 'http://localhost:8080'
 
 checkToken();
 getLadder(ladderID);
@@ -26,15 +26,26 @@ addLadderViewListener();
 addChallengeViewListener();
 addMatchesListener();
 addHamburgerListener();
-
+addCloseMenuListener();
 
 function addHamburgerListener(){
-    $('.hamburger').on('click', function(e){
-        $(this).css('visibility', 'hidden');
-        $('.left-nav, .log-nav').css('visibility', 'visible');
+    $('.fa-bars').on('click', function(e){
+        // e.preventDefault();
+        $(this).css('display', 'none');
+        $('.fa-times').css('display', 'inline-block');
+        $('.left-nav, .log-nav').css('display', 'block');
+
     })
 }
 
+function addCloseMenuListener(){
+    $('.fa-times').on('click', function(e){
+        e.preventDefault();
+        $('.left-nav, .log-nav').css('display', 'none');
+        $(this).css('display', 'none');
+        $('.fa-bars').css('display', 'block');
+    });
+}
 function checkToken(){
     const token = sessionStorage.getItem('userToken');
     if(token){
@@ -241,7 +252,7 @@ function postNewUser(userObj){
     .done(function(data){
         getUsers();
         $('#registration').fadeOut();
-        userAuth(data.username, tmpAuth);
+        // userAuth(data.username, tmpAuth);
     })
     .fail(function(err){
         console.log(err);
@@ -379,7 +390,7 @@ function addUserDeleteListener(){
         e.preventDefault();
         const playerID = $(this).parent().attr('data-attr');
         console.log(`going to delete users/${playerID} `);
-        deleteUserMatches(playerID);
+        deleteUserMatches(playerID);  // NOT WORKING **********************  PROMISE??
         userDelete(playerID);
     });
 }
@@ -691,9 +702,10 @@ function tallyScore(match, def1, def2, def3, chal1, chal2, chal3){
         updateLadder(ladderObj);
         console.log(`changing ${sessionStorage.getItem('currentUserRank')} to ${defenderRank}`);
         sessionStorage.setItem('currentUserRank', defenderRank);
-    } 
-    if(!isActive){
+        console.log(`current rank is now: ${sessionStorage.getItem('currentUserRank')}`);
+    } else if(!isActive){   //BROKEN HERE ************************************************************************
         //set challenger isActive to true
+        isActive = true;
         const userObj = {"id": match.challenger._id,"isActive": true};
         putUser(match.challenger._id, userObj)
         //put challenger on bottom rung
@@ -761,7 +773,7 @@ function showMatches(matchData){
 
 
 function generateChallengeHTML(myMatch, defender, challenger, id){
-    return `<div class="challenge" data-attr=${id}>${challenger} challenged ${defender}
+    return `<div class="challenge" data-attr=${id}>${challenger} vs ${defender}
             <button type="button" class="record" style=${!myMatch?"display:none":"display:inline"}>Record</button>
             <button type="button" class="del-challenge" style=${!myMatch?"display:none":"display:inline"}>Delete</button>
             </div>`;
@@ -799,12 +811,9 @@ function showMyMatches(matchData){
             }
         }
     });
-    
 }
 
-
 //-----------------
-
 function getMatches(){
     $.ajax({
         url: `${BASE_URL}/matches`,

@@ -233,6 +233,7 @@ router.get('/', jwtAuth, (req, res) => {
   
   
   //DELETE A USER
+  // ******************** NEED TO DELETE MATCHES THAT THE USER WAS PART OF 
   router.delete('/:id', jwtAuth, (req, res) => {
     console.log(req.params.id);
     User

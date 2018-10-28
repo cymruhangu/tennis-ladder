@@ -81,7 +81,7 @@ body, html {
     left:2%;
     width:250px;
     color: white;
-    background-color: rgba(147, 219, 249, 0.1);
+    background-color: rgba(147, 219, 249, 0.4);
     border-radius: 12px;
     text-shadow: 2px 2px 4px #000000;
     height: 25%;
@@ -97,6 +97,7 @@ body, html {
 
 .left-nav, .log-nav{
     font-size:1.6em;
+    z-index: 5;
 }
 
 .admin-view{
@@ -110,7 +111,7 @@ body, html {
     right:2%;
     width:350px;
     color: white;
-    background-color: rgba(147, 219, 249, 0.1);
+    background-color: rgba(147, 219, 249, 0.4);
     border-radius: 10px;
     text-shadow: 2px 2px 4px #000000;
 }
@@ -135,11 +136,22 @@ button, li {
 
 
 .hamburger {
-    width: 50px;
-    height: 50px;
-    background:white;
     visibility: hidden;
+    color: yellow;
     float: left;
+    margin: 0 auto;
+    padding-top: 20px;
+    padding-left: 20px;
+    padding-bottom: 10px;
+}
+
+.fa, .fas {
+    display: none;
+    font-size: 2.2em;
+}
+
+.fa-times {
+    display: none;
 }
 .nav-logout {
     visibility: hidden;
@@ -263,7 +275,7 @@ button, li {
     width: 40%;
     color: white;
     text-shadow: 2px 2px 4px #000000;
-    font-size: 1.4em;
+    /* font-size: 1.4em; */
     position: relative;;
     left: 25%;
     top: 50px;
@@ -813,9 +825,15 @@ input {
     .hamburger{
         visibility: visible;
     }
+    .fa-bars{
+        display: inline-block;
+    }
+    .fa-times{
+        display: none;
+    }
     .left-nav, .log-nav{
         font-size: .8em;
-        visibility: hidden;
+        display: none;
     }
     .left-nav {
         width: 28%;
@@ -831,8 +849,12 @@ input {
     }
     #ladder-container, #match-container, #challenge-container, #my-all-matches {
         font-size: .8em;
-        width: 68%;
-        left: 18%;
+        width: 90%;
+        left: 5px;
+    }
+
+    .chalBtn{
+        height:20px;
     }
     #login-form {
         width: 70%;
