@@ -69,7 +69,6 @@ function clearSessionStorage(){
 
 function addEnterListener(){
     $('.enter-btn').on('click', function(e){
-        console.log("Enter button clicked");
         $('#landing').fadeOut();
         $('#ladder').fadeIn(90, function(){
             $('#ladder-container').fadeIn(2500)});
@@ -78,7 +77,6 @@ function addEnterListener(){
 
 function addNavLogin(){
     $('.nav-login, #login-link').on('click', function(e){
-        console.log('login link clicked');
         e.preventDefault();
         $('#ladder, #registration').fadeOut();
         $('#login').fadeIn();
@@ -88,7 +86,6 @@ function addNavLogin(){
 
 function addNavReg(){
     $('.nav-register, #register-link').on('click', function(e){
-        console.log('show register clicked');
         e.preventDefault();
         $('#ladder, #login').fadeOut();
         $('#registration').fadeIn();
@@ -98,7 +95,6 @@ function addNavReg(){
 
 function addNavLogout(){
     $('.nav-logout').on('click', function(e){
-        console.log('logout clicked');
         e.preventDefault();
         clearSessionStorage();
         getLadder(ladderID);
@@ -112,7 +108,6 @@ function addNavLogout(){
 
 function addNavAdmin(){
     $('.admin-view').on('click', function(e){
-        console.log('admin view clicked');
         e.preventDefault();
         getUsers();
         $('#ladder,#ladder-container, #match-container, #played-matches, #challenges, #challenge-container, #my-space, #registration, #login').fadeOut();
@@ -133,7 +128,6 @@ function addLadderViewListener(){
 function addChallengeViewListener(){
     $('.challenge-view').on('click', function(e){
         e.preventDefault();
-        console.log('challenge view clicked');
         getMatches();
         $('#ladder, #ladder-container, #played-matches, #match-container, #my-space, #admin').fadeOut();
         $('#challenges').fadeIn(90, function(){
@@ -144,7 +138,6 @@ function addChallengeViewListener(){
 
 function addMatchesListener(){
     $('.match-view').on('click', function(e){
-        console.log('matches view clicked');
         e.preventDefault();
         $('#ladder, #ladder-container, #challenges, #my-space, #admin').fadeOut();
         getMatches();
@@ -203,7 +196,6 @@ function userAuth(authObj, userName){
         })
         .done(function(data){
             $('#login').fadeOut();
-            console.log(data);
             sessionStorage.setItem('userToken', `Bearer ${data.authToken}`);
             sessionStorage.setItem('userName', userName);
             //get users and find the current user's 
@@ -262,7 +254,6 @@ function postNewUser(userObj){
 }
 
 function getUsers(userName){
-    console.log('ran getUsers');
     $.ajax({
         url: `${BASE_URL}/users`,
         method: "GET",
@@ -272,7 +263,6 @@ function getUsers(userName){
         }
     })
     .done(function(data){
-        console.log(data);
         if(userName){
             setUserID(data.users);
         } else {
@@ -291,8 +281,6 @@ function setUserID(usersData){
         return user.username === userName;
     });
     const currentUser = userArr[0];
-    console.log(currentUser.name);
-    console.log(currentUser.isActive);
     isActive = currentUser.isActive;
     sessionStorage.setItem('currentUserID', currentUser.id);
     sessionStorage.setItem('currentName', currentUser.name);
@@ -340,7 +328,6 @@ function addUserEditListener(){
     $('.user-edit').on("click", function(event){
         event.stopPropagation();
         const playerID = $(this).parent().attr('data-attr');
-        console.log(`going to edit users/${playerID} `);
         //ajax call for specific user
         getPlayer(playerID);
         $('#edit-user-admin').fadeIn();
@@ -357,7 +344,6 @@ function getPlayer(ID){
         }
     })
     .done(function(data){
-        console.log(data);
         //render player PUT Form
         createUserEdit(data);
     })
@@ -379,7 +365,6 @@ function createUserEdit(user){
 function addCancelListener(){
     $('.edit-cancel').on('click', function(e){
         e.preventDefault();
-        console.log('cancel clicked');
         //clear form
         clearForm('.userEditForm');
         $('#edit-user').fadeOut();
@@ -390,7 +375,6 @@ function addUserDeleteListener(){
     $('.user-delete').on('click', function(e){
         e.preventDefault();
         const playerID = $(this).parent().attr('data-attr');
-        console.log(`going to delete users/${playerID} `);
         deleteUserMatches(playerID); 
         userDelete(playerID);
     });
@@ -422,14 +406,12 @@ function deleteUserMatches(playerID){
 
 function addUserPutListener(user){
     $('.userEditForm').submit(function(e){
-        console.log('addUserPutListener called');
         e.preventDefault();
         const firstName = $('input[id=new-first]').val();
         const lastName = $('input[id=new-last]').val();
         const userName = $('input[id=new-username]').val();
         const age = $('input[id=new-age]').val();
         const email = $('input[id=new-email]').val();
-        console.log(`updating ${user.id} ${userName}  ${age}  ${email} `);
         const userObj = {
             "id": `${user.id}`,
             "name":{
@@ -440,7 +422,6 @@ function addUserPutListener(user){
             "email": `${email}`,
             "age": `${age}`
         }
-        console.log(userObj);
         putUser(user.id, userObj);
         $('#edit-user-admin').fadeOut();
         clearForm('.userEditForm');
@@ -448,7 +429,6 @@ function addUserPutListener(user){
 }
 
 function putUser(ID, userObj){
-    console.log('calling putUser');
     $.ajax({
         url: `${BASE_URL}/users/${ID}`,
         method: "PUT",
@@ -502,7 +482,6 @@ function addChallengeListener(rank){
     $('.chalBtn').on("click", function(event){
         event.stopPropagation();
         const defender = $(this).parent().attr('data-attr');
-        // console.log(`challenge to ${defender} will be created`);
         $(this).fadeOut();
         $(this).next('.challenged').fadeIn();
         
@@ -527,8 +506,6 @@ function createMatch(matchObj){
             'Authorization': sessionStorage.getItem('userToken')
         },
         success: function(response){
-            console.log(response.id);
-            // getMatches();
             //Put match to each user
             addUsersMatch(response.id, matchObj);
         }
@@ -544,16 +521,13 @@ function createMatch(matchObj){
 function addUsersMatch(matchID, matchObj){
     const defObj = {"id": matchObj.defender, "matches": matchID, "action": "add" };
     const chalObj = {"id": matchObj.challenger, "matches": matchID, "action": "add" };
-    // console.log(defObj);
-    // console.log(chalObj);
-    putUser(matchObj.defender, defObj);
+   putUser(matchObj.defender, defObj);
     putUser(matchObj.challenger, chalObj);
 }
 
 
 function addMyMatchesListener(){
     $('.my-matches').on('click', function(e){
-        console.log("My Matches clicked");
         e.preventDefault();
         getMatches();
         $('#ladder, #played-matches, #challenges, #admin').fadeOut();
@@ -572,7 +546,6 @@ function addMyProfileListener(){
 //click registers for each
 function addRecordListener(){
     $('.record').on('click', function(e){
-        console.log('record match clicked');
         e.preventDefault();
         const matchID = $(this).parent().attr('data-attr');
         //need a get for specific matches
@@ -584,7 +557,6 @@ function addRecordListener(){
 //clicks register for each delete...why? how to stop
 function addMatchDeleteListener(defID, chalID){
     $('.del-challenge').on('click', function(e){
-        console.log('delete match clicked');
         e.stopPropagation();
         e.preventDefault();
         const matchID = $(this).parent().attr('data-attr');
@@ -623,7 +595,6 @@ function addScoreListener(match){
         const chalSet1 = $('input[id=chal-set1]').val();
         const chalSet2 = $('input[id=chal-set2').val();
         const chalSet3 = $('input[id=chal-set3').val();
-        console.log(chalSet3);
         if(defSet3 == null && chalSet3 == null ){
             chalSet3 = defSet3 = 0;
         }
@@ -645,11 +616,9 @@ function tallyScore(match, def1, def2, def3, chal1, chal2, chal3){
     else{ chalSets++;}
     if(def3 > chal3) { defSets++;}
     else{ chalSets++;}
-    console.log(`defSets = ${defSets} chalSets = ${chalSets}`);
     const matchWinner = defSets > chalSets ? match.defender: match.challenger;
     let matchLoser, set1, set2, set3;
     if(matchWinner === match.defender){
-        console.log('defender won!');
         matchLoser = match.challenger;
         set1 = {
             setNum: 1,
@@ -695,26 +664,18 @@ function tallyScore(match, def1, def2, def3, chal1, chal2, chal3){
         "matchPlayed": true
         };
 
-    // console.log(matchUpdateObj);
     matchUpdate(match.id, matchUpdateObj);
     if(rankingChange){
         // what is defender's rank? 
         const rankings = ladderRankings.map(player => player._id);
         const defenderRank = rankings.indexOf(match.defender._id);
-        console.log(match.defender._id);
-        console.log(defenderRank);
         const ladderObj = {"id": ladderID, "defender": match.defender._id, "challenger": match.challenger._id, "isActive": true};
-        //console.log(ladderObj);
         updateLadder(ladderObj);
-        console.log(`changing ${sessionStorage.getItem('currentUserRank')} to ${defenderRank}`);
         sessionStorage.setItem('currentUserRank', defenderRank);
-        console.log(`current rank is now: ${sessionStorage.getItem('currentUserRank')}`);
     } else if(!isActive){  
-        //set challenger isActive to true
-        console.log("challenger's first match. Setting to Active");
+        //set challenger isActive to true     
         isActive = true;
         const userObj = {"id": match.challenger._id,"isActive": true};
-        console.log(userObj);
         putUser(match.challenger._id, userObj)
         //put challenger on bottom rung
         const ladderObj = {"id": ladderID, "isActive": true, "new": match.challenger._id};
@@ -765,7 +726,6 @@ function showMatches(matchData){
             const defenderName = `${match.defender.name.firstName.charAt(0)}. ${match.defender.name.lastName}`;
             const challengerName = `${match.challenger.name.firstName.charAt(0)}. ${match.challenger.name.lastName}`;
             const matchID = match.id;
-            // console.log(`myMatch is ${myMatch}`);
             const challengeDiv = generateChallengeHTML(myMatch, defenderName, challengerName, matchID);
             $('#challenge-container').append(challengeDiv);
             //handle my-matches
@@ -800,7 +760,6 @@ function showMyMatches(matchData){
         if(myMatch){ 
             if(match.matchPlayed){
                 const winnerName = `${match.winner.name.firstName.charAt(0)}. ${match.winner.name.lastName}`;
-                console.log(winnerName);
                 const loserName = `${match.loser.name.firstName.charAt(0)}. ${match.loser.name.lastName}`;
                 const firstSet = `${match.score[0].winnerGames}-${match.score[0].loserGames}`;
                 const secondSet = `${match.score[1].winnerGames}-${match.score[1].loserGames}`;
@@ -811,7 +770,6 @@ function showMyMatches(matchData){
                 const defenderName = `${match.defender.name.firstName.charAt(0)}. ${match.defender.name.lastName}`;
                 const challengerName = `${match.challenger.name.firstName.charAt(0)}. ${match.challenger.name.lastName}`;
                 const matchID = match.id;
-                console.log(`myMatch is ${myMatch}`);
                 const challengeDiv = generateChallengeHTML(myMatch, defenderName, challengerName, matchID);
                 $('#my-challenges-container').append(challengeDiv);
                 addRecordListener();
@@ -826,18 +784,13 @@ function getMatches(){
     $.ajax({
         url: `${BASE_URL}/matches`,
         headers: {'Authorization': 'Bearer ' + sessionStorage.getItem('userToken')},
-        // beforeSend:function(xhr){ xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem("userToken")); },
-        headers: {"Authorization": "Bearer " + sessionStorage.getItem("userToken")},
         method: "GET",
         dataType: 'json'
     })
     .done(function(data){
-    // console.log(data.matches);
-    currentMatches = data.matches;
-    showMatches(data.matches);
-    showMyMatches(data.matches);
-    // $('#matches').fadeIn();
-    // $('#challenges').fadeIn();
+        currentMatches = data.matches;
+        showMatches(data.matches);
+        showMyMatches(data.matches);   
     })
     .fail(function(err){
         console.log(err);
@@ -877,7 +830,6 @@ function showLadder(ladderData){
         if(place.name){
             const playerName = `${place.name.firstName} ${place.name.lastName}`;
             const playerID = place._id;
-            //console.log(place.name.firstName);
             rank = index + 1;
             const rungDiv = createRungHTML(rank, playerName, playerID);
             $('#ladder-container').append(rungDiv);
@@ -888,7 +840,6 @@ function showLadder(ladderData){
     if(playerName  && !isActive){
         rank = ladderData.length + 1;
         const lastRung = createRungHTML(rank, playerName, sessionStorage.getItem('currentUserID'));
-        console.log(`last rung is ${lastRung}`);
         $('#ladder-container').append(lastRung);
     }
     addChallengeListener(rank);
@@ -924,7 +875,6 @@ function createRungHTML(rank, player, ID){
 //Update ladder rankings
 //NOTE: If unranked challenger loses they should be set to active and go at the bottom of the ladder /////
 function updateLadder(ladderUpdateObj){
-    console.log(ladderUpdateObj);
     $.ajax({
         url: `${BASE_URL}/ladders/${ladderID}`,
         method: "PUT",
