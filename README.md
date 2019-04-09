@@ -4,6 +4,13 @@ link:  https://serene-shore-12858.herokuapp.com/
 
 
 ![A screenshot of my Tennis Ladder App](Ladder-Screenshot.png)
+Technology:
+---------
+HTML5, CSS, Javascript, jQuery, Node, Express, mongoDB
+
+Test userid:
+---------
+userid: stefanos  password: 1qazxsw23e
 
 BACKGROUND:
 

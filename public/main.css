@@ -27,39 +27,52 @@ body, html {
 }
 
 #login-form {
-    height: 40%;
+    height: 420px;
+    width: 310px
+}
+
+#login-form fieldset {
+    margin: 0 auto;
+    position: relative;
+    left: -16px;
+    border-radius: 10px;
 }
 
 #ladderReg {
     height: 60%;
+    width: 30%;
 }
 
 #login-form, #ladderReg {
-    width: 30%;
     position: relative;
-    top: 300px;
+    top: 20%;
     left:30%;
     border-radius: 15px;
     padding: 16px;
     background-color: rgb(164, 169, 170);
 }
 
+#login-form h1 {
+    margin: 0 auto;
+}
 
 #login-submit, #register-submit {
-    margin-top: 25px;
+    margin-top: 15px;
+    margin-left: 80px;
+    text-align: center;
     width: 100px;
     height: 50px;
     background-color: #bbe015;
     border-radius: 10px;
-    position: relative;
-    left: 42%;
+    /* position: relative;
+    left: 30%; */
 }
 
 #register-link, #login-link{
     color: white;
     font-size: 1em;
     text-align: center;
-    margin-top: 50px;
+    margin-top: 30px;
 }
 
 #register-link:hover, #login-link:hover {
@@ -275,13 +288,9 @@ button, li {
     width: 40%;
     color: white;
     text-shadow: 2px 2px 4px #000000;
-    /* font-size: 1.4em; */
     position: relative;;
     left: 25%;
     top: 50px;
-    /* background-color: rgba(147, 219, 249, 0.4);
-     */
-    
     border: 4px solid white;
     margin-top: 0;
     margin-left: 20px;
@@ -339,7 +348,6 @@ button, li {
     position: absolute;
     right: 130px;
 }
-
 
 .user-edit:hover, .user-delete:hover,.edit-cancel:hover, .edit-submit:hover{
     background-color: yellow;
@@ -498,18 +506,13 @@ li{
     cursor: pointer;
 } 
 
-/* .btn:hover{
-    font-weight: bold;
-    box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
-  } */
+
 
   .slideshow li:nth-child(1) span { 
     background-image: url(assets/federer-halle-2018-saturday.jpg?auto=format&fit=crop&w=1350&q=8) 
-    /* background-image: url(http://cdn.cnn.com/cnnnext/dam/assets/170830113302-federer-first-round-us-open-exlarge-169.jpg?auto=format&fit=crop&w=1350&q=80)  */
   }
   .slideshow li:nth-child(2) span{ 
     background-image: url(https://www.atpworldtour.com/en/news/www.atpworldtour.com/-/media/images/news/2017/05/29/13/16/nadal-roland-garros-2017-monday1.jpg?auto=format&fit=crop&w=1350&q=80);
-    /* background-image: url(assets/rodlaver.jpg); */
     animation-delay: 4s; 
   }
   .slideshow li:nth-child(3) span{ 
@@ -666,8 +669,6 @@ label {
     display: inline-block;
 }
 
-
-
 form {
        background-color: rgb(180, 180, 192);
 }
@@ -687,12 +688,12 @@ input {
         font-size: 1em;
     }
 
-    #login-form {
+    /* #login-form {
         top: 150px;
         width: 30%;
         left: 30%;
-        height: 65%;
-    }
+        height: 65%; */
+    /* } */
 
     #ladderReg {
         top: 50px;
@@ -749,11 +750,6 @@ input {
         left: 30%;
         font-size: 1.0em;
     }
-    
-    /* .userEditForm input {
-        width: 80%;
-        height: 30px;
-    } */
 
     .userEditForm label {
         font-size: 1em;
@@ -796,11 +792,14 @@ input {
         height: 20px;
     }
     #login-form{
-        width: 40%;
-        height: 35%;
+        left: 25%;
+        /* height: 35%; */
+    }
+    #reguster-link{
+        margin-top: 20px;
     }
     #login-form h1, #ladderReg h1{
-        font-size: 1.5em;
+        font-size: 1.3em;
     }
     #login-submit, #register-submit{
         left: 33%;
@@ -816,14 +815,21 @@ input {
 
 @media only screen and (max-width: 780px){
     #login-form{
-        height: 45%;
+        /* height: 45%; */
     }
     #ladderReg{
         height: 68%;
     }
 }
 
-@media only screen and (max-width: 416px){
+@media only screen and (max-width: 650px){
+    .log-nav:{
+        width: 70px;
+        font-size: .8em;
+    }
+}
+
+@media only screen and (max-width: 500px){
 
     .hamburger{
         visibility: visible;
@@ -835,7 +841,6 @@ input {
         display: none;
     }
     .left-nav, .log-nav{
-        font-size: .8em;
         display: none;
     }
     .left-nav {
@@ -860,9 +865,7 @@ input {
         height:20px;
     }
     #login-form {
-        width: 70%;
-        height: 73%;
-        top: 50px;
+        top: 60px;
         left:45px;
     }
 
